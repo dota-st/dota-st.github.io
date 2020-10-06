@@ -34,6 +34,44 @@
 <p>即可拿到flag呦~</p>
 </li>
 </ul>
+<ul>
+<li><h2 id="backup"><a href="#backup" class="headerlink" title="backup"></a>backup</h2><hr>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/4VR%40591%60F0%7D%5BYOQ%40X5%5D%7BYEF.png"></p>
+<br>
+
+<p>这道题提示我们是文件备份，文件泄露的问题</p>
+<p>常见的备份文件名为：index.php~和index.php.bak</p>
+<p>试着输入了一下，没想到成功下载了文件，打开文件，即可得到flag嗷~</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>备份文件<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">        body&#123;</span><br><span class="line"><span class="css">            <span class="selector-tag">margin-left</span><span class="selector-pseudo">:auto</span>;</span></span><br><span class="line"><span class="css">            <span class="selector-tag">margin-right</span><span class="selector-pseudo">:auto</span>;</span></span><br><span class="line"><span class="css">            <span class="selector-tag">margin-TOP</span><span class="selector-pseudo">:200PX</span>;</span></span><br><span class="line"><span class="css">            <span class="selector-tag">width</span><span class="selector-pseudo">:20em</span>;</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>你知道index.php的备份文件名吗？<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">?php</span></span></span><br><span class="line"><span class="tag">$<span class="attr">flag</span>=<span class="string">&quot;Cyberpeace&#123;855A1C4B3401294CB6604CCC98BDE334&#125;&quot;</span></span></span><br><span class="line"><span class="tag">?&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>本题也可使用目录遍历搜索</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Y2LMCC%25TTM%5D%7BJ474Q3N42%5BD.png"></p>
+<p>感觉自己是不是有点厉害了现在<del>让我们继续闯关，冲冲冲</del></p>
+</li>
+</ul>
+<ul>
+<li><h2 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h2><hr>
+<p>此关提示我们信息在cookie中</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/U1SU0%29T8J378V4ULADE%5DAL5.png"></p>
+<br>
+
+<p>去查看文件的请求头和响应头信息</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%2450CQV6YEE5P%40%28SH%29_GUBCQ.png"></p>
+<br>
+
+<p>提示我们去查看cookie.php，我们去访问这个文件，让我们继续看文件响应头</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/N%28OZ%25%7D57V5%7BB_9J%7DJ%28N5K%28J.png"></p>
+<br>
+
+<p>打开文件查看响应头，gogogo！</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/9W43RJ_R%25UC%7D3W%408%28%24DROGI.png"></p>
+<br>
+
+<p>flag就出现在了我们面前，金币++，开心~</p>
+</li>
+</ul>
 ]]></content>
       <tags>
         <tag>CTF</tag>
