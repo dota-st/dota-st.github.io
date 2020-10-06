@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>攻防世界Web区~持续更新中！</title>
+    <url>/posts/14571/</url>
+    <content><![CDATA[<h1 id="新手练习区"><a href="#新手练习区" class="headerlink" title="新手练习区"></a>新手练习区</h1><ul>
+<li><h2 id="view-source"><a href="#view-source" class="headerlink" title="view source"></a>view source</h2><hr>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/NE96%7DBO%60EX%28%5B%40YGU%25FPT%29I3.png"></p>
+<p>题目提示查看源代码，但无法使用右键打开开发者模式，我们这个时候可以使用f12快捷键打开开发者模式</p>
+<br>
+
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%242%29AW49Y%5BP5%407W%7BM8%7D%25S%40%25R.png"></p>
+<br>
+
+<p>flag就藏在源代码里，我们操练起cv大法，然后提交拿分<del>~</del></p>
+</li>
+</ul>
+<ul>
+<li><h2 id="robots"><a href="#robots" class="headerlink" title="robots"></a>robots</h2><hr>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/_6%5D5%7B%7DXV%29FML%60R14%7DQMV9N4.png"></p>
+<br>
+
+<blockquote>
+<p>Robots协议是Web站点和搜索引擎爬虫交互的一种方式，Robots.txt是存放在站点根目录下的一个纯文本文件。该文件可以指    定搜索引擎爬虫只抓取指定的内容，或者是禁止搜索引擎爬虫抓取网站的部分或全部内容。当一个搜索引擎爬虫访问一个站点时，它会首先检查该站点根目录下是否存在robots.txt，如果存在，搜索引擎爬虫就会按照该文件中的内容来确定访问的范围；如果该文件不存在，那么搜索引擎爬虫就沿着链接抓取。另外，robots.txt必须放置在一个站点的根目录下，而且文件名必须全部小写。</p>
+</blockquote>
+<br>
+
+<p>所以我们在url输入robots.txt</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/H%5BM%5D%25%29J%5BP89Q9BM2U8~11VI.png"></p>
+<p>跳转到页面，提示我们还有个f1ag_1s_h3re.php,我们继续访问文件</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%7BQ%25D9C7260DI5L%5BSMIY8X2G.png"></p>
+<br>
+
+<p>即可拿到flag呦~</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hack The Box账号注册</title>
     <url>/posts/33946/</url>
     <content><![CDATA[<h3 id="hack-the-box-是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧"><a href="#hack-the-box-是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧" class="headerlink" title="hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧~"></a>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧<del>~</del></h3><hr>
@@ -26,20 +65,5 @@
 
 <p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png"></p>
 <h4 id="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"><a href="#这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！" class="headerlink" title="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"></a>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</h4>]]></content>
-  </entry>
-  <entry>
-    <title>攻防世界Web区</title>
-    <url>/posts/14570/</url>
-    <content><![CDATA[<h1 id="新手练习区"><a href="#新手练习区" class="headerlink" title="新手练习区"></a>新手练习区</h1><ul>
-<li><h2 id="view-source"><a href="#view-source" class="headerlink" title="view source"></a>view source</h2></li>
-</ul>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/NE96%7DBO%60EX%28%5B%40YGU%25FPT%29I3.png"></p>
-<p>题目提示查看源代码，但无法使用右键打开开发者模式，我们这个时候可以使用f12快捷键打开开发者模式</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%242%29AW49Y%5BP5%407W%7BM8%7D%25S%40%25R.png"></p>
-<p>flag就在源代码中，我们轻车熟路的cv操练起来，提交取得金币！</p>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
   </entry>
 </search>
