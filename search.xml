@@ -75,7 +75,7 @@
 
 <p>本题也可使用目录遍历搜索</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Y2LMCC%25TTM%5D%7BJ474Q3N42%5BD.png"></p>
-<p>感觉自己是不是有点厉害了现在<del>让我们继续闯关，冲冲冲</del></p>
+<p>感觉自己是不是有点厉害了现在,操练起兵器，我们继续闯关，冲冲冲~</p>
 </li>
 </ul>
 <ul>
@@ -97,6 +97,21 @@
 <br>
 
 <p>flag就出现在了我们面前，金币++，开心~</p>
+</li>
+</ul>
+<ul>
+<li><h2 id="disabled-button"><a href="#disabled-button" class="headerlink" title="disabled_button"></a>disabled_button</h2><hr>
+<p>题目提示页面按钮不能打开，点击了发现确实打不开</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/disabled_button/0QDTUEI%5DW3HBBG_VJKPY%60~S.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/disabled_button/%5D608EGFTAJL%29U%24AOJALE4%5BX.png"></p>
+<br>
+
+<p>这时候运用到我们html的知识，前台万物可更改！我们打开源码修改属性，把disabled去掉，按钮即可打开</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/disabled_button/2F%40%40E_S6P5JDKK%7B~0%60%609BL1.png"></p>
+<br>
+
+<p>点击后，flag就出现啦~</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/disabled_button/17LAH%25%7B9QR%60%7DB%24F%7BSGZ5BMD.png"></p>
 </li>
 </ul>
 ]]></content>
