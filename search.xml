@@ -130,6 +130,65 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/NA9%25KLH%29H95R14I0E%28%243X46.png"></p>
 </li>
 </ul>
+<ul>
+<li><h2 id="command-execution"><a href="#command-execution" class="headerlink" title="command_execution"></a>command_execution</h2><hr>
+<p>本题给了我们一个ping页面，我们尝试ping了本机地址之后回显信息</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/command_execution/RY~GME%5DY0S%7BCWA11S%28%24KUYE.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/command_execution/881NMO91RVEV%29%7BO4%5D%29L%7DKTC.png"></p>
+<br>
+
+<p>页面回显ping -c 3 127.0.0.1 ，这里提示我们这是linux系统，ping三次。我们尝试使用linux命令执行，同时执行多条命令，发现有回显</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/command_execution/%7BPQ%7DQ33TMU1UC%297_%25UL3%5BQC%20%281%29.png"></p>
+<br>
+
+<p>于是我们尝试寻找带有flag的文件~，可以用；多条执行也可以使用|只执行后面的语句</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/command_execution/F8F%60R%7DHS%5B_J8UDX%28IQE0%5B26.png"></p>
+<br>
+
+<p>发现flag.txt可疑文件，我们去查看一下</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/command_execution/_M4D~KMQ~K%7D%7BKET0TJSEQ31.png"></p>
+<br>
+
+<p>轻轻松松获得flag咯~</p>
+<br>
+
+<p><strong>扩充知识：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>常见连接符</strong></th>
+<th><strong>举例</strong></th>
+<th><strong>效果</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>;</td>
+<td>A;B</td>
+<td>先执行A，再执行B</td>
+</tr>
+<tr>
+<td>&amp;</td>
+<td>A&amp;B</td>
+<td>简单拼接，A B之间无制约关系</td>
+</tr>
+<tr>
+<td>|</td>
+<td>A|B</td>
+<td>显示B的执行结果</td>
+</tr>
+<tr>
+<td>&amp;&amp;</td>
+<td>A&amp;&amp;B</td>
+<td>A执行成功，然后才会执行B</td>
+</tr>
+<tr>
+<td>||</td>
+<td>A||B</td>
+<td>A执行失败，然后才会执行B</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
 ]]></content>
       <tags>
         <tag>CTF</tag>
