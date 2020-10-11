@@ -114,6 +114,22 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/disabled_button/17LAH%25%7B9QR%60%7DB%24F%7BSGZ5BMD.png"></p>
 </li>
 </ul>
+<ul>
+<li><h2 id="weak-auth"><a href="#weak-auth" class="headerlink" title="weak_auth"></a>weak_auth</h2><hr>
+<p>本题提示为弱密码爆破</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/7O1MJB2%607W_M~F%60QVKQ4SLL5.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/YU%60V%60%7B9Y16XM%5BY1Y%28%5B4FZF7.png"></p>
+<br>
+
+<p>我们尝试抓包查看源代码，发现提示我们用户名为admin，使用密码爆破</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/%24R_D76HB0S%409GL%24RMWZ50FM.png"></p>
+<br>
+
+<p>我们使用字典配合burpsuite进行一个爆破，最后得到结果~，在响应包里拿到flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/VD2TF%7BN%5DP%60F47D%40%7DZI9%60EG8.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/NA9%25KLH%29H95R14I0E%28%243X46.png"></p>
+</li>
+</ul>
 ]]></content>
       <tags>
         <tag>CTF</tag>
