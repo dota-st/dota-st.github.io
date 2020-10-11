@@ -147,8 +147,6 @@
 
 <p>发现flag.txt可疑文件，我们去查看一下</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/command_execution/_M4D~KMQ~K%7D%7BKET0TJSEQ31.png"></p>
-<br>
-
 <p>轻轻松松获得flag咯~</p>
 <br>
 
@@ -189,6 +187,27 @@
 </tbody></table>
 </li>
 </ul>
+<ul>
+<li><h2 id="simple-php"><a href="#simple-php" class="headerlink" title="simple_php"></a>simple_php</h2><hr>
+<p>本题需要我们掌握php弱类型比较，打开环境给出我们一些源码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/simple_php/W%7DIBQVLJ20X%7BPN4H%5BOWVT5S.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/simple_php/XYN%25%7B%60Q%5BS31GMA4%29B41AA%256.png"></p>
+<p>首先我们分析一下源代码：</p>
+<p>1）有include函数，包含了config.php文件</p>
+<p>2）url需要接收参数a和参数b</p>
+<p>3）如果$a=0或者$a为真,输出$flag1</p>
+<p>4）如果b是数字或者字符串，如果$b&gt;1234就输出$flag2</p>
+<br>
+
+<p>总结，我们构造a参数得等于0且不为假，构造b参数&gt;1234且不能为数字和字符串。</p>
+<p>粗略来看，这不是难为我们吗！!不过兄弟莫慌，这个时候我们想起前面所说的php弱类型比较，那这弱类型到底指的什么呢？下面我们一起学习一下~</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">掌握php弱类型比较</span><br><span class="line">php中其中两种比较符号:</span><br><span class="line">&#x3D;&#x3D;：先将字符串类型转化成相同，再比较</span><br><span class="line">&#x3D;&#x3D;&#x3D;：先判断两种字符串的类型是否相等，再比较</span><br><span class="line">字符串和数字比较使用&#x3D;&#x3D;时,字符串会先转换为数字类型再比较</span><br><span class="line">var_dump(&#39;a&#39; &#x3D;&#x3D; 0);&#x2F;&#x2F;true，此时a字符串类型转化成数字，因为a字符串开头中没有找到数字，所以转换为0</span><br><span class="line">var_dump(&#39;123a&#39; &#x3D;&#x3D; 123);&#x2F;&#x2F;true，这里&#39;123a&#39;会被转换为123</span><br><span class="line"></span><br><span class="line">var_dump(&#39;a123&#39; &#x3D;&#x3D; 123);&#x2F;&#x2F;false，因为php中有这样一个规定：字符串的开始部分决定了它的值，如果该字符串以合法的数字开始，则使用该数字至和它连续的最后一个数字结束，否则其比较时整体值为0。</span><br><span class="line">举例：</span><br><span class="line">var_dump(&#39;123a1&#39; &#x3D;&#x3D; 123);&#x2F;&#x2F;true</span><br><span class="line">var_dump(&#39;1233a&#39; &#x3D;&#x3D; 123);&#x2F;&#x2F;false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看完之后，是不是突然恍然大悟！所以我们尝试构造<strong>a=0a&amp;b=1234a</strong>输入</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/simple_php/DE5%7D3O9%5B%40%40BTDQN%25O%5BSF%7BXU.png"></p>
+</li>
+</ul>
+<p>  如此，取flag如探囊取物~</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
