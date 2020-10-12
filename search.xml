@@ -226,7 +226,9 @@
 <br>
 
 <p>返回的结果中含有flag，此题通关！</p>
-<p>以下是curl的使用手册，来自阮一峰的日志：<a href="http://www.ruanyifeng.com/blog/2019/09/curl-reference.html">http://www.ruanyifeng.com/blog/2019/09/curl-reference.html</a></p>
+<br>
+
+<p>以下是curl的使用手册，来自阮一峰大佬的网络日志：<a href="http://www.ruanyifeng.com/blog/2019/09/curl-reference.html">http://www.ruanyifeng.com/blog/2019/09/curl-reference.html</a></p>
 <br>
 
 <p>curl 是常用的命令行工具，用来请求 Web 服务器。它的名字就是客户端（client）的 URL 工具的意思。</p>
