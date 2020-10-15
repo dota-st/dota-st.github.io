@@ -498,7 +498,20 @@
 
 </li>
 </ul>
-<h1 id="高手进阶区"><a href="#高手进阶区" class="headerlink" title="高手进阶区"></a>高手进阶区</h1>]]></content>
+<h1 id="高手进阶区"><a href="#高手进阶区" class="headerlink" title="高手进阶区"></a>高手进阶区</h1><ul>
+<li><h2 id="baby-web"><a href="#baby-web" class="headerlink" title="baby_web"></a>baby_web</h2><hr>
+<p>有点激动，终于到高手web进阶区了，慢慢走向高手的路了是不是？好吧好吧，不吹了，来看看题目</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/baby_web/2QD4IVBA_IZPP_%2425STG%28%28N.png"></p>
+<p>题目提示我们是初始页面，打开是一个1.php，尝试输入了一下index.php,发现存在这个页面，但302跳转了</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/baby_web/VC70ZU3IO_B8ZM7Q%28~93O%5DX.png"></p>
+<p>然后使用curl请求一下，curl工具默认不随着302跳转</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/baby_web/HY40G4%601ZEH%7DEGO2EN%25~498.png"></p>
+<p>flag就出来了，妥妥的签到题呀哈哈嗝。</p>
+<p>后来发现其实刚开始就已经给出flag了，汗！</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/baby_web/YY4%24SZRJG~%7DGSJ%5DHWPE~6XO.png"></p>
+</li>
+</ul>
+]]></content>
       <tags>
         <tag>CTF</tag>
       </tags>
