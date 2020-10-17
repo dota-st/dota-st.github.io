@@ -10,6 +10,13 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/7%60CZ6H%24XMN37HSV%40%5BKG%40%60YW.png"></p>
 <p>发现flag，通关！</p>
 </li>
+<li><h2 id="计算器"><a href="#计算器" class="headerlink" title="计算器"></a>计算器</h2><p>进入环境后，发现给出一串数字计算，但怎么也输入不了超过两位数的数字，只能输入一位</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/R%60T%5B%60G~%24KK_4G73~~FWC%40YY.png"></p>
+<p>猜测是前端限制，打开后，修改1数值为2，就可以输入两位数字了，然后提交获取flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/%28RKID%60YAVX1ZTCXS9%7B3%7D~KU.png"></p>
+<p>当然，还有另一种方法，就是去找他的js文件，找了一下，发现flag了</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/51MY%5B%7DSCM%29%60XKFO4SI8Z3%7DM.png"></p>
+</li>
 </ol>
 ]]></content>
       <tags>
