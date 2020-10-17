@@ -264,10 +264,42 @@
 <p>再访问flag.baidu.com即可得到flag</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/BC%5BB1EG9A%5D%7BSO%28%5DTKKV%605Z7.png"></p>
 </li>
+<li><h2 id="你必须让他停下"><a href="#你必须让他停下" class="headerlink" title="你必须让他停下"></a>你必须让他停下</h2><p>打开页面，是一个不停刷新的画面</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E4%BD%A0%E5%BF%85%E9%A1%BB%E8%AE%A9%E4%BB%96%E5%81%9C%E4%B8%8B%E6%9D%A5/_J5%28NO03FKQI%5BU%5D%7B0QOIL1L.png"></p>
+<p>仔细观察了一下，发现有一次请求中源代码会显示出flag，所以我们使用burpsuite抓包，然后进行若干次发送请求</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E4%BD%A0%E5%BF%85%E9%A1%BB%E8%AE%A9%E4%BB%96%E5%81%9C%E4%B8%8B%E6%9D%A5/WLO9%24%5B0%40N%7D96OW%5B%25F%60Q626H.png"></p>
+<p>在请求图片名字为10的时候，暴露出flag。</p>
+</li>
+<li><h2 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h2><p>题目环境打不开，可能平台出问题了，暂时跳过……</p>
+</li>
+<li><h2 id="变量1"><a href="#变量1" class="headerlink" title="变量1"></a>变量1</h2><p>打开题目，给出php代码，我们进行一波代码审计</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%8F%98%E9%87%8F1/TID%7DDC4B%283WM90Y_%5D%60DLX2X.png"></p>
+<p>首先需要对args用get方式进行一个传参，第一个if里面含有正则，对一些字符进行了一个过滤，还发现下面<strong>var_dump</strong>里的变量有两个$$，这是一个可变变量。</p>
+<blockquote>
+<p>可变变量是一种独特的变量，它允许动态改变一个变量名称。其工作原理是该变量的名称由另一个变量的值来确定，实现过程就是在变量的前面再多加一个美元符号“$”.</p>
+</blockquote>
+<p>所以我们需要对args传一个变量的值，通过var_dump来显示它的信息，php中的全局变量有以下几种</p>
+<blockquote>
+<ul>
+<li>$_POST [用于接收post提交的数据]</li>
+<li>$_GET [用于获取url地址栏的参数数据]</li>
+<li>$_FILES [用于文件就收的处理img 最常见]</li>
+<li>$_COOKIE [用于获取与setCookie()中的name 值]</li>
+<li>$_SESSION [用于存储session的值或获取session中的值]</li>
+<li>$_REQUEST [具有get,post的功能，但比较慢]</li>
+<li>SERVER[是预定义服务器变量的一种，所有SERVER[是预定义服务器变量的一种，所有_SERVER [是预定义服务器变量的一种，所有_SERVER开头的都</li>
+<li>$GLOBALS [一个包含了全部变量的全局组合数组]</li>
+<li>$_ENV [ 是一个包含服务器端环境变量的数组。它是PHP中一个超级全局变量，我们可以在PHP 程序的任何地方直接访问它]</li>
+</ul>
+</blockquote>
+<p>我们这里使用GLOBALS全局变量进行构造</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%8F%98%E9%87%8F1/EW%7BSV%7B4D%29ZL3L~CLXXN4M%25Q.png"></p>
+<p>ok，回显出flag。</p>
+</li>
 </ol>
 ]]></content>
       <tags>
-        <tag>ctf</tag>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
