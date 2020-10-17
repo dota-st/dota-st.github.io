@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>bugku平台web题目~持续更新中！</title>
+    <url>/posts/55334/</url>
+    <content><![CDATA[<ol>
+<li><h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><p>打开页面，是一群会动的滑稽，还越动越快，哈哈哈</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/6YPR%25%7B%40PNPA%5BNUEN%7BBW6VGQ.png"></p>
+<p>好啦，看起来页面给不出什么有用的信息，我们查看一下源代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/7%60CZ6H%24XMN37HSV%40%5BKG%40%60YW.png"></p>
+<p>发现flag，通关！</p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>ctf</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>curl的使用</title>
     <url>/posts/25992/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>curl 是常用的命令行工具，用来请求 Web 服务器。它的名字就是客户端（client）的 URL 工具的意思。</p>
