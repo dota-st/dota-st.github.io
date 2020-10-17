@@ -1,53 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>bugku平台web题目~持续更新中！</title>
-    <url>/posts/55334/</url>
-    <content><![CDATA[<ol>
-<li><h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><p>打开页面，是一群会动的滑稽，还越动越快，哈哈哈</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/6YPR%25%7B%40PNPA%5BNUEN%7BBW6VGQ.png"></p>
-<p>好啦，看起来页面给不出什么有用的信息，我们查看一下源代码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/7%60CZ6H%24XMN37HSV%40%5BKG%40%60YW.png"></p>
-<p>发现flag，通关！</p>
-</li>
-<li><h2 id="计算器"><a href="#计算器" class="headerlink" title="计算器"></a>计算器</h2><p>进入环境后，发现给出一串数字计算，但怎么也输入不了超过两位数的数字，只能输入一位</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/R%60T%5B%60G~%24KK_4G73~~FWC%40YY.png"></p>
-<p>猜测是前端限制，打开后，修改1数值为2，就可以输入两位数字了，然后提交获取flag</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/%28RKID%60YAVX1ZTCXS9%7B3%7D~KU.png"></p>
-<p>当然，还有另一种方法，就是去找他的js文件，找了一下，发现flag了</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/51MY%5B%7DSCM%29%60XKFO4SI8Z3%7DM.png"></p>
-</li>
-<li><h2 id="GET"><a href="#GET" class="headerlink" title="$_GET"></a>$_GET</h2><p>看题目也知道是get方式发送请求，打开后看页面给出的代码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/UZAL7ME3%7BJQ7OQ%7BCE1VC193.png"></p>
-<p>查看代码，告诉我们传参给what，当传的参数值为flag，输出flag</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/YINKR%28%29%7BP6602C3PPQ%60C%7B15.png"></p>
-<p>ok,获取到flag。</p>
-</li>
-<li><h2 id="POST"><a href="#POST" class="headerlink" title="$_POST"></a>$_POST</h2><p>这次要求我们使用post方式传参</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/J%7B4QX%29%5DODJBTH%257%25PJZVRH2.png"></p>
-<p>和上道题目一样，需要对what参数传参flag回显答案，但我们不是使用get方式，而是使用post方式进行请求</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/UI%259OG4%7D99JEQ%7D4QQB%24U_S1.png"></p>
-<p>回显flag，通关。</p>
-</li>
-<li><h2 id="矛盾"><a href="#矛盾" class="headerlink" title="矛盾"></a>矛盾</h2><p>打开题目，查看给出的代码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/WM9ZE87%29%7BBW9%25ERIN9%7BW%248Y.png"></p>
-<p>依然用get方式对参数num传值，但这次多了一个is_numeric()函数和一个if判断。</p>
-<blockquote>
-<p>isnumeric( )还是一个很实用的函数，在算法题目里面应该会有比较大的作用。</p>
-<p>检测字符串是否只由数字组成，如果字符串中只包括数字，就返回Ture，否则返回False。</p>
-</blockquote>
-<p>同时我们还需要知道php的弱类型比较，例如’123a’会被转换成’123’,字符串的开头部分决定了它的值。如果该字符串以合法的数字开始，则使用该数字至和他连续的最后一个数字结束，否则其比较时整体值为0。</p>
-<p>所以我们既要满足第一个不是纯数字又要数值上等于1</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/OO%7D2%40M0%4076CCULY%5D3GNA%40QL.png"></p>
-<p>成功，获取flag。</p>
-</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>curl的使用</title>
     <url>/posts/25992/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>curl 是常用的命令行工具，用来请求 Web 服务器。它的名字就是客户端（client）的 URL 工具的意思。</p>
@@ -254,6 +207,67 @@
 ]]></content>
       <tags>
         <tag>curl</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>bugku平台web题目~持续更新中！（新手推荐）</title>
+    <url>/posts/55334/</url>
+    <content><![CDATA[<ol>
+<li><h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><p>打开页面，是一群会动的滑稽，还越动越快，哈哈哈</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/6YPR%25%7B%40PNPA%5BNUEN%7BBW6VGQ.png"></p>
+<p>好啦，看起来页面给不出什么有用的信息，我们查看一下源代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/7%60CZ6H%24XMN37HSV%40%5BKG%40%60YW.png"></p>
+<p>发现flag，通关！</p>
+</li>
+<li><h2 id="计算器"><a href="#计算器" class="headerlink" title="计算器"></a>计算器</h2><p>进入环境后，发现给出一串数字计算，但怎么也输入不了超过两位数的数字，只能输入一位</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/R%60T%5B%60G~%24KK_4G73~~FWC%40YY.png"></p>
+<p>猜测是前端限制，打开后，修改1数值为2，就可以输入两位数字了，然后提交获取flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/%28RKID%60YAVX1ZTCXS9%7B3%7D~KU.png"></p>
+<p>当然，还有另一种方法，就是去找他的js文件，找了一下，发现flag了</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/51MY%5B%7DSCM%29%60XKFO4SI8Z3%7DM.png"></p>
+</li>
+<li><h2 id="GET"><a href="#GET" class="headerlink" title="$_GET"></a>$_GET</h2><p>看题目也知道是get方式发送请求，打开后看页面给出的代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/UZAL7ME3%7BJQ7OQ%7BCE1VC193.png"></p>
+<p>查看代码，告诉我们传参给what，当传的参数值为flag，输出flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/YINKR%28%29%7BP6602C3PPQ%60C%7B15.png"></p>
+<p>ok,获取到flag。</p>
+</li>
+<li><h2 id="POST"><a href="#POST" class="headerlink" title="$_POST"></a>$_POST</h2><p>这次要求我们使用post方式传参</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/J%7B4QX%29%5DODJBTH%257%25PJZVRH2.png"></p>
+<p>和上道题目一样，需要对what参数传参flag回显答案，但我们不是使用get方式，而是使用post方式进行请求</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/UI%259OG4%7D99JEQ%7D4QQB%24U_S1.png"></p>
+<p>回显flag，通关。</p>
+</li>
+<li><h2 id="矛盾"><a href="#矛盾" class="headerlink" title="矛盾"></a>矛盾</h2><p>打开题目，查看给出的代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/WM9ZE87%29%7BBW9%25ERIN9%7BW%248Y.png"></p>
+<p>依然用get方式对参数num传值，但这次多了一个<strong>is_numeric()函数</strong>和一个<strong>if判断</strong>。</p>
+<blockquote>
+<p>isnumeric( )还是一个很实用的函数，在算法题目里面应该会有比较大的作用。</p>
+<p>检测字符串是否只由数字组成，如果字符串中只包括数字，就返回Ture，否则返回False。</p>
+</blockquote>
+<p>同时我们还需要知道php的弱类型比较，例如’123a’会被转换成’123’,字符串的开头部分决定了它的值。如果该字符串以合法的数字开始，则使用该数字至和他连续的最后一个数字结束，否则其比较时整体值为0。</p>
+<p>所以我们既要满足第一个不是纯数字又要数值上等于1</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/OO%7D2%40M0%4076CCULY%5D3GNA%40QL.png"></p>
+<p>成功，获取flag。</p>
+</li>
+<li><h2 id="web3"><a href="#web3" class="headerlink" title="web3"></a>web3</h2><p>打开题目环境，有一个弹框，一直点都一直弹出，f12点不开开发者工具，所以我们直接url请求查看源代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/%25WTF6%5D64VA%2846%5DGK7~%5B6%7BAM.png"></p>
+<p>拉到底下，发现一串unicode编码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/S3AKL%5BJ%40%296T%25Z%5BWB8CAS7IC.png"></p>
+<p>把它转成Ascii码即可解密获取flag呦</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/K%7DOPCINA9JMUUT6NFY1IT71.png"></p>
+</li>
+<li><h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>题目提示我们解析域名</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/HK%5DCS7TD%60%5BU9_SC%60H3%28%7B%25FE.png"></p>
+<p>按照题目要求把flag.baidu.com解析到123.206.87.240，所以我们在本地的hosts文件里写入</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/%5D4%28BG%28N5%7DD%28Y%40KWWD~ISX~B.png"></p>
+<p>再访问flag.baidu.com即可得到flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/BC%5BB1EG9A%5D%7BSO%28%5DTKKV%605Z7.png"></p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
