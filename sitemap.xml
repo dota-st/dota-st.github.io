@@ -2,49 +2,49 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://blog.wlhhlc.top/posts/55334/</loc>
+    <loc>https://www.wlhhlc.top/about/index.html</loc>
     
     <lastmod>2020-10-18</lastmod>
     
   </url>
   
   <url>
-    <loc>https://blog.wlhhlc.top/posts/33946/</loc>
+    <loc>https://www.wlhhlc.top/posts/55334/</loc>
+    
+    <lastmod>2020-10-18</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.wlhhlc.top/posts/33946/</loc>
     
     <lastmod>2020-10-16</lastmod>
     
   </url>
   
   <url>
-    <loc>https://blog.wlhhlc.top/posts/14571/</loc>
+    <loc>https://www.wlhhlc.top/posts/14571/</loc>
     
     <lastmod>2020-10-15</lastmod>
     
   </url>
   
   <url>
-    <loc>https://blog.wlhhlc.top/posts/25992/</loc>
+    <loc>https://www.wlhhlc.top/posts/25992/</loc>
     
     <lastmod>2020-10-12</lastmod>
     
   </url>
   
   <url>
-    <loc>https://blog.wlhhlc.top/about/index.html</loc>
-    
-    <lastmod>2020-10-07</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.wlhhlc.top/tags/index.html</loc>
+    <loc>https://www.wlhhlc.top/tags/index.html</loc>
     
     <lastmod>2020-10-03</lastmod>
     
   </url>
   
   <url>
-    <loc>https://blog.wlhhlc.top/messageboard/index.html</loc>
+    <loc>https://www.wlhhlc.top/messageboard/index.html</loc>
     
     <lastmod>2020-10-03</lastmod>
     
@@ -52,23 +52,23 @@
   
 
   <url>
-    <loc>https://blog.wlhhlc.top/</loc>
-    <lastmod>2020-10-18</lastmod>
+    <loc>https://www.wlhhlc.top/</loc>
+    <lastmod>2020-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
-    <loc>https://blog.wlhhlc.top/tags/CTF/</loc>
-    <lastmod>2020-10-18</lastmod>
+    <loc>https://www.wlhhlc.top/tags/CTF/</loc>
+    <lastmod>2020-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://blog.wlhhlc.top/tags/curl/</loc>
-    <lastmod>2020-10-18</lastmod>
+    <loc>https://www.wlhhlc.top/tags/curl/</loc>
+    <lastmod>2020-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
