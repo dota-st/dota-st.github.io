@@ -53,22 +53,22 @@
 
   <url>
     <loc>https://www.wlhhlc.top/</loc>
-    <lastmod>2020-10-21</lastmod>
+    <lastmod>2020-10-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
-    <loc>https://www.wlhhlc.top/tags/CTF/</loc>
-    <lastmod>2020-10-21</lastmod>
+    <loc>https://www.wlhhlc.top/tags/curl/</loc>
+    <lastmod>2020-10-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.wlhhlc.top/tags/curl/</loc>
-    <lastmod>2020-10-21</lastmod>
+    <loc>https://www.wlhhlc.top/tags/CTF/</loc>
+    <lastmod>2020-10-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>

@@ -1,127 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>bugku平台web题目~持续更新中！（新手推荐）</title>
-    <url>/posts/55334/</url>
-    <content><![CDATA[<ol>
-<li><h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><p>打开页面，是一群会动的滑稽，还越动越快，哈哈哈</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/6YPR%25%7B%40PNPA%5BNUEN%7BBW6VGQ.png"></p>
-<p>好啦，看起来页面给不出什么有用的信息，我们查看一下源代码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/7%60CZ6H%24XMN37HSV%40%5BKG%40%60YW.png"></p>
-<p>发现flag，通关！</p>
-</li>
-<li><h2 id="计算器"><a href="#计算器" class="headerlink" title="计算器"></a>计算器</h2><p>进入环境后，发现给出一串数字计算，但怎么也输入不了超过两位数的数字，只能输入一位</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/R%60T%5B%60G~%24KK_4G73~~FWC%40YY.png"></p>
-<p>猜测是前端限制，打开后，修改1数值为2，就可以输入两位数字了，然后提交获取flag</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/%28RKID%60YAVX1ZTCXS9%7B3%7D~KU.png"></p>
-<p>当然，还有另一种方法，就是去找他的js文件，找了一下，发现flag了</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/51MY%5B%7DSCM%29%60XKFO4SI8Z3%7DM.png"></p>
-</li>
-<li><h2 id="GET"><a href="#GET" class="headerlink" title="$_GET"></a>$_GET</h2><p>看题目也知道是get方式发送请求，打开后看页面给出的代码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/UZAL7ME3%7BJQ7OQ%7BCE1VC193.png"></p>
-<p>查看代码，告诉我们传参给what，当传的参数值为flag，输出flag</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/YINKR%28%29%7BP6602C3PPQ%60C%7B15.png"></p>
-<p>ok,获取到flag。</p>
-</li>
-<li><h2 id="POST"><a href="#POST" class="headerlink" title="$_POST"></a>$_POST</h2><p>这次要求我们使用post方式传参</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/J%7B4QX%29%5DODJBTH%257%25PJZVRH2.png"></p>
-<p>和上道题目一样，需要对what参数传参flag回显答案，但我们不是使用get方式，而是使用post方式进行请求</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/UI%259OG4%7D99JEQ%7D4QQB%24U_S1.png"></p>
-<p>回显flag，通关。</p>
-</li>
-<li><h2 id="矛盾"><a href="#矛盾" class="headerlink" title="矛盾"></a>矛盾</h2><p>打开题目，查看给出的代码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/WM9ZE87%29%7BBW9%25ERIN9%7BW%248Y.png"></p>
-<p>依然用get方式对参数num传值，但这次多了一个<strong>is_numeric()函数</strong>和一个<strong>if判断</strong>。</p>
-<blockquote>
-<p>isnumeric( )还是一个很实用的函数，在算法题目里面应该会有比较大的作用。</p>
-<p>检测字符串是否只由数字组成，如果字符串中只包括数字，就返回Ture，否则返回False。</p>
-</blockquote>
-<p>同时我们还需要知道php的弱类型比较，例如’123a’会被转换成’123’,字符串的开头部分决定了它的值。如果该字符串以合法的数字开始，则使用该数字至和他连续的最后一个数字结束，否则其比较时整体值为0。</p>
-<p>所以我们既要满足第一个不是纯数字又要数值上等于1</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/OO%7D2%40M0%4076CCULY%5D3GNA%40QL.png"></p>
-<p>成功，获取flag。</p>
-</li>
-<li><h2 id="web3"><a href="#web3" class="headerlink" title="web3"></a>web3</h2><p>打开题目环境，有一个弹框，一直点都一直弹出，f12点不开开发者工具，所以我们直接url请求查看源代码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/%25WTF6%5D64VA%2846%5DGK7~%5B6%7BAM.png"></p>
-<p>拉到底下，发现一串unicode编码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/S3AKL%5BJ%40%296T%25Z%5BWB8CAS7IC.png"></p>
-<p>把它转成Ascii码即可解密获取flag呦</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/K%7DOPCINA9JMUUT6NFY1IT71.png"></p>
-</li>
-<li><h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>题目提示我们解析域名</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/HK%5DCS7TD%60%5BU9_SC%60H3%28%7B%25FE.png"></p>
-<p>按照题目要求把flag.baidu.com解析到123.206.87.240，所以我们在本地的hosts文件里写入</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/%5D4%28BG%28N5%7DD%28Y%40KWWD~ISX~B.png"></p>
-<p>再访问flag.baidu.com即可得到flag</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/BC%5BB1EG9A%5D%7BSO%28%5DTKKV%605Z7.png"></p>
-</li>
-<li><h2 id="你必须让他停下"><a href="#你必须让他停下" class="headerlink" title="你必须让他停下"></a>你必须让他停下</h2><p>打开页面，是一个不停刷新的画面</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E4%BD%A0%E5%BF%85%E9%A1%BB%E8%AE%A9%E4%BB%96%E5%81%9C%E4%B8%8B%E6%9D%A5/_J5%28NO03FKQI%5BU%5D%7B0QOIL1L.png"></p>
-<p>仔细观察了一下，发现有一次请求中源代码会显示出flag，所以我们使用burpsuite抓包，然后进行若干次发送请求</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E4%BD%A0%E5%BF%85%E9%A1%BB%E8%AE%A9%E4%BB%96%E5%81%9C%E4%B8%8B%E6%9D%A5/WLO9%24%5B0%40N%7D96OW%5B%25F%60Q626H.png"></p>
-<p>在请求图片名字为10的时候，暴露出flag。</p>
-</li>
-<li><h2 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h2><p>题目环境打不开，可能平台出问题了，暂时跳过……</p>
-</li>
-<li><h2 id="变量1"><a href="#变量1" class="headerlink" title="变量1"></a>变量1</h2><p>打开题目，给出php代码，我们进行一波代码审计</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%8F%98%E9%87%8F1/TID%7DDC4B%283WM90Y_%5D%60DLX2X.png"></p>
-<p>首先需要对args用get方式进行一个传参，第一个if里面含有正则，对一些字符进行了一个过滤，还发现下面<strong>var_dump</strong>里的变量有两个$$，这是一个可变变量。</p>
-<blockquote>
-<p>可变变量是一种独特的变量，它允许动态改变一个变量名称。其工作原理是该变量的名称由另一个变量的值来确定，实现过程就是在变量的前面再多加一个美元符号“$”.</p>
-</blockquote>
-<p>所以我们需要对args传一个变量的值，通过var_dump来显示它的信息，php中的全局变量有以下几种</p>
-<blockquote>
-<ul>
-<li>$_POST [用于接收post提交的数据]</li>
-<li>$_GET [用于获取url地址栏的参数数据]</li>
-<li>$_FILES [用于文件就收的处理img 最常见]</li>
-<li>$_COOKIE [用于获取与setCookie()中的name 值]</li>
-<li>$_SESSION [用于存储session的值或获取session中的值]</li>
-<li>$_REQUEST [具有get,post的功能，但比较慢]</li>
-<li>SERVER[是预定义服务器变量的一种，所有SERVER[是预定义服务器变量的一种，所有_SERVER [是预定义服务器变量的一种，所有_SERVER开头的都</li>
-<li>$GLOBALS [一个包含了全部变量的全局组合数组]</li>
-<li>$_ENV [ 是一个包含服务器端环境变量的数组。它是PHP中一个超级全局变量，我们可以在PHP 程序的任何地方直接访问它]</li>
-</ul>
-</blockquote>
-<p>我们这里使用GLOBALS全局变量进行构造</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%8F%98%E9%87%8F1/EW%7BSV%7B4D%29ZL3L~CLXXN4M%25Q.png"></p>
-<p>ok，回显出flag。</p>
-</li>
-<li><h2 id="web5"><a href="#web5" class="headerlink" title="web5"></a>web5</h2><p>打开页面提示是jsfuck加密</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web5/S%24E92B%60%7BE%24X%29T1UC%28%400H%24FG.png"></p>
-<p>没有什么有用的信息，我们查看源代码，发现一堆编码出现在我们面前</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web5/G%2444%402T5FQDV%25%7DF8OY%28M1AS.png"></p>
-<p>jsfuck其实是一串js代码，经过了特殊的编写方式，把包含的字符做到极致，最后只剩下 ()+[]!  这六个字符。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">false       &#x3D;&gt;  ![]</span><br><span class="line">true        &#x3D;&gt;  !![]</span><br><span class="line">undefined   &#x3D;&gt;  [][[]]</span><br><span class="line">NaN         &#x3D;&gt;  +[![]]</span><br><span class="line">0           &#x3D;&gt;  +[]</span><br><span class="line">1           &#x3D;&gt;  +!+[]</span><br><span class="line">2           &#x3D;&gt;  !+[]+!+[]</span><br><span class="line">10          &#x3D;&gt;  +[[+!+[]]+[+[]]]</span><br><span class="line">Array       &#x3D;&gt;  []</span><br><span class="line">Number      &#x3D;&gt;  +[]</span><br><span class="line">String      &#x3D;&gt;  []+[]</span><br><span class="line">Boolean     &#x3D;&gt;  ![]</span><br><span class="line">Function    &#x3D;&gt;  [][&quot;filter&quot;]</span><br><span class="line">run         &#x3D;&gt;  [][&quot;filter&quot;][&quot;constructor&quot;]( CODE )()</span><br><span class="line">eval        &#x3D;&gt;  [][&quot;filter&quot;][&quot;constructor&quot;](&quot;return eval&quot;)()( CODE )</span><br><span class="line">window      &#x3D;&gt;  [][&quot;filter&quot;][&quot;constructor&quot;](&quot;return this&quot;)()</span><br></pre></td></tr></table></figure>
-
-<p>所以我们复制粘贴这串jsfuck到控制台输出，得到结果</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web5/%28JU~1L3FO~6KTRQV886%25%60%40W.png"></p>
-<p>再按题目提示的，转换成大写的形式，提交即可。</p>
-</li>
-<li><h2 id="头等舱"><a href="#头等舱" class="headerlink" title="头等舱"></a>头等舱</h2><p>进去后，发现确实和页面说的一样，啥信息都没有</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%A4%B4%E7%AD%89%E8%88%B1/AJH%28INH1G56374%249K6G%29IWB.png"></p>
-<p>好，我们抓包看看，有没有什么有用的信息</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%A4%B4%E7%AD%89%E8%88%B1/2CWHD%60%25%5BADSG%25H2W%5DYX9H%29Y.png"></p>
-<p>好吧，flag这就出来了。</p>
-</li>
-<li><h2 id="网站被黑"><a href="#网站被黑" class="headerlink" title="网站被黑"></a>网站被黑</h2><p>打开环境，是一个被挂了黑页的网站</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/QQ%E6%88%AA%E5%9B%BE20201018162409.png"></p>
-<p>我们先扫一下页面，看看留下了什么</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/UT~3VV~T72FTBD_PXMF3L68.png"></p>
-<p>发现有一个shell.php，我们去访问一下</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/I%40OI%250XWBJ%40M5%28X%25QY%286IAC.png"></p>
-<p>发现是一个需要登录的页面，我们使用burpsuite爆破一下密码</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/2GRA6H%7BML86%7DW%5DM8R7A8%29SR.png"></p>
-<p>爆破得到密码为hack，输入密码，得到flag</p>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/T6Z2%25VF%290%7D%2938%5D%7B%7D9PSS%602F.png"></p>
-</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>curl的使用</title>
     <url>/posts/25992/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>curl 是常用的命令行工具，用来请求 Web 服务器。它的名字就是客户端（client）的 URL 工具的意思。</p>
@@ -356,6 +235,127 @@
 
 <p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png"></p>
 <h4 id="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"><a href="#这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！" class="headerlink" title="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"></a>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</h4>]]></content>
+  </entry>
+  <entry>
+    <title>bugku平台web题目~持续更新中！（新手推荐）</title>
+    <url>/posts/55334/</url>
+    <content><![CDATA[<ol>
+<li><h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><p>打开页面，是一群会动的滑稽，还越动越快，哈哈哈</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/6YPR%25%7B%40PNPA%5BNUEN%7BBW6VGQ.png"></p>
+<p>好啦，看起来页面给不出什么有用的信息，我们查看一下源代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web2/7%60CZ6H%24XMN37HSV%40%5BKG%40%60YW.png"></p>
+<p>发现flag，通关！</p>
+</li>
+<li><h2 id="计算器"><a href="#计算器" class="headerlink" title="计算器"></a>计算器</h2><p>进入环境后，发现给出一串数字计算，但怎么也输入不了超过两位数的数字，只能输入一位</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/R%60T%5B%60G~%24KK_4G73~~FWC%40YY.png"></p>
+<p>猜测是前端限制，打开后，修改1数值为2，就可以输入两位数字了，然后提交获取flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/%28RKID%60YAVX1ZTCXS9%7B3%7D~KU.png"></p>
+<p>当然，还有另一种方法，就是去找他的js文件，找了一下，发现flag了</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E8%AE%A1%E7%AE%97%E5%99%A8/51MY%5B%7DSCM%29%60XKFO4SI8Z3%7DM.png"></p>
+</li>
+<li><h2 id="GET"><a href="#GET" class="headerlink" title="$_GET"></a>$_GET</h2><p>看题目也知道是get方式发送请求，打开后看页面给出的代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/UZAL7ME3%7BJQ7OQ%7BCE1VC193.png"></p>
+<p>查看代码，告诉我们传参给what，当传的参数值为flag，输出flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/get/YINKR%28%29%7BP6602C3PPQ%60C%7B15.png"></p>
+<p>ok,获取到flag。</p>
+</li>
+<li><h2 id="POST"><a href="#POST" class="headerlink" title="$_POST"></a>$_POST</h2><p>这次要求我们使用post方式传参</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/J%7B4QX%29%5DODJBTH%257%25PJZVRH2.png"></p>
+<p>和上道题目一样，需要对what参数传参flag回显答案，但我们不是使用get方式，而是使用post方式进行请求</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/post/UI%259OG4%7D99JEQ%7D4QQB%24U_S1.png"></p>
+<p>回显flag，通关。</p>
+</li>
+<li><h2 id="矛盾"><a href="#矛盾" class="headerlink" title="矛盾"></a>矛盾</h2><p>打开题目，查看给出的代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/WM9ZE87%29%7BBW9%25ERIN9%7BW%248Y.png"></p>
+<p>依然用get方式对参数num传值，但这次多了一个<strong>is_numeric()函数</strong>和一个<strong>if判断</strong>。</p>
+<blockquote>
+<p>isnumeric( )还是一个很实用的函数，在算法题目里面应该会有比较大的作用。</p>
+<p>检测字符串是否只由数字组成，如果字符串中只包括数字，就返回Ture，否则返回False。</p>
+</blockquote>
+<p>同时我们还需要知道php的弱类型比较，例如’123a’会被转换成’123’,字符串的开头部分决定了它的值。如果该字符串以合法的数字开始，则使用该数字至和他连续的最后一个数字结束，否则其比较时整体值为0。</p>
+<p>所以我们既要满足第一个不是纯数字又要数值上等于1</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%9F%9B%E7%9B%BE/OO%7D2%40M0%4076CCULY%5D3GNA%40QL.png"></p>
+<p>成功，获取flag。</p>
+</li>
+<li><h2 id="web3"><a href="#web3" class="headerlink" title="web3"></a>web3</h2><p>打开题目环境，有一个弹框，一直点都一直弹出，f12点不开开发者工具，所以我们直接url请求查看源代码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/%25WTF6%5D64VA%2846%5DGK7~%5B6%7BAM.png"></p>
+<p>拉到底下，发现一串unicode编码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/S3AKL%5BJ%40%296T%25Z%5BWB8CAS7IC.png"></p>
+<p>把它转成Ascii码即可解密获取flag呦</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web3/K%7DOPCINA9JMUUT6NFY1IT71.png"></p>
+</li>
+<li><h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>题目提示我们解析域名</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/HK%5DCS7TD%60%5BU9_SC%60H3%28%7B%25FE.png"></p>
+<p>按照题目要求把flag.baidu.com解析到123.206.87.240，所以我们在本地的hosts文件里写入</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/%5D4%28BG%28N5%7DD%28Y%40KWWD~ISX~B.png"></p>
+<p>再访问flag.baidu.com即可得到flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/BC%5BB1EG9A%5D%7BSO%28%5DTKKV%605Z7.png"></p>
+</li>
+<li><h2 id="你必须让他停下"><a href="#你必须让他停下" class="headerlink" title="你必须让他停下"></a>你必须让他停下</h2><p>打开页面，是一个不停刷新的画面</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E4%BD%A0%E5%BF%85%E9%A1%BB%E8%AE%A9%E4%BB%96%E5%81%9C%E4%B8%8B%E6%9D%A5/_J5%28NO03FKQI%5BU%5D%7B0QOIL1L.png"></p>
+<p>仔细观察了一下，发现有一次请求中源代码会显示出flag，所以我们使用burpsuite抓包，然后进行若干次发送请求</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E4%BD%A0%E5%BF%85%E9%A1%BB%E8%AE%A9%E4%BB%96%E5%81%9C%E4%B8%8B%E6%9D%A5/WLO9%24%5B0%40N%7D96OW%5B%25F%60Q626H.png"></p>
+<p>在请求图片名字为10的时候，暴露出flag。</p>
+</li>
+<li><h2 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h2><p>题目环境打不开，可能平台出问题了，暂时跳过……</p>
+</li>
+<li><h2 id="变量1"><a href="#变量1" class="headerlink" title="变量1"></a>变量1</h2><p>打开题目，给出php代码，我们进行一波代码审计</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%8F%98%E9%87%8F1/TID%7DDC4B%283WM90Y_%5D%60DLX2X.png"></p>
+<p>首先需要对args用get方式进行一个传参，第一个if里面含有正则，对一些字符进行了一个过滤，还发现下面<strong>var_dump</strong>里的变量有两个$$，这是一个可变变量。</p>
+<blockquote>
+<p>可变变量是一种独特的变量，它允许动态改变一个变量名称。其工作原理是该变量的名称由另一个变量的值来确定，实现过程就是在变量的前面再多加一个美元符号“$”.</p>
+</blockquote>
+<p>所以我们需要对args传一个变量的值，通过var_dump来显示它的信息，php中的全局变量有以下几种</p>
+<blockquote>
+<ul>
+<li>$_POST [用于接收post提交的数据]</li>
+<li>$_GET [用于获取url地址栏的参数数据]</li>
+<li>$_FILES [用于文件就收的处理img 最常见]</li>
+<li>$_COOKIE [用于获取与setCookie()中的name 值]</li>
+<li>$_SESSION [用于存储session的值或获取session中的值]</li>
+<li>$_REQUEST [具有get,post的功能，但比较慢]</li>
+<li>SERVER[是预定义服务器变量的一种，所有SERVER[是预定义服务器变量的一种，所有_SERVER [是预定义服务器变量的一种，所有_SERVER开头的都</li>
+<li>$GLOBALS [一个包含了全部变量的全局组合数组]</li>
+<li>$_ENV [ 是一个包含服务器端环境变量的数组。它是PHP中一个超级全局变量，我们可以在PHP 程序的任何地方直接访问它]</li>
+</ul>
+</blockquote>
+<p>我们这里使用GLOBALS全局变量进行构造</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%8F%98%E9%87%8F1/EW%7BSV%7B4D%29ZL3L~CLXXN4M%25Q.png"></p>
+<p>ok，回显出flag。</p>
+</li>
+<li><h2 id="web5"><a href="#web5" class="headerlink" title="web5"></a>web5</h2><p>打开页面提示是jsfuck加密</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web5/S%24E92B%60%7BE%24X%29T1UC%28%400H%24FG.png"></p>
+<p>没有什么有用的信息，我们查看源代码，发现一堆编码出现在我们面前</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web5/G%2444%402T5FQDV%25%7DF8OY%28M1AS.png"></p>
+<p>jsfuck其实是一串js代码，经过了特殊的编写方式，把包含的字符做到极致，最后只剩下 ()+[]!  这六个字符。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">false       &#x3D;&gt;  ![]</span><br><span class="line">true        &#x3D;&gt;  !![]</span><br><span class="line">undefined   &#x3D;&gt;  [][[]]</span><br><span class="line">NaN         &#x3D;&gt;  +[![]]</span><br><span class="line">0           &#x3D;&gt;  +[]</span><br><span class="line">1           &#x3D;&gt;  +!+[]</span><br><span class="line">2           &#x3D;&gt;  !+[]+!+[]</span><br><span class="line">10          &#x3D;&gt;  +[[+!+[]]+[+[]]]</span><br><span class="line">Array       &#x3D;&gt;  []</span><br><span class="line">Number      &#x3D;&gt;  +[]</span><br><span class="line">String      &#x3D;&gt;  []+[]</span><br><span class="line">Boolean     &#x3D;&gt;  ![]</span><br><span class="line">Function    &#x3D;&gt;  [][&quot;filter&quot;]</span><br><span class="line">run         &#x3D;&gt;  [][&quot;filter&quot;][&quot;constructor&quot;]( CODE )()</span><br><span class="line">eval        &#x3D;&gt;  [][&quot;filter&quot;][&quot;constructor&quot;](&quot;return eval&quot;)()( CODE )</span><br><span class="line">window      &#x3D;&gt;  [][&quot;filter&quot;][&quot;constructor&quot;](&quot;return this&quot;)()</span><br></pre></td></tr></table></figure>
+
+<p>所以我们复制粘贴这串jsfuck到控制台输出，得到结果</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web5/%28JU~1L3FO~6KTRQV886%25%60%40W.png"></p>
+<p>再按题目提示的，转换成大写的形式，提交即可。</p>
+</li>
+<li><h2 id="头等舱"><a href="#头等舱" class="headerlink" title="头等舱"></a>头等舱</h2><p>进去后，发现确实和页面说的一样，啥信息都没有</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%A4%B4%E7%AD%89%E8%88%B1/AJH%28INH1G56374%249K6G%29IWB.png"></p>
+<p>好，我们抓包看看，有没有什么有用的信息</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%A4%B4%E7%AD%89%E8%88%B1/2CWHD%60%25%5BADSG%25H2W%5DYX9H%29Y.png"></p>
+<p>好吧，flag这就出来了。</p>
+</li>
+<li><h2 id="网站被黑"><a href="#网站被黑" class="headerlink" title="网站被黑"></a>网站被黑</h2><p>打开环境，是一个被挂了黑页的网站</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/QQ%E6%88%AA%E5%9B%BE20201018162409.png"></p>
+<p>我们先扫一下页面，看看留下了什么</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/UT~3VV~T72FTBD_PXMF3L68.png"></p>
+<p>发现有一个shell.php，我们去访问一下</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/I%40OI%250XWBJ%40M5%28X%25QY%286IAC.png"></p>
+<p>发现是一个需要登录的页面，我们使用burpsuite爆破一下密码</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/2GRA6H%7BML86%7DW%5DM8R7A8%29SR.png"></p>
+<p>爆破得到密码为hack，输入密码，得到flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BD%91%E7%AB%99%E8%A2%AB%E9%BB%91/T6Z2%25VF%290%7D%2938%5D%7B%7D9PSS%602F.png"></p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
   </entry>
   <entry>
     <title>攻防世界Web区~持续更新中！</title>
