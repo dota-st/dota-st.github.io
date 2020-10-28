@@ -427,6 +427,41 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%A4%87%E4%BB%BD%E6%98%AF%E4%B8%AA%E5%A5%BD%E4%B9%A0%E6%83%AF/JE36DTP5PN~GP5EA2POZ%28YI.png"></p>
 <p>ok，成功绕过，取得flag。</p>
 </li>
+<li><h2 id="成绩单"><a href="#成绩单" class="headerlink" title="成绩单"></a>成绩单</h2><p>根据页面内容，还有输入框的提示1,2,3，猜测应该是sql注入的类型，尝试传参一个1</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/3V6%28G84T%29H%5BA_Z_%24%7B%25NG%7BSH.png"></p>
+<p>加个’号测试测试</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/%29FK7%5DYXUELQ96IWRV_V8%7DML.png"></p>
+<p>发现没有回显，加一个注释试试</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/BJT40REGPF%7D2%5D19_N_S%25K07.png"></p>
+<p>判定是存在sql注入，我们查查应该有多少列，其实看网页显示的数据，就能看出是4列了，但还是查查试试，免得判断错误</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/Q%28CQDWU%7D%5DFT%60%25%24H8%25AK8B%5BB.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/HX%292DBLC3G%603~%5D%28%5D5KWB%254L.png"></p>
+<p>发现为4时有回显数据，为5时没有数据回显，判断有4列</p>
+<p>那我们直接来尝试联合注入，查查数据库名字，这里记得要写成id=-1’，把前面查询的数据置空，当然id=0也是可以的</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/I6M%7DB2QK6WB4MF3ILV_WMRG.png"></p>
+<p>查出数据库的名字为：skctf_flag</p>
+<p>继续查表名字</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/%28CVZ%7D%5D97KJW5_%40GLWYO_O%24S.png"></p>
+<p>查出有两个表，分别为fl4g，sc。我们先查表为fl4g的列名</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/V12W79PWN~1R%25~FUWXJEC%5BF.png"></p>
+<p>得到列名为skctf_flag，下一步查看列里面的数据</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/3Z1HO%7BD%40J%5B%24NINEOQ4SWQ7T.png"></p>
+<p>ok，爆出flag了，大功告成！</p>
+<p><strong>使用sqlmap工具爆破</strong>：</p>
+<p>首先这是个post方式提交的，所以我们需要用burpsuite进行抓取数据包</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/_T9%5DIEYFI%29%7D3B1ULO69CXNK.png"></p>
+<p>然后复制到文本文件上</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/V_2IY%7D%295REKL6GRA4AMZFCG.png"></p>
+<p>查询数据库：</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/ZCI8V7QAV3DBW%60%5B%40J8~_BLP.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/BJB0ITHDT2EF%28H7Y%29%60ADNMG.png"></p>
+<p>查询表名：</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/RA5%29I%7DFT%7BV2S%28L87RD%60AD%40O.png"></p>
+<p>查询字段名：</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/B~%40I%25~2Z52PR1WEJ5YEC5%7DE.png"></p>
+<p>查询字段信息：</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/PSMH%7DE%25MAI~EMU434%7DLDE%5B2.png"></p>
+</li>
 </ol>
 ]]></content>
       <tags>
