@@ -411,7 +411,7 @@
 <p>源码意思是，对key进行一个过滤，然后传参key1和key2两个参数，同时key1和key2的md5值要相等，并且未经过md5加密前的值不能相等，满足条件就会输出flag。</p>
 <p>对于key过滤我们可以考虑使用双写的方法，kkeyey1</p>
 <p>这里说一下可以利用==漏洞和数组漏洞绕过md5</p>
-<p>==漏洞：</p>
+<p><strong>==漏洞：</strong></p>
 <blockquote>
 <p>如果两个字符经MD5加密后的值为 0exxxxx形式，就会被认为是科学计数法，且表示的是0*10的xxxx次方，还是零，都是相等的。</p>
 <p>下列的字符串的MD5值都是0e开头的：</p>
@@ -422,9 +422,8 @@
 <p>s214587387a</p>
 <p>s214587387a</p>
 </blockquote>
-<p>数组漏洞：</p>
-<p>nbsp;md5()函数无法处理数组，如果我们传数组进去，会返回一个NULL，所以两个数组经过加密后得到的都是相同的NULL。</p>
-<p>我们尝试一下</p>
+<p><strong>数组漏洞：</strong></p>
+<p>&emsp; &emsp;md5()函数无法处理数组，如果我们传数组进去，会返回一个NULL，所以两个数组经过加密后得到的都是相同的NULL。</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%A4%87%E4%BB%BD%E6%98%AF%E4%B8%AA%E5%A5%BD%E4%B9%A0%E6%83%AF/JE36DTP5PN~GP5EA2POZ%28YI.png"></p>
 <p>ok，成功绕过，取得flag。</p>
 </li>
