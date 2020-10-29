@@ -463,6 +463,24 @@
 <p>查询字段信息：</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E6%88%90%E7%BB%A9%E5%8D%95/PSMH%7DE%25MAI~EMU434%7DLDE%5B2.png"></p>
 </li>
+<li><h2 id="秋名山老司机"><a href="#秋名山老司机" class="headerlink" title="秋名山老司机"></a>秋名山老司机</h2><p>喂，高桥凉介吗？我是藤原拓海，我想加入…车队。</p>
+<p>哈哈，不好意思，走错片场了</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%A7%8B%E5%90%8D%E5%B1%B1%E8%80%81%E5%8F%B8%E6%9C%BA/2NGXH%7DD8~~%24%7BFV9YRG%2826QK.jpg"></p>
+<p>打开页面，是一个很长的计算式子，而且2s内又会发生变化。</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%A7%8B%E5%90%8D%E5%B1%B1%E8%80%81%E5%8F%B8%E6%9C%BA/X5_XP_O_%5BCZ%5DL1H1B%7BWIQPV.png"></p>
+<p>翻了一下网页源码也没有什么有用的信息，猜测是需要我们向他发送一个post数据包，数据为式子的计算值，但它没有给出需要传参的对象是什么。而且在2s内计算出值不太可能，这个时候我们需要写一个python脚本跑一跑</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line">url = <span class="string">&#x27;http://123.206.87.240:8002/qiumingshan/&#x27;</span></span><br><span class="line">session = requests.session()</span><br><span class="line">a = re.findall(<span class="string">&#x27;&lt;div&gt;([0-9+*-]*)?&#x27;</span>, session.get(url).text)</span><br><span class="line"><span class="comment">#因为re.findall返回的是一个列表，所以我们查看一下列表的内容</span></span><br><span class="line">print(<span class="string">&quot;页面的计算式子：&quot;</span>,a[<span class="number">0</span>],<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">b = eval(a[<span class="number">0</span>])</span><br><span class="line">c = &#123;<span class="string">&quot;&quot;</span>:b&#125;</span><br><span class="line">result = session.post(url,c)</span><br><span class="line">print(result.text)</span><br></pre></td></tr></table></figure>
+
+<p>先解释一下脚本，用session保持一个会话状态，免得下次post出去的时候就是另一个计算值了，然后用正则匹配页面内容<div>后面的数字和+-<em>三种运算符，后面的</em>表示匹配全部，?表示非贪婪匹配，用eval计算我们的式子。</p>
+<p>首先我们给一个空的对象传计算的值测试测试，因为我们也不知道给谁传值</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%A7%8B%E5%90%8D%E5%B1%B1%E8%80%81%E5%8F%B8%E6%9C%BA/J%5D8U%28%5BUYQ9CQO95MUC%28FXRX.png"></p>
+<p>返回页面结果，提示我们给value传值，ok，那我们在字典上再填上value</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line">url = <span class="string">&#x27;http://123.206.87.240:8002/qiumingshan/&#x27;</span></span><br><span class="line">session = requests.session()</span><br><span class="line">a = re.findall(<span class="string">&#x27;&lt;div&gt;([0-9+*-]*)?&#x27;</span>, session.get(url).text)</span><br><span class="line"><span class="comment">#因为re.findall返回的是一个列表，所以我们查看一下列表的内容</span></span><br><span class="line">print(<span class="string">&quot;页面的计算式子：&quot;</span>,a[<span class="number">0</span>],<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">b = eval(a[<span class="number">0</span>])</span><br><span class="line">c = &#123;<span class="string">&quot;value&quot;</span>:b&#125;</span><br><span class="line">result = session.post(url,c)</span><br><span class="line">print(result.text)</span><br></pre></td></tr></table></figure>
+
+<p>看看结果</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%A7%8B%E5%90%8D%E5%B1%B1%E8%80%81%E5%8F%B8%E6%9C%BA/4JCI7%255O%60Q849KFX9M9%24V_B.png"></p>
+<p>拿到flag，下一关下一关！！！</p>
+</li>
 </ol>
 ]]></content>
       <tags>
