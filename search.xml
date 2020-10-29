@@ -481,6 +481,28 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%A7%8B%E5%90%8D%E5%B1%B1%E8%80%81%E5%8F%B8%E6%9C%BA/4JCI7%255O%60Q849KFX9M9%24V_B.png"></p>
 <p>拿到flag，下一关下一关！！！</p>
 </li>
+<li><h2 id="速度要快"><a href="#速度要快" class="headerlink" title="速度要快"></a>速度要快</h2><p>打开页面</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/8%40T~%7B%7D%607N0E4JJ%29JV%24K%40SWT.png"></p>
+<p>让我们快点，好，那我就用burpsuite搞一下你</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/%29EHX4V~L3USH7W%5B4%606%40M_WX.png"></p>
+<p>发现响应头有flag，flag后面数据被base64加密了，我们去解决一下</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/G%40K%28U69GOE7I7X%60U2%7DZX6ZJ.jpg"></p>
+<p>好家伙，还有一串base64加密的数据，那我们再解一遍</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/P%24O581JD%5BGRO%7B%7B%24VPO6Y9RH.jpg"></p>
+<p>题目提示我们flag的格式，所以我们去按照格式提交一下</p>
+<p>…..emm答案不正确</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/MOJS0I82%60U3GCO7%7BC%29O%7D4GA.jpg"></p>
+<p>后面发现每次提交一次包，返回的flag都不一样</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/%7D%7DI~3MYXK%40AK%40L71HFANWR4.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/N9PFS22WWSK9~VW_2F_%409WP.jpg"></p>
+<p>被演了一手，注意到返回的数据提示我们需要post发送margin，应该是发送数据margin:解密后的flag。但再次发送后还是回显“我感觉你得快点”</p>
+<p>那我直接上脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">url = <span class="string">&#x27;http://123.206.87.240:8002/web6/&#x27;</span></span><br><span class="line">se = requests.session()</span><br><span class="line">flag = se.get(url).headers[<span class="string">&#x27;flag&#x27;</span>]</span><br><span class="line">flag = base64.b64decode(flag).decode()<span class="comment">#多加个decode(),是因为上一步生成的是bytes类型，要转换成string</span></span><br><span class="line">flag = base64.b64decode(flag.split(<span class="string">&quot;:&quot;</span>)[<span class="number">1</span>]) </span><br><span class="line">go = &#123;<span class="string">&#x27;margin&#x27;</span>:flag&#125;</span><br><span class="line">print(se.post(url,data=go).text)</span><br></pre></td></tr></table></figure>
+
+<p>然后得到flag</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/O1%24UM%29LIER5PAGC7OFY%29_TN.png"></p>
+<p>还是解释一波脚本吧，首先使用session保持一个会话状态，然后得到返回的响应头中的flag那一条数据。经过第一次base64解密，然后取解密出来的那一串字符串中的‘：’后面的那一串base64加密的数据进行解密，最后发送一个post数据包，打印出文本信息。</p>
+</li>
 </ol>
 ]]></content>
       <tags>
