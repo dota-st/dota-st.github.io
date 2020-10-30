@@ -503,8 +503,7 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/O1%24UM%29LIER5PAGC7OFY%29_TN.png"></p>
 <p>还是解释一波脚本吧，首先使用session保持一个会话状态，然后得到返回的响应头中的flag那一条数据。经过第一次base64解密，然后取解密出来的那一串字符串中的‘：’后面的那一串base64加密的数据进行解密，最后发送一个post数据包，打印出文本信息。</p>
 </li>
-<li><p>cookies欺骗</p>
-<p>打开页面，是一大串没有用的字符串(因为尝试解密了N次…)</p>
+<li><h2 id="cookies欺骗"><a href="#cookies欺骗" class="headerlink" title="cookies欺骗"></a>cookies欺骗</h2><p>打开页面，是一大串没有用的字符串(因为尝试解密了N次…)</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/8J9PK_S4VX%7DW%29W7U0RRO%25DO.png"></p>
 <p>有注意到filename参数后面跟的是一串base64编码，去解密一下</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/8J9PK_S4VX%7DW%29W7U0RRO%25DO.png"></p>
