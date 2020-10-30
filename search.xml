@@ -507,10 +507,10 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/8J9PK_S4VX%7DW%29W7U0RRO%25DO.png"></p>
 <p>有注意到filename参数后面跟的是一串base64编码，去解密一下</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/8J9PK_S4VX%7DW%29W7U0RRO%25DO.png"></p>
-<p>解密的到keys.txt，应该这是个突破点，访问一下index.php，注意要base64编码，按照它的方式传参。</p>
+<p>解密得到keys.txt，应该这是个突破点，访问一下index.php，注意要先进行base64编码，按照它的方式传参。</p>
 <p>index.php经过base64编码后为：aW5kZXgucGhw</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/PAAJKTHIOF1TTDZHYHWDZ%7BV.png"></p>
-<p>在源代码中发现有点有用的信息，这时候把视线再转移到另一个参数line。只显示&lt;?php不全，猜测可能是line控制显示的行数</p>
+<p>在源代码中发现有点有用的信息，这时候把视线再转移到另一个参数line。前面只显示&lt;?php，并不全，猜测可能是line控制显示的行数</p>
 <p>我们尝试更改line的值</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/FQ%5B4IHZ%5BWK82R5C%29FQFGKQ9.png"></p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/cookies%E6%AC%BA%E9%AA%97/88L4Y%7D0_M%28WV~LM%7BE%2968F%25I.png"></p>
