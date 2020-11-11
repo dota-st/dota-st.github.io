@@ -880,11 +880,12 @@
 <p>flag爆出来了。猜测源码应该是用a传进来的md5值和它源码的另一个md5值进行比较。这里再说明一下，php处理哈希字符串时，会利用!=或者==进行一个比较，每一个”0E”开头的哈希值都会被解释成0。因此两个”0E”开头的哈希值会被php认为相等。</p>
 <p>这里记录一下一些使用0e开头的md5和原值</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">s1885207154a</span><br><span class="line">0e509367213418206700842008763514</span><br><span class="line">s1836677006a</span><br><span class="line">0e481036490867661113260034900752</span><br><span class="line">s155964671a</span><br><span class="line">0e342768416822451524974117254469</span><br><span class="line">s1184209335a</span><br><span class="line">0e072485820392773389523109082030</span><br><span class="line">s1665632922a</span><br><span class="line">0e731198061491163073197128363787</span><br><span class="line">s1502113478a</span><br><span class="line">0e861580163291561247404381396064</span><br><span class="line">s1836677006a</span><br><span class="line">0e481036490867661113260034900752</span><br><span class="line">s1091221200a</span><br><span class="line">0e940624217856561557816327384675</span><br><span class="line">s155964671a</span><br><span class="line">0e342768416822451524974117254469</span><br><span class="line">s1502113478a</span><br><span class="line">0e861580163291561247404381396064</span><br><span class="line">s155964671a</span><br><span class="line">0e342768416822451524974117254469</span><br><span class="line">s1665632922a</span><br><span class="line">0e731198061491163073197128363787</span><br><span class="line">s155964671a</span><br><span class="line">0e342768416822451524974117254469</span><br><span class="line">s1091221200a</span><br><span class="line">0e940624217856561557816327384675</span><br><span class="line">s1836677006a</span><br><span class="line">0e481036490867661113260034900752</span><br><span class="line">s1885207154a</span><br><span class="line">0e509367213418206700842008763514</span><br><span class="line">s532378020a</span><br><span class="line">0e220463095855511507588041205815</span><br><span class="line">s878926199a</span><br><span class="line">0e545993274517709034328855841020</span><br><span class="line">s1091221200a</span><br><span class="line">0e940624217856561557816327384675</span><br><span class="line">s214587387a</span><br><span class="line">0e848240448830537924465865611904</span><br><span class="line">s1502113478a</span><br><span class="line">0e861580163291561247404381396064</span><br><span class="line">s1091221200a</span><br><span class="line">0e940624217856561557816327384675</span><br><span class="line">s1665632922a</span><br><span class="line">0e731198061491163073197128363787</span><br><span class="line">s1885207154a</span><br><span class="line">0e509367213418206700842008763514</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
+</li>
+<li><h2 id="程序员本地网站"><a href="#程序员本地网站" class="headerlink" title="程序员本地网站"></a>程序员本地网站</h2><p>打开页面，提示我们从本地访问</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9C%AC%E5%9C%B0%E7%BD%91%E7%AB%99/H%7BV6G1KGD14%29HAGV8B7WCHL.png"></p>
+<p>那我们就抓包加个xff头，X-Forwarded-For:127.0.0.1</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9C%AC%E5%9C%B0%E7%BD%91%E7%AB%99/%5DJCHINA92U0KSN0A%7BW%244YW6.png"></p>
+<p>flag就出来了</p>
 </li>
 </ol>
 ]]></content>
