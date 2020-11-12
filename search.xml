@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hack The Box账号注册</title>
-    <url>/posts/33946/</url>
-    <content><![CDATA[<h3 id="hack-the-box-是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧"><a href="#hack-the-box-是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧" class="headerlink" title="hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧~"></a>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧<del>~</del></h3><hr>
-<h4 id="打开网站注册的时候，提示需要自己入侵网站获取注册"><a href="#打开网站注册的时候，提示需要自己入侵网站获取注册" class="headerlink" title="打开网站注册的时候，提示需要自己入侵网站获取注册"></a>打开网站注册的时候，提示需要自己入侵网站获取注册</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg"></p>
-<h4 id="在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字"><a href="#在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字" class="headerlink" title="在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字"></a>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png"></p>
-<h4 id="跑去查看js文件源码"><a href="#跑去查看js文件源码" class="headerlink" title="跑去查看js文件源码"></a>跑去查看js文件源码</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png"></p>
-<h4 id="发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试"><a href="#发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试" class="headerlink" title="发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~"></a>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png"></p>
-<h4 id="给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看"><a href="#给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看" class="headerlink" title="给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看"></a>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png"></p>
-<h3 id="解密结果："><a href="#解密结果：" class="headerlink" title="解密结果："></a>解密结果：</h3><h4 id="In-order-to-generate-the-invite-code-make-a-POST-request-to-api-invite-generate"><a href="#In-order-to-generate-the-invite-code-make-a-POST-request-to-api-invite-generate" class="headerlink" title="In order to generate the invite code, make a POST request to /api/invite/generate"></a>In order to generate the invite code, make a POST request to /api/invite/generate</h4><p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png"></p>
-<h4 id="返回一段被base64方式加密的密文，我们再次跑去解密base64"><a href="#返回一段被base64方式加密的密文，我们再次跑去解密base64" class="headerlink" title="返回一段被base64方式加密的密文，我们再次跑去解密base64"></a>返回一段被base64方式加密的密文，我们再次跑去解密base64</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png"></p>
-<h4 id="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"><a href="#这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！" class="headerlink" title="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"></a>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</h4>]]></content>
-  </entry>
-  <entry>
     <title>curl的使用</title>
     <url>/posts/25992/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>curl 是常用的命令行工具，用来请求 Web 服务器。它的名字就是客户端（client）的 URL 工具的意思。</p>
@@ -235,6 +208,33 @@
       <tags>
         <tag>curl</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Hack The Box账号注册</title>
+    <url>/posts/33946/</url>
+    <content><![CDATA[<h3 id="hack-the-box-是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧"><a href="#hack-the-box-是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧" class="headerlink" title="hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧~"></a>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面我们一起来愉快的注册一次吧<del>~</del></h3><hr>
+<h4 id="打开网站注册的时候，提示需要自己入侵网站获取注册"><a href="#打开网站注册的时候，提示需要自己入侵网站获取注册" class="headerlink" title="打开网站注册的时候，提示需要自己入侵网站获取注册"></a>打开网站注册的时候，提示需要自己入侵网站获取注册</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg"></p>
+<h4 id="在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字"><a href="#在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字" class="headerlink" title="在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字"></a>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png"></p>
+<h4 id="跑去查看js文件源码"><a href="#跑去查看js文件源码" class="headerlink" title="跑去查看js文件源码"></a>跑去查看js文件源码</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png"></p>
+<h4 id="发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试"><a href="#发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试" class="headerlink" title="发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~"></a>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</h4><p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png"></p>
+<h4 id="给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看"><a href="#给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看" class="headerlink" title="给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看"></a>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png"></p>
+<h3 id="解密结果："><a href="#解密结果：" class="headerlink" title="解密结果："></a>解密结果：</h3><h4 id="In-order-to-generate-the-invite-code-make-a-POST-request-to-api-invite-generate"><a href="#In-order-to-generate-the-invite-code-make-a-POST-request-to-api-invite-generate" class="headerlink" title="In order to generate the invite code, make a POST request to /api/invite/generate"></a>In order to generate the invite code, make a POST request to /api/invite/generate</h4><p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png"></p>
+<h4 id="返回一段被base64方式加密的密文，我们再次跑去解密base64"><a href="#返回一段被base64方式加密的密文，我们再次跑去解密base64" class="headerlink" title="返回一段被base64方式加密的密文，我们再次跑去解密base64"></a>返回一段被base64方式加密的密文，我们再次跑去解密base64</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png"></p>
+<h4 id="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"><a href="#这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！" class="headerlink" title="这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！"></a>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</h4>]]></content>
   </entry>
   <entry>
     <title>攻防世界Web区~持续更新中！</title>
@@ -891,25 +891,16 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%90%84%E7%A7%8D%E7%BB%95%E8%BF%87/7R%5BB3%290OA%5B%7BSATZJ8L%7BTLAX.png"></p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line">$_GET[<span class="string">&#x27;id&#x27;</span>] = urldecode($_GET[<span class="string">&#x27;id&#x27;</span>]);</span><br><span class="line">$flag = <span class="string">&#x27;flag&#123;xxxxxxxxxxxxxxxxxx&#125;&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">&#x27;uname&#x27;</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>($_POST[<span class="string">&#x27;passwd&#x27;</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> ($_GET[<span class="string">&#x27;uname&#x27;</span>] == $_POST[<span class="string">&#x27;passwd&#x27;</span>])</span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&#x27;passwd can not be uname.&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (sha1($_GET[<span class="string">&#x27;uname&#x27;</span>]) === sha1($_POST[<span class="string">&#x27;passwd&#x27;</span>])&amp;($_GET[<span class="string">&#x27;id&#x27;</span>]==<span class="string">&#x27;margin&#x27;</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;Flag: &#x27;</span>.$flag);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&#x27;sorry!&#x27;</span>;</span><br><span class="line"></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
 
-
-
+<p>总的看下来，需要我们通过get提交参数id和参数uname，还有通过post提交一个passwd参数</p>
+<p>第一个if判断，判断是否提交uname和passwd</p>
+<p>第二个if判断，uname的值和passwd的值一样就输出提示，所以我们这里两个参数的值不能一样</p>
+<p>第三个if判断，sha1()函数是用来计算字符串的SHA-1散列，这里要求经过sha1函数处理的两个值一样并且参数id等于margin，即可输出flag</p>
+<p>我们可以用数组来进行绕过sha1函数，因为sha1函数无法处理数组，会返回false。两个false，条件就成立了，就可以绕过。</p>
+<p>所以我们这么构造一下</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%90%84%E7%A7%8D%E7%BB%95%E8%BF%87/KGYCCZ52%25%28F%7DD%24R%24~XQX2G2.png"></p>
+<p>flag出来了，姿势使用对了。</p>
 </li>
 </ol>
-<pre><code>总的看下来，需要我们通过get提交参数id和参数uname，还有通过post提交一个passwd参数
-
-第一个if判断，判断是否提交uname和passwd
-
-第二个if判断，uname的值和passwd的值一样就输出提示，所以我们这里两个参数的值不能一样
-
-第三个if判断，sha1()函数是用来计算字符串的SHA-1散列，这里要求经过sha1函数处理的两个值一样并且参数id等于margin，即可输出flag
-
-我们可以用数组来进行绕过sha1函数，因为sha1函数无法处理数组，会返回false。两个false，条件就成立了，就可以绕过。
-
-所以我们这么构造一下
-
-![](https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%90%84%E7%A7%8D%E7%BB%95%E8%BF%87/KGYCCZ52%25%28F%7DD%24R%24~XQX2G2.png)
-
-flag出来了，姿势使用对了。</code></pre>
 ]]></content>
       <tags>
         <tag>CTF</tag>
