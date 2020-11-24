@@ -916,10 +916,8 @@
 <p>解密后得到源码，拼凑起来就是下面这样：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;window.location.href&#x3D;&#39;http:&#x2F;&#x2F;www.bugku.com&#39;;&lt;&#x2F;script&gt; </span><br><span class="line">&lt;!--&quot;;if(!$_GET[&#39;id&#39;])</span><br><span class="line">&#123;</span><br><span class="line">	header(&#39;Location: hello.php?id&#x3D;1&#39;);</span><br><span class="line">	exit();</span><br><span class="line">&#125;</span><br><span class="line">$id&#x3D;$_GET[&#39;id&#39;];</span><br><span class="line">$a&#x3D;$_GET[&#39;a&#39;];</span><br><span class="line">$b&#x3D;$_GET[&#39;b&#39;];</span><br><span class="line">if(stripos($a,&#39;.&#39;))</span><br><span class="line">&#123;</span><br><span class="line">	echo &#39;no no no no no no no&#39;;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">$data &#x3D; @file_get_contents($a,&#39;r&#39;);</span><br><span class="line">if($data&#x3D;&#x3D;&quot;bugku is a nice plateform!&quot; and $id&#x3D;&#x3D;0 and strlen($b)&gt;5 and eregi(&quot;111&quot;.substr($b,0,1),&quot;1114&quot;) and substr($b,0,1)!&#x3D;4)</span><br><span class="line">&#123;</span><br><span class="line">	require(&quot;f4l2a3g.txt&quot;);</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">	print &quot;never never never give up !!!&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">?&gt;--&gt;</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
 
-<p>解释一波代码：</p>
-</li>
-</ol>
 <blockquote>
+<p>解释一波代码：</p>
 <p>1.首先限制id必须为非零非空</p>
 <p>2.一共需要传参a,b,id三个参数</p>
 <p>3.匹配a中是否有.这个符号</p>
@@ -927,26 +925,16 @@
 <p>5.判断data等于字符串”bugku is a nice plateform!”，id==0，b的长度要大于5</p>
 <p>6.字符串1114要与字符串111连接变量b的第一个字符构成正则匹配，而且b的第一个字符不能为4</p>
 </blockquote>
-<pre><code>好，那我们要采用什么姿势绕过呢？
+<p>好，那我们要采用什么姿势绕过呢？</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">对于参数id，因为是&#x3D;&#x3D;弱类型比较，可以使用0abc之类的绕过，因为0abc&#x3D;&#x3D;比较为0</span><br><span class="line"></span><br><span class="line">对于参数a，因为是读取数据流，我们可以使用php协议中的input，即php:&#x2F;&#x2F;input，它可以访问请求的原始数据的只读流，所以我们用post发送数据&quot;bugku is a nice plateform!&quot;</span><br><span class="line"></span><br><span class="line">对参数b，我们可以使用空字符对付它。因为eregi()函数存在空字符截断漏洞，当参数中的待匹配字符串或者正则表达式遇到空字符则截断，会丢弃后面的数据。我们可以构造%0012345。这里%00是空格经过url编码后的形式，值得注意的是，这里是一共6个长度。</span><br></pre></td></tr></table></figure>
 
-对于参数id，因为是==弱类型比较，可以使用0abc之类的绕过，因为0abc==比较为0
-
-对于参数a，因为是读取数据流，我们可以使用php协议中的input，即php://input，它可以访问请求的原始数据的只读流，所以我们用post发送数据&quot;bugku is a nice plateform!&quot;
-
-对参数b，我们可以使用空字符对付它。因为eregi()函数存在空字符截断漏洞，当参数中的待匹配字符串或者正则表达式遇到空字符则截断，会丢弃后面的数据。我们可以构造%0012345。这里%00是空格经过url编码后的形式，值得注意的是，这里是一共6个长度。
-
-好，我们去试试吧
-
-![](https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/never%20give%20up/S%5BR1_E5%25%5DYA_LKG%28RSZ_VE6.png)
-
-成功绕过拿到flag了。
-
-其实，这里有个问题，就是源码中并没有限制我们访问f4l2a3g.txt文件，只是告诉我们可以通过这种构造方式访问。
-
-所以我们可以直接访问得到flag，这也是一个思维点，我觉得。
-
-![](https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/never%20give%20up/P%5DHY~JA4DCBADUQYCEJCT%28X.png)</code></pre>
-<ol start="25">
+<p>好，我们去试试吧</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/never%20give%20up/S%5BR1_E5%25%5DYA_LKG%28RSZ_VE6.png"></p>
+<p>成功绕过拿到flag了。</p>
+<p>其实，这里有个问题，就是源码中并没有限制我们访问f4l2a3g.txt文件，只是告诉我们可以通过这种构造方式访问。</p>
+<p>所以我们可以直接访问得到flag，这也是一个思维点，我觉得。</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/never%20give%20up/P%5DHY~JA4DCBADUQYCEJCT%28X.png"></p>
+</li>
 <li><h2 id="welcome-to-bugkuctf"><a href="#welcome-to-bugkuctf" class="headerlink" title="welcome to bugkuctf"></a>welcome to bugkuctf</h2><p>题目挂掉，暂时跳过</p>
 </li>
 <li><h2 id="过狗一句话"><a href="#过狗一句话" class="headerlink" title="过狗一句话"></a>过狗一句话</h2><p>题目还是挂了，flag被删除，跳过</p>
