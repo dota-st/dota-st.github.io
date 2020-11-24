@@ -990,6 +990,18 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E5%90%84%E7%A7%8D%E7%BB%95%E8%BF%87/KGYCCZ52%25%28F%7DD%24R%24~XQX2G2.png"></p>
 <p>flag出来了，姿势使用对了。</p>
 </li>
+<li><h2 id="web8"><a href="#web8" class="headerlink" title="web8"></a>web8</h2><p>打开，首先是一波代码审计<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web8/%24O9CMJNNH%248%28%7B0R90%28F_%40NO.png"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输出flag需要满足下面几个条件：</span><br><span class="line">1.get传值的ac参数不为空</span><br><span class="line">2.参数f的值从文件fn中获取</span><br><span class="line">3.参数ac需要满足等于参数f</span><br></pre></td></tr></table></figure>
+
+<p>所以我们可以使用php伪协议进行构造<br>第一种方法，使用php://input协议</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web8/D%5DHZ9FHB%5BG8X~TW%5DP5X%60CIJ.png"></p>
+<p>第二种方法，使用data://text/plain协议</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web8/K28D7J0%5D%24JR6S41%7BWB%29%5BPL8.png"></p>
+<p>补充：</p>
+<p>因为一直对题目的txt提示感到疑惑，想着可能file_get_contents读取的文件是存在的，后面乱试了一通index.txt，fn.txt<br>ac.txt…..flag.txt，发现是存在一个flag.txt</p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web8/D%28BU2~CWBAOBQWP%60TVAE0AN.png"></p>
+<p>然后可以构造取得flag<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web8/%7BYUA%25%7B9%7D6W7UY%24%29PU3TDGMP.png"></p>
+</li>
 </ol>
 ]]></content>
       <tags>
