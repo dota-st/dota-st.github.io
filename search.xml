@@ -1002,6 +1002,8 @@
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web8/D%28BU2~CWBAOBQWP%60TVAE0AN.png"></p>
 <p>然后可以构造取得flag<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/web8/%7BYUA%25%7B9%7D6W7UY%24%29PU3TDGMP.png"></p>
 </li>
+<li><h2 id="细心"><a href="#细心" class="headerlink" title="细心"></a>细心</h2><p>打开是一个404页面<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BB%86%E5%BF%83/OK6R%5BVSY%5B%7B0AL215GT2GR%245.png"><br>心头一动，莫非又是一道挂掉的题？？！<br>但和之前挂得题有点不一样，用御剑扫一下<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BB%86%E5%BF%83/9%60S0%5B9Z%24~~7CR%5D1EBN3PTTO.png"><br>扫出一个robots.txt，访问一波<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BB%86%E5%BF%83/TRVX_OR7BM_%5D30%28%29W%7BSF%5BDW.png"><br>还有个resusl.php页面，打开<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BB%86%E5%BF%83/MON_0I~~NX9G%60%25I%5B7%29%7D~LBA.png"><br>提示我们需要管理员，页面还有个get传值，那我们试试传值x=admin<br><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku/%E7%BB%86%E5%BF%83/HZ%7B%5B_AJ5_VG%7DZBSEA4%2921NK.png"><br>flag出来了！</p>
+</li>
 </ol>
 ]]></content>
       <tags>
