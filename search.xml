@@ -5,8 +5,8 @@
     <url>/posts/25127/</url>
     <content><![CDATA[<h1>前言</h1>
 <p>对，我就是萌新，哭哭。<br>
-萌新系列需要萌新码开启，按照第一题提示加群即可获得</p>
-<div align=left><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/DDB74BA5D9F54D97E757A1B862D52268.gif" width = "200" height = "200"/></div>
+萌新系列需要萌新码开启，按照第一题提示加群即可获得<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/DDB74BA5D9F54D97E757A1B862D52268.gif" width = "200" height = "200" style="float: left;"/></p>
 <h1>crypto</h1>
 <h2 id="密码1"><a class="header-anchor" href="#密码1">¶</a>密码1</h2>
 <p>给出了一串16进制的数据，我们先转换成str<br>
