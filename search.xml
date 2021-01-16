@@ -944,6 +944,22 @@ private属性被序列化的时候属性值会变成：%00类名%00属性名</p>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/getshell/%7BN83F_52HH4~9ZTQB%2543%5DYW.png" alt=""><br>
 flag在根目录下获得😀<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/getshell/%28KDTXR%40KF5NY%7D%5DX8U2ZKGIJ.png" alt=""></p>
+<h2 id="社工-伪造"><a class="header-anchor" href="#社工-伪造">¶</a>社工-伪造</h2>
+<p>首先题目是社工类，提示信息伪造<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E7%A4%BE%E5%B7%A5%E4%BC%AA%E9%80%A0/D9%28M%29DCU%5BND%24VKY%7D~U%5DUGQ3.png" alt=""><br>
+开启环境<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E7%A4%BE%E5%B7%A5%E4%BC%AA%E9%80%A0/%7D%60U08%60%29FL%24A%24Z48%7D1F~%2526L.png" alt=""><br>
+这里输入我的qq小号进入<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E7%A4%BE%E5%B7%A5%E4%BC%AA%E9%80%A0/%60_A04M1D%5DKDB%606W6A%25%7D%40F6O.png" alt=""><br>
+对话之后，小美告诉我们她只告诉她的男朋友flag，我们去她的空间看看<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E7%A4%BE%E5%B7%A5%E4%BC%AA%E9%80%A0/C~%5D%5D~Z5XHO6X%406PILOH75%7DF.png" alt=""><br>
+这里有张她和她男朋友的聊天的截图<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E7%A4%BE%E5%B7%A5%E4%BC%AA%E9%80%A0/S10114-20264579.jpg" alt=""><br>
+结合题目提示，我们把qq名字和头像都换成她男朋友的<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E7%A4%BE%E5%B7%A5%E4%BC%AA%E9%80%A0/FOGG2UKMK%40%241YY%7BW%60Q%5D8CZT.png" alt=""><br>
+再进行一次登录，向小美要flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E7%A4%BE%E5%B7%A5%E4%BC%AA%E9%80%A0/2T5SNT_G%7D2E0%2967AX0N%5BQ%7D9.png" alt=""><br>
+成功获取flag</p>
 <h1>Misc</h1>
 <h1>Reverse</h1>
 ]]></content>
