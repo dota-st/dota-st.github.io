@@ -76,9 +76,10 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 二进制：0b1111101000<br>
 16进制：0x3e8<br>
 双重取反：~~1000<br>
+或者100*10<br>
 这里也存在sql注入<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web1/~SZMD3FOJY19SPW0P%605OUNW.png" alt=""><br>
-当然省事的话直接按照他sql语句进行，取?id=id–+直接显示全部</p>
+当然省事的话直接按照他sql语句进行，取<code>?id=id--+</code>直接显示全部</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
