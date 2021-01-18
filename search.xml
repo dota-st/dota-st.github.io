@@ -45,6 +45,11 @@
 发现文件头错误，png文件头应该是89504E47，将99改成89，再保存打开文件，得到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E9%9A%90%E5%86%991/%60H%5D8C_3VB0IV%7D%25_UF7UEB%5B6.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;zhe_ci_meiyou_ctfshow&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="隐写2"><a class="header-anchor" href="#隐写2">¶</a>隐写2</h2>
+<p>下载下来得到一张jpg图片，图片提示jphs隐写，用Jphswin工具打开<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%992/9%606%7BK5P%5DIM%60X5%60%29K%5B6YXU%29V.png" alt=""><br>
+点击seek解密，密码没有，就空着不写，然后另存为txt文本，得到flag</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;202cb962ac59075b964b07152d234b70&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="萌新-隐写2"><a class="header-anchor" href="#萌新-隐写2">¶</a>萌新_隐写2</h2>
 <p>下载文件得到一个加密的zip压缩包<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%992/E%296IXVG444M%24KA5B1%25%29_1XN.png" alt=""><br>
@@ -53,11 +58,6 @@
 得到压缩包密码为：19981000<br>
 打开压缩包后得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;brute_force&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="隐写2"><a class="header-anchor" href="#隐写2">¶</a>隐写2</h2>
-<p>下载下来得到一张jpg图片，图片提示jphs隐写，用Jphswin工具打开<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%992/9%606%7BK5P%5DIM%60X5%60%29K%5B6YXU%29V.png" alt=""><br>
-点击seek解密，密码没有，就空着不写，然后另存为txt文本，得到flag</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;202cb962ac59075b964b07152d234b70&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="萌新隐写3"><a class="header-anchor" href="#萌新隐写3">¶</a>萌新隐写3</h2>
 <p>这题直接打开图片地址，就有flag，emmm<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%993/B9XXQPT35%7BX4%40%7BFNUL8BA6Y.png" alt=""></p>
@@ -115,6 +115,11 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 <h2 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h2>
 <p>接着上道题，这里题目说管理员修改了一下代码，但还是能按照上题思路解出<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web2/J0%60%7BU%60N4P9_9D%25VKCR%299_KL.png" alt=""></p>
+<h2 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h2>
+<p>这次多加了过滤</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/or|\-|\\|\*|\&lt;|\&gt;|\!|x|hex|\+/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
+<p>但我们依然可以利用intval函数特性进行绕过<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web3/ND%60OP54_%28EFK97T%5B451%297ZS.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
