@@ -39,6 +39,12 @@
 得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;base_base_base&#125;</span><br></pre></td></tr></table></figure>
 <h1>Misc</h1>
+<h2 id="隐写1"><a class="header-anchor" href="#隐写1">¶</a>隐写1</h2>
+<p>下载下来的png文件打不开，提示错误，放进010进去查看<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E9%9A%90%E5%86%991/J_%28%5BAFO4S%5B3K%40C%29S03_%5DY1J.png" alt=""><br>
+发现文件头错误，png文件头应该是89504E47，将99改成89，再保存打开文件，得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E9%9A%90%E5%86%991/%60H%5D8C_3VB0IV%7D%25_UF7UEB%5B6.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;zhe_ci_meiyou_ctfshow&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="萌新-隐写2"><a class="header-anchor" href="#萌新-隐写2">¶</a>萌新_隐写2</h2>
 <p>下载文件得到一个加密的zip压缩包<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%992/E%296IXVG444M%24KA5B1%25%29_1XN.png" alt=""><br>
@@ -47,6 +53,11 @@
 得到压缩包密码为：19981000<br>
 打开压缩包后得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;brute_force&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="隐写2"><a class="header-anchor" href="#隐写2">¶</a>隐写2</h2>
+<p>下载下来得到一张jpg图片，图片提示jphs隐写，用Jphswin工具打开<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%992/9%606%7BK5P%5DIM%60X5%60%29K%5B6YXU%29V.png" alt=""><br>
+点击seek解密，密码没有，就空着不写，然后另存为txt文本，得到flag</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;202cb962ac59075b964b07152d234b70&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="萌新隐写3"><a class="header-anchor" href="#萌新隐写3">¶</a>萌新隐写3</h2>
 <p>这题直接打开图片地址，就有flag，emmm<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%993/B9XXQPT35%7BX4%40%7BFNUL8BA6Y.png" alt=""></p>
@@ -60,6 +71,27 @@
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%994/7G8X7YG1%601~MKYZZO2F%40%282J.png" alt=""><br>
 当然还有一种办法，就是crtl+a全选复制到外面(隐藏的文字一起被选中)，就可以看到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;word_stega&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="萌新隐写5"><a class="header-anchor" href="#萌新隐写5">¶</a>萌新隐写5</h2>
+<p>打开，给了我们一段unicode编码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%995/ZT%5BEJQ%60WI%7B4%5D%28%7D%5D0E1UR7Y7.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">䴀娀圀䜀䌀娀娀䤀一䈀儀圀㘀堀㌀䬀一䘀㈀嘀㘀夀吀嘀䰀㔀㐀圀㘀㌀吀䠀䰀㔀刀䐀䜀䴀匀㜀䘀䔀㴀㴀㴀㴀㴀㴀</span><br></pre></td></tr></table></figure>
+<p>从中文转换后得到<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%995/UZKYZ3%40%25D%5BYE0PUTIRA%24%24%40T.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\u4d00\u5a00\u5700\u4700\u4300\u5a00\u5a00\u4900\u4e00\u4200\u5100\u5700\u3600\u5800\u3300\u4b00\u4e00\u4600\u3200\u5600\u3600\u5900\u5400\u5600\u4c00\u3500\u3400\u5700\u3600\u3300\u5400\u4800\u4c00\u3500\u5200\u4400\u4700\u4d00\u5300\u3700\u4600\u4500\u3d00\u3d00\u3d00\u3d00\u3d00\u3d00</span><br></pre></td></tr></table></figure>
+<p>再16进制转化成字符<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%995/%60351NNWFW91L4F272ZLX229.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MZWGCZZINBQW6X3KNF2V6YTVL54W63THL5RDGMS7FE&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br></pre></td></tr></table></figure>
+<p>base32解密得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%995/23ZKJ5~_DQAM%40E0%29%5BOC3%24LE.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag(hao_jiu_bu_yong_b32_)</span><br></pre></td></tr></table></figure>
+<h2 id="萌新隐写6"><a class="header-anchor" href="#萌新隐写6">¶</a>萌新隐写6</h2>
+<p>下载下来是一个音频文件，拖进音频分析软件里<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%996/%25OX%7D_%7DD_%252AZA%7DOH3V0P%25F0.png" alt=""><br>
+看到一段有规律的波形，应该是莫斯密码，长的替换成-，短的替换成.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-- ..- --.. .. -.- .. ... --. ----- ----- -..</span><br></pre></td></tr></table></figure>
+<p>莫斯密码解密得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%996/%7DZ%5D%40_5%24_FYQ1CQ_FY%5BVY%7D%290.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;MUZIKISG00D&#125;</span><br></pre></td></tr></table></figure>
 <h1>Web</h1>
 <h2 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h2>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> &lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;ctf.show萌新计划web1&lt;&#x2F;title&gt;</span><br><span class="line">    &lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;?php</span><br><span class="line"># 包含数据库连接文件</span><br><span class="line">include(&quot;config.php&quot;);</span><br><span class="line"># 判断get提交的参数id是否存在</span><br><span class="line">if(isset($_GET[&#39;id&#39;]))&#123;</span><br><span class="line">    $id &#x3D; $_GET[&#39;id&#39;];</span><br><span class="line">    # 判断id的值是否大于999</span><br><span class="line">    if(intval($id) &gt; 999)&#123;</span><br><span class="line">        # id 大于 999 直接退出并返回错误</span><br><span class="line">        die(&quot;id error&quot;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        # id 小于 999 拼接sql语句</span><br><span class="line">        $sql &#x3D; &quot;select * from article where id &#x3D; $id order by id limit 1 &quot;;</span><br><span class="line">        echo &quot;执行的sql为：$sql&lt;br&gt;&quot;;</span><br><span class="line">        # 执行sql 语句</span><br><span class="line">        $result &#x3D; $conn-&gt;query($sql);</span><br><span class="line">        # 判断有没有查询结果</span><br><span class="line">        if ($result-&gt;num_rows &gt; 0) &#123;</span><br><span class="line">            # 如果有结果，获取结果对象的值$row</span><br><span class="line">            while($row &#x3D; $result-&gt;fetch_assoc()) &#123;</span><br><span class="line">                echo &quot;id: &quot; . $row[&quot;id&quot;]. &quot; - title: &quot; . $row[&quot;title&quot;]. &quot; &lt;br&gt;&lt;hr&gt;&quot; . $row[&quot;content&quot;]. &quot;&lt;br&gt;&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        # 关闭数据库连接</span><br><span class="line">        $conn-&gt;close();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;!-- flag in id &#x3D; 1000 --&gt;</span><br><span class="line">&lt;&#x2F;html&gt; </span><br></pre></td></tr></table></figure>
@@ -80,6 +112,9 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 这里也存在sql注入<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web1/~SZMD3FOJY19SPW0P%605OUNW.png" alt=""><br>
 当然省事的话直接按照他sql语句进行，取<code>?id=id--+</code>直接显示全部</p>
+<h2 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h2>
+<p>接着上道题，这里题目说管理员修改了一下代码，但还是能按照上题思路解出<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web2/J0%60%7BU%60N4P9_9D%25VKCR%299_KL.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
