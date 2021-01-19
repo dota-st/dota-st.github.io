@@ -120,6 +120,39 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/or|\-|\\|\*|\&lt;|\&gt;|\!|x|hex|\+/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
 <p>但我们依然可以利用intval函数特性进行绕过<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web3/ND%60OP54_%28EFK97T%5B451%297ZS.png" alt=""></p>
+<h2 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h2>
+<p>这次再面基础上又多加了select语句过滤</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/or|\-|\\\|\/|\\*|\&lt;|\&gt;|\!|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
+<p>但intval函数依然存在，我们继续构造?id='1000’获取flag</p>
+<h2 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h2>
+<p>这次不能再使用’1000‘获取flag了</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/\&#x27;|\&quot;|or|\||\-|\\\|\/|\\*|\&lt;|\&gt;|\!|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
+<p>可以看到，这次正则表达式中匹配了单引号和双引号，再使用<code>?id='1000'</code>，单引号就会被匹配到，回显id error<br>
+但~没有被过滤，所以我们采取双重取反进行绕过，即构造<code>?id=~~1000</code>，就可获取到flag</p>
+<h2 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h2>
+<p>依然增加了正则表达式</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;id&#x27;</span>]))&#123;</span><br><span class="line">        $id = $_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&quot;/\&#x27;|\&quot;|or|\||\-|\\\|\/|\\*|\&lt;|\&gt;|\^|\!|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
+<p>这次看到多匹配了一个<sup>，但我们不用</sup>，我们继续使用双重取反构造获取flag：<code>?id=~~1000</code></p>
+<h2 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h2>
+<p>oh，no!</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/\&#x27;|\&quot;|or|\||\-|\\\|\/|\\*|\&lt;|\&gt;|\^|\!|\~|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">           <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">   &#125; </span><br></pre></td></tr></table></figure>
+<p>这次它终于把<code>~</code>加到正则表达式了，我们无法使用双重取反的套路了<br>
+这次我们使用sql注入，采取<code>?id=id%23</code>进行注入，获取flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web7/D%60QTGOVBB_WRP_%28MEYRI%40%60U.png" alt=""></p>
+<h2 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h2>
+<p>emmm，这道题一开始我还以为是md5全相等，后面问了才知道这是个玩梗的题，即程序员离职删库跑路，命令<code>rm -rf /*</code>，Linux下强制递归删除文件。<br>
+所以构造成?flag=rm -rf /*<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web8/4QL%290H49VUPBABI8LD180%29S.png" alt=""></p>
+<h2 id="web9"><a class="header-anchor" href="#web9">¶</a>web9</h2>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/_YDF%29_0HEIUECJ%5DF%247T4%7BAW.png" alt=""><br>
+考查eval命令执行，并且需要匹配到<strong>system|exec|highlight</strong>三个其中之一<br>
+这里使用system命令配合tac读取config.php文件<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/Y8NXJHEEAK%60SW%7DQW%60M7~%5DYM.png" alt=""><br>
+这里为啥不用cat命令读取？因为cat读取还需要右键查看源码才能看到flag，QWQ<br>
+还可以使用highlight，构造成**?c=highlight_file(“config.php”);**<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/WL%7D1TDTU%5DP%7D4Y%24202RZGM6T.png" alt=""><br>
+还可以使用exec命令，构造成**?c=exec(‘tac config.php’,$res);var_dump($res);**<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/_3BDIKSEX%28%5DA%25QMRU~%29MT%28V.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
