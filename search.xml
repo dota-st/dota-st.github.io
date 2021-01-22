@@ -478,6 +478,31 @@ emmm…这波有点难受。</p>
 <p>莫斯密码解密得到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%996/%7DZ%5D%40_5%24_FYQ1CQ_FY%5BVY%7D%290.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;MUZIKISG00D&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="杂项1"><a class="header-anchor" href="#杂项1">¶</a>杂项1</h2>
+<p>打开，题目说明如下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B91/%28JU4MLHWM7%5D%60D2_K%7BP7T%5BPA.png" alt=""><br>
+那我们直接拿这个md5去解一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B91/F%25ZBJ%40T~%25K%7BTI%5DRYX%60DUDJV.png" alt=""><br>
+得到结果为：helloctf，所以flag是</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;hello&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="杂项2"><a class="header-anchor" href="#杂项2">¶</a>杂项2</h2>
+<p>下载下来得到一个压缩包，解压后是一张png图片<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B9%E4%BA%8C/QF%29BKVD%7D9VL3ONLAYJF%40%405U.png" alt=""><br>
+丢进010观察，看到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B9%E4%BA%8C/XZR9%408LLSZROT6%25~D7%28%5B%2987.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;ctfshow_im_coming&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="萌新杂项3"><a class="header-anchor" href="#萌新杂项3">¶</a>萌新杂项3</h2>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B93/TR577_DC6Z9CP%40K_M%405W%609F.png" alt=""><br>
+通过题目描述，可以得到这些数字97，10，01，还着重说了名字小五，银行卡密码只能是数字，那就是15谐音，所以一共是97,10,01,15，银行卡密码只有6位，所以就是互相组合一下，我是直接971015，把后面的01换成15成功了</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;971015&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="杂项4"><a class="header-anchor" href="#杂项4">¶</a>杂项4</h2>
+<p>下载得到一个加密压缩包，根据提示，密码为372开头的9位数字，所以我们先生成一个372000000到372999999的字典</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;pd.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">372000000</span>,<span class="number">373000000</span>,<span class="number">1</span>):</span><br><span class="line">        f.write(str(i)+<span class="string">&quot;\n&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B94/IOYK~1KO%5BL%60TV2N832%5D%60K78.png" alt=""><br>
+再进行压缩包爆破<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B94/N~TU%5DY68K_7H7%60N%5B2JRQ201.png" alt=""><br>
+得到密码为372619038，所以flag为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;372619038&#125;</span><br></pre></td></tr></table></figure>
 <h1>Web</h1>
 <h2 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h2>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> &lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;ctf.show萌新计划web1&lt;&#x2F;title&gt;</span><br><span class="line">    &lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;?php</span><br><span class="line"># 包含数据库连接文件</span><br><span class="line">include(&quot;config.php&quot;);</span><br><span class="line"># 判断get提交的参数id是否存在</span><br><span class="line">if(isset($_GET[&#39;id&#39;]))&#123;</span><br><span class="line">    $id &#x3D; $_GET[&#39;id&#39;];</span><br><span class="line">    # 判断id的值是否大于999</span><br><span class="line">    if(intval($id) &gt; 999)&#123;</span><br><span class="line">        # id 大于 999 直接退出并返回错误</span><br><span class="line">        die(&quot;id error&quot;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        # id 小于 999 拼接sql语句</span><br><span class="line">        $sql &#x3D; &quot;select * from article where id &#x3D; $id order by id limit 1 &quot;;</span><br><span class="line">        echo &quot;执行的sql为：$sql&lt;br&gt;&quot;;</span><br><span class="line">        # 执行sql 语句</span><br><span class="line">        $result &#x3D; $conn-&gt;query($sql);</span><br><span class="line">        # 判断有没有查询结果</span><br><span class="line">        if ($result-&gt;num_rows &gt; 0) &#123;</span><br><span class="line">            # 如果有结果，获取结果对象的值$row</span><br><span class="line">            while($row &#x3D; $result-&gt;fetch_assoc()) &#123;</span><br><span class="line">                echo &quot;id: &quot; . $row[&quot;id&quot;]. &quot; - title: &quot; . $row[&quot;title&quot;]. &quot; &lt;br&gt;&lt;hr&gt;&quot; . $row[&quot;content&quot;]. &quot;&lt;br&gt;&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        # 关闭数据库连接</span><br><span class="line">        $conn-&gt;close();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;!-- flag in id &#x3D; 1000 --&gt;</span><br><span class="line">&lt;&#x2F;html&gt; </span><br></pre></td></tr></table></figure>
