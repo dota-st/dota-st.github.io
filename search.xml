@@ -6,7 +6,7 @@
     <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
 <p>哈哈，首先写自动签到脚本的初衷还是因为签到有金币可以拿。一开始想法是用卷积神经网络训练模型，然后识别登录页面的验证码，但是当我爬取了1000张验证码后，在标记上面花了我整整一个早上和一个下午的时间<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku%E7%AD%BE%E5%88%B0%E7%A8%8B%E5%BA%8F/YA%25G4S9~O%5DES3FHO2%7DK95XT.png" alt=""><br>
-然后结果是训练出来的模型对于训练集识别百分百，但对于测试集识别率不尽人意，猜想可能是数字加大小写字母的组合需要更多的训练集，但是一想到又要花费大量时间标记，就感觉整个人都不好了😭，正好有人说用github登录的思路，就想着先用github来实现吧惨惨</p>
+然后结果是训练出来的模型对于训练集识别百分百，但对于测试集识别率不尽人意，猜想可能是数字加大小写字母的组合需要更多的训练集，但是一想到又要花费大量时间标记，就感觉整个人都不好了😭，正好有人说采取github登录的思路，就想着先用github来实现吧惨惨</p>
 <h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
 <p>思路很简单，就是通过github的cookie去请求登录，登录成功后，通过requests保持session会话去请求打卡地址<br>
 使用步骤如下：<br>
@@ -21,7 +21,8 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">user&#x3D;你的用户名# server_key&#x3D;填写你的server酱# git_cookie&#x3D;填写抓包获得的githubcookie#</span><br><span class="line">******author:dota_st******</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku%E7%AD%BE%E5%88%B0%E7%A8%8B%E5%BA%8F/QLT33%29NA~Z9%28E%24%5D597V6Y%5B9.png" alt=""><br>
 最后我打包成exe文件，发到我的服务器上（没有服务器的也可以找一下提供云函数的在线平台），设置计划任务，每天固定时间启动:yum，:最好设置两次启动，虽然脚本已经尽可能在错误时重试，但因为github这边通道不是很稳定，有可能出现失败的情况<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku%E7%AD%BE%E5%88%B0%E7%A8%8B%E5%BA%8F/9%244%25S64%404MD%24%40PLXQYMYV_Q.png" alt=""></p>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku%E7%AD%BE%E5%88%B0%E7%A8%8B%E5%BA%8F/9%244%25S64%404MD%24%40PLXQYMYV_Q.png" alt=""><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/bugku%E7%AD%BE%E5%88%B0%E7%A8%8B%E5%BA%8F/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210126165907.jpg" alt=""></p>
 ]]></content>
       <tags>
         <tag>程序</tag>
