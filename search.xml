@@ -141,6 +141,49 @@
       </tags>
   </entry>
   <entry>
+    <title>Web1000题系列修炼(一)</title>
+    <url>/posts/14827/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>这个web系列题是ctfshow平台上发现的，正好web太菜了，借由这个系列题开始自我修炼吧😖</p>
+<h2 id="信息收集-1-20"><a class="header-anchor" href="#信息收集-1-20">¶</a>信息收集(1-20)</h2>
+<h3 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h3>
+<p>右键查看源码就能看到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web1/%24A%60L%5D%280Z%28L%24%5DUO3%60QC03%5B0K.png" alt=""></p>
+<h3 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h3>
+<p>打开网页提示无法查看源代码，右键也使用不了，那我们就在url前面加上<code>view-source:</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">view-source:http:&#x2F;&#x2F;83a83588-671e-4a94-9c6f-6857f9e20c2f.chall.ctf.show&#x2F;</span><br></pre></td></tr></table></figure>
+<p>访问后即可获得flag</p>
+<h3 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h3>
+<p>右键源码也没看到信息，去查看一下请求头和响应头，在响应头这里找到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web3/58CPJ8K6U1MK55EAIOYX6%24D.png" alt=""></p>
+<h3 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h3>
+<p>题目提示robots，所以我们直接访问<code>http://c6f215bf-6c3e-4a21-949b-1c37d603ca56.chall.ctf.show/robots.txt</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/%28SHD3YCKR5EX_PFSJJJ~%28KT.png" alt=""><br>
+然后根据提示，再访问flagishere.txt，即可得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/8S25%29G2%40%25%7BLSCUTWJL%24FJJ1.png" alt=""></p>
+<h3 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h3>
+<p>题目提示是phps源码泄露，于是在index.php后面加上s，即构造url如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;69ba9522-1aaf-4726-b2df-360c5c88d1ac.chall.ctf.show&#x2F;index.phps</span><br></pre></td></tr></table></figure>
+<p>访问后弹出一个下载文件，下载后打开文件得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web5/XL%7D%60G7X%5BG1ZPH%60HYCE__%40%7DR.png" alt=""></p>
+<h3 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h3>
+<p>题目提示www.zip源码泄露，于是构造url访问下载压缩包</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;www.zip</span><br></pre></td></tr></table></figure>
+<p>在压缩包中有一个fl000g.txt文件，打开内容为：flag{flag_here}，本来以为这是flag，然后提交错误了。接着访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
+<p>得到正确的flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web6/%29%29EZQI_I6W%60%25OY7_%28GGJI%5B9.png" alt=""></p>
+<h3 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h3>
+<p>根据提示，是个git泄露问题，访问.git/index.php即可，即构造url如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e85f4c26-faf9-4ace-a049-4f1b4587ad44.chall.ctf.show&#x2F;.git&#x2F;index.php</span><br></pre></td></tr></table></figure>
+<p>访问后就能得到flag</p>
+<h3 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h3>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>bugku自动签到程序</title>
     <url>/posts/51649/</url>
     <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
