@@ -288,6 +288,44 @@
 下载db.mdb文件后，用记事本打开搜索flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/G8QY%29JHUVWV%60KE%40MU9K%7BXOT.png" alt=""><br>
 成功获取到flag</p>
+<h2 id="爆破-21-28"><a class="header-anchor" href="#爆破-21-28">¶</a>爆破(21-28)</h2>
+<h3 id="web21"><a class="header-anchor" href="#web21">¶</a>web21</h3>
+<p>题目给了一个zip文件，打开后解压是爆破的字典，我们抓包一下网址看看<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/%7DJ%7BI5%243FC%5D0~HWVBF9YEZAA.png" alt=""><br>
+发现账号和密码都被base64了，我们发送到intruder模块，给爆破的位置加上$符圈住<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CNNU1O4C%40XHK3Y5JORN%60Q1V.png" alt=""><br>
+去base64解码一下看看格式<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/XNGZCN%286QM%40%40S%40%29%5DCDH5810.png" alt=""><br>
+格式是账号:密码，那我们使用custom iterator(自定义迭代器)模块，首先第一个放账号admin<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CVUBPQE_TDC%60%282%7BNFWNJN66.png" alt=""><br>
+第二个放符号<code>:</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/EE%24R8%28LNP_D4TP6_LGD%40WBX.png" alt=""><br>
+第三个放题目给的字典<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/YDJT6U%5B3%7B%7B%5BW3%24LTQU%40S2I7.png" alt=""><br>
+接着再进行base64编码，还有把后面这个url编码字符最好取消掉<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/BG65%608Y%28U%5D%5BZ_Z0Q9PIR%7B%40V.png" alt=""><br>
+然后就是attack开始爆破了<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/I%40HP%40S%299HT%5DREAIMIUYYV8K.png" alt=""><br>
+爆破出密码，成功获得flag</p>
+<h3 id="web22"><a class="header-anchor" href="#web22">¶</a>web22</h3>
+<p>题目让我们去爆破ctfer.com域名，也就是去爆破子域名，直接上layer<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/CNI3BQ%29BITHJIJ~2%7B6E%5DFC6.png" alt=""><br>
+爆破出有flag的子域名，访问后得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/WW7DID%7BTYG1US%60G6%244MWXJI.png" alt=""></p>
+<h3 id="web23"><a class="header-anchor" href="#web23">¶</a>web23</h3>
+<p>打开看到php源码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 11:43:51</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 11:56:11</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;token&#x27;</span>]))&#123;</span><br><span class="line">    $token = md5($_GET[<span class="string">&#x27;token&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+<p>代码审计一下，输出flag需要满足两个条件</p>
+<blockquote>
+<p>第一，传入的token值经过md5加密后，第1位=第14位并且第14位=第17位<br>
+第二，第1位+第14位+第17位÷第1位等于第31位</p>
+</blockquote>
+<p>根据源码改一下，写个脚本</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   10:48</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$dict = <span class="string">&quot;0123456789qwertyuiopasdfghjklzxcvbnm&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>($i = <span class="number">0</span>;$i&lt; <span class="number">36</span>;$i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>($j = <span class="number">0</span>;$j&lt;<span class="number">36</span>;$j++)&#123;</span><br><span class="line">        $token = md5($dict[$i].$dict[$j]);</span><br><span class="line">        <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;加密后的md5值为：&quot;</span>.$token).<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;解密后的值为：&quot;</span>.$dict[$i].$dict[$j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后得到满足的值，即3j<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/1%40X%282I%7D%29WT%40%7DX%7B%7BC%7B%7DW%5BYO3.png" alt=""><br>
+于是构造url传参token=3j，获得flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/%7DMZ8I%5BI%5BR%2441YZ%29P0%5DA8TU9.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
@@ -1944,7 +1982,7 @@ flag出来了！</p>
 <p>前段日子，新版bugku平台改版上线，然后我就兴冲冲的去刷了一波😂<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%60%5DEGP1RJ%5D%7DAC%5D_%5D85OHB%257U.png" alt=""><br>
 大部分题还是上线的老bugku平台的题，但也在逐渐上线新题，所以开了个文章记录下新题的做题过程（会慢慢更新）。有大部分web的题我在博客的另一篇文章写过，这里不重复写了，只记录一些想记录的题。<br>
-想看的师傅移步到这里https://www.wlhhlc.top/posts/55334/噢。</p>
+想看的师傅移步到这里<code>https://www.wlhhlc.top/posts/55334/</code>噢。</p>
 <h1>Web</h1>
 <h2 id="xxx二手交易市场"><a class="header-anchor" href="#xxx二手交易市场">¶</a>xxx二手交易市场</h2>
 <p>题目提示是：本人现实碰到的题目，无提示勿问。好家伙，莫非要渗透一波？？<br>
