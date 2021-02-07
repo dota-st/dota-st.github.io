@@ -98,8 +98,7 @@
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_2.png" alt=""><br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_3.png" alt=""><br>
 如果出现了提示<code>You should add &quot;extension=mongodb.so&quot; to php.ini</code>说明成功了，接着我们去php的配置文件php.ini进行修改<br>
-路径一般为:<code>/etc/php/7.2/cli/php.ini</code><br>
-<a href="http://%E6%8E%A5%E7%9D%80%E6%88%91%E4%BB%AC%E5%8E%BB%E6%8B%93%E5%B1%95%E5%A4%84%E5%8A%A0%E4%B8%8Aextension=mongodb.so">接着我们去拓展处加上extension=mongodb.so</a><br>
+路径一般为:<code>/etc/php/7.2/cli/php.ini</code>，<a href="http://%E6%8E%A5%E7%9D%80%E6%88%91%E4%BB%AC%E5%8E%BB%E6%8B%93%E5%B1%95%E5%A4%84%E5%8A%A0%E4%B8%8Aextension=mongodb.so">接着我们去拓展处加上extension=mongodb.so</a><br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/3CBP_L%2507KRWPG%40EF96MB0A.png" alt=""><br>
 然后再把这两个开关改成Off，记住要把前面的分号去掉，不然会被注释掉<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/7SM9T%60%5BK%29%7D52XNR_%40~1HI6L.png" alt=""><br>
