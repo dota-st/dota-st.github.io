@@ -286,6 +286,34 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
       </tags>
   </entry>
   <entry>
+    <title>Hack The Box账号注册</title>
+    <url>/posts/33946/</url>
+    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
+<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
+<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
+<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
+<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
+<p>跑去查看js文件源码</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
+<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
+<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
+<p><strong>解密结果：</strong></p>
+<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
+<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
+<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
+<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
+]]></content>
+  </entry>
+  <entry>
     <title>curl的使用</title>
     <url>/posts/25992/</url>
     <content><![CDATA[<h2 id="简介"><a class="header-anchor" href="#简介">¶</a>简介</h2>
@@ -516,34 +544,6 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
       </tags>
   </entry>
   <entry>
-    <title>Hack The Box账号注册</title>
-    <url>/posts/33946/</url>
-    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
-<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
-<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
-<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
-<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
-<p>跑去查看js文件源码</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
-<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
-<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
-<p><strong>解密结果：</strong></p>
-<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
-<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
-<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
-<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
-]]></content>
-  </entry>
-  <entry>
     <title>模拟网站攻击到提权的全部过程</title>
     <url>/posts/46463/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -669,224 +669,6 @@ emmm…这波有点难受。</p>
 ]]></content>
       <tags>
         <tag>渗透</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Web1000题系列修炼(一)</title>
-    <url>/posts/14827/</url>
-    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
-<p>这个web系列题是前些日子我随意逛逛的时候，在ctfshow平台上发现的，正好web太菜了，借由这个系列题开始自我修炼吧😖</p>
-<h2 id="信息收集-1-20"><a class="header-anchor" href="#信息收集-1-20">¶</a>信息收集(1-20)</h2>
-<h3 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h3>
-<p>右键查看源码就能看到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web1/%24A%60L%5D%280Z%28L%24%5DUO3%60QC03%5B0K.png" alt=""></p>
-<h3 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h3>
-<p>打开网页提示无法查看源代码，右键也使用不了，那我们就在url前面加上<code>view-source:</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">view-source:http:&#x2F;&#x2F;83a83588-671e-4a94-9c6f-6857f9e20c2f.chall.ctf.show&#x2F;</span><br></pre></td></tr></table></figure>
-<p>访问后即可获得flag</p>
-<h3 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h3>
-<p>右键源码也没看到信息，去查看一下请求头和响应头，在响应头这里找到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web3/58CPJ8K6U1MK55EAIOYX6%24D.png" alt=""></p>
-<h3 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h3>
-<p>题目提示robots，所以我们直接访问<code>http://c6f215bf-6c3e-4a21-949b-1c37d603ca56.chall.ctf.show/robots.txt</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/%28SHD3YCKR5EX_PFSJJJ~%28KT.png" alt=""><br>
-然后根据提示，再访问flagishere.txt，即可得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/8S25%29G2%40%25%7BLSCUTWJL%24FJJ1.png" alt=""></p>
-<h3 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h3>
-<p>题目提示是phps源码泄露，于是在index.php后面加上s，即构造url如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;69ba9522-1aaf-4726-b2df-360c5c88d1ac.chall.ctf.show&#x2F;index.phps</span><br></pre></td></tr></table></figure>
-<p>访问后弹出一个下载文件，下载后打开文件得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web5/XL%7D%60G7X%5BG1ZPH%60HYCE__%40%7DR.png" alt=""></p>
-<h3 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h3>
-<p>题目提示www.zip源码泄露，于是构造url访问下载压缩包</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;www.zip</span><br></pre></td></tr></table></figure>
-<p>在压缩包中有一个fl000g.txt文件，打开内容为：flag{flag_here}，本来以为这是flag，然后提交错误了。接着访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
-<p>得到正确的flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web6/%29%29EZQI_I6W%60%25OY7_%28GGJI%5B9.png" alt=""></p>
-<h3 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h3>
-<p>根据提示，是个git泄露问题，访问.git/index.php即可，即构造url如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e85f4c26-faf9-4ace-a049-4f1b4587ad44.chall.ctf.show&#x2F;.git&#x2F;index.php</span><br></pre></td></tr></table></figure>
-<p>访问后就能得到flag</p>
-<h3 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h3>
-<p>根据提示，本题考查的是svn泄露</p>
-<blockquote>
-<p>SVN（subversion）是源代码版本管理软件。 在使用SVN管理本地代码过程中，会自动生成一个隐藏文件夹，其中包含重要的源代码信息。但一些网站管理员在发布代码时，不愿意使用‘导出’功能，而是直接复制代码文件夹到WEB服务器上，这就使隐藏文件夹被暴露于外网环境，这使得渗透工程师可以借助其中包含版本信息追踪的网站文件，逐步摸清站点结构。 在服务器上布署代码时。如果是使用 svn checkout 功能来更新代码，而没有配置好目录访问权限，则会存在此漏洞。黑客利用此漏洞，可以下载整套网站的源代码。</p>
-</blockquote>
-<p>我们构造url访问，即可获得flag</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;a79a4695-f024-44dd-af3e-4eb6c2720be7.chall.ctf.show&#x2F;.svn&#x2F;</span><br></pre></td></tr></table></figure>
-<h3 id="web9"><a class="header-anchor" href="#web9">¶</a>web9</h3>
-<p>本题考查的是vim的缓存泄露</p>
-<blockquote>
-<p>vim编辑文本时会创建一个临时文件，如果程序正常退出，临时文件自动删除，如果意外退出就会保留，当vim异常退出后，因为未处理缓存文件，导致可以通过缓存文件恢复原始文件内容。而本题的情景就是电脑死机了意外退出，导致存在临时文件</p>
-</blockquote>
-<p>构造url如下，下载.swp后缀结尾的文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;0b4ba9f5-92a1-42fa-ba28-49cff3f8400e.chall.ctf.show&#x2F;index.php.swp</span><br></pre></td></tr></table></figure>
-<p>打开文件即可获取flag</p>
-<h3 id="web10"><a class="header-anchor" href="#web10">¶</a>web10</h3>
-<p>题目提示cookie，然后我们查看一下请求头，发现cookie数据为flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/5%5BL%7B~%7BV%24%245%254B7%5D67~%29B5CX.png" alt=""><br>
-我们解一下url编码，得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/%5DCN%2579K%24A9%280%24%60%240_TOFG%28E.png" alt=""></p>
-<h3 id="web11"><a class="header-anchor" href="#web11">¶</a>web11</h3>
-<p>根据提示，查询对ctfshow域名进行dns查询，查看TXT记录<br>
-阿里云查询链接：<a href="https://zijian.aliyun.com/">https://zijian.aliyun.com/</a><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web11/RDP905P_SOZF0HM725N3%7DJV.png" alt=""><br>
-获取flag成功</p>
-<h3 id="web12"><a class="header-anchor" href="#web12">¶</a>web12</h3>
-<p>根据题目提示，我们访问robots.txt，获取到后台地址<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/%24%24%28H%2954_BF%5DPS%7B06RN_M%7B7O.png" alt=""><br>
-然后我们访问一下后台</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;c25a456d-63f7-497e-9170-0365a9cdce53.chall.ctf.show&#x2F;admin&#x2F;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/3UKIBC9YJVM%40%7D6V%29O%28LT%291G.png" alt=""><br>
-账号名直接盲猜admin，密码是网站底部的这串数字，372619038<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/ZIA0BV2O2KFNIR~5%24%282T2DN.png" alt=""><br>
-登录进来后，获取到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/OD2%603%24A%4083R%5BL%287A%5DGC%24Z%5B2.png" alt=""></p>
-<h3 id="web13"><a class="header-anchor" href="#web13">¶</a>web13</h3>
-<p>在网站找到一个超链接<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/JDUYP_%7D%24%24HV%5B%7BUGOENSK%7BLB.png" alt=""><br>
-访问后，发现开发者在文档中写了自己的后台地址和账号密码<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/Q%25%25%40CO8%29ZM%40M1%29_%7BMLDU6P6.png" alt=""><br>
-这里把your-domain换成自己的做题环境，访问后台地址</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e63907cd-33af-4c57-b605-4f7e04928e43.chall.ctf.show&#x2F;system1103&#x2F;login.php</span><br></pre></td></tr></table></figure>
-<p>输入账号和密码后得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/1G7F~2%7D~NO048WQL%5D1LFUTR.png" alt=""></p>
-<h3 id="web14"><a class="header-anchor" href="#web14">¶</a>web14</h3>
-<p>打开网站，根据提示访问<code>http://4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show/editor/</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/Y%5B8CN%60PAKNL%7BV%25SICU%60LH56.png" alt=""><br>
-看到一个编辑器，在flash的上传中，发现有个文件空间<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/617KH%5BRRFKY%5D4L%5BI%5DW~UXA3.png" alt=""><br>
-点击文件空间，发现爆出了目录<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%25U17ETN4D42GP3~TG%7D%25N3M8.png" alt=""><br>
-找了找，flag在var/www/html/nothinghere/fl000g.txt中，于是构造url访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show&#x2F;nothinghere&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
-<p>得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%60_%28G6DSOG5TBQLZLDH08F7V.png" alt=""></p>
-<h3 id="web15"><a class="header-anchor" href="#web15">¶</a>web15</h3>
-<p>根据题目提示邮箱，在网页底部发现一个邮箱<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/HK_MLVPS3%246282SAV6YPFIM.png" alt=""><br>
-再url后面加上admin访问一下后台<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/VFRR%5DS8%60%60%7DV7%5D%251%25_2QAGS7.png" alt=""><br>
-有一个忘记密码选项，点击一下<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/%24OSUPYKMZZOORSX80VE63S2.png" alt=""><br>
-有密保问题，联想到qq邮箱，搜索一下qq<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/8%24BYJYK%5B7%251M3N0TF%60F%60VK2.png" alt=""><br>
-得到地址为西安，于是提交西安<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/I%5D%5B9%7BXDD98TS%5BMO%5DB%28_%7B%29%60P.png" alt=""><br>
-得到密码为admin7789，账号还是admin，登录后获得flag</p>
-<h3 id="web16"><a class="header-anchor" href="#web16">¶</a>web16</h3>
-<p>根据题目提示，存在探针</p>
-<blockquote>
-<p>php探针是用来探测空间、服务器运行状况和PHP信息用的，探针可以实时查看服务器硬盘资源、内存占用、网卡流量、系统负载、服务器时间等信息。是一个查看服务器信息的工具。<br>
-比如查看服务器支持什么，不支持什么，空间速度等等状况！</p>
-</blockquote>
-<p>于是访问<code>http://e42c0d7a-d052-485d-bb09-a7c68a6d0214.chall.ctf.show/tz.php</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/CL_7ZWZ3%24~0%7D3D0Q1PPD86H.png" alt=""><br>
-再点击phpinfo查看信息<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/_NM4E%5B4%60TFQ%7DPP%60%240P2A~72.png" alt=""><br>
-在页面搜索一下ctfshow，即可得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/MK%7B%28X5DI52%29LVAPG%7D%7BTJSQE.png" alt=""></p>
-<h3 id="web17"><a class="header-anchor" href="#web17">¶</a>web17</h3>
-<p>根据题目，查找ctfer.com的真实ip，于是用fofa查找<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web17/%7BE3HVN%5DBT7C7%7BR%29_G%7DL%29ODI.png" alt=""><br>
-查到ip地址为：111.231.70.44，所以flag为：flag{111.231.70.44}</p>
-<h3 id="web18"><a class="header-anchor" href="#web18">¶</a>web18</h3>
-<p>打开是一个游戏，我们去找找它的文件，在js中发现了当分数大于100时，赋值的一串编码<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/_%60NIPJPH%606XG7%7BHCOPOJMWC.png" alt=""><br>
-我们拿去unicode解码一下<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/WHIID%5B%5BUR1Y%5DOL_G0K7H%247G.png" alt=""><br>
-根据提示，访问110.php，构造url</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;884e39f8-376a-4d61-9618-ee22fecc3327.chall.ctf.show&#x2F;110.php</span><br></pre></td></tr></table></figure>
-<p>访问后得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/%60OO6K~50K%60A%7B~0EC%24G%5D_52N.png" alt=""></p>
-<h3 id="web19"><a class="header-anchor" href="#web19">¶</a>web19</h3>
-<p>打开是一个登录框，右键查看一下源码<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/_KY%7DOY%5BDG6ICR%5DH9U~N%600%28E.png" alt=""><br>
-根据php源码，我们需要post发送用户名和密码过去</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">当用户名为admin</span><br><span class="line">密码为a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04</span><br><span class="line">即可输出flag</span><br></pre></td></tr></table></figure>
-<p>构造发送post请求<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/%5DK48MGWOC%243%2555U6R%28YHEWA.png" alt=""><br>
-成功获取flag</p>
-<h3 id="web20"><a class="header-anchor" href="#web20">¶</a>web20</h3>
-<p>根据题目提示，是mdb文件泄露</p>
-<blockquote>
-<p>mdb文件是早期asp+access构架的数据库文件</p>
-</blockquote>
-<p>于是我们访问/db/db.mdb，即构造url如下访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;5c070a5e-3a51-4904-a668-4385dfa7e714.chall.ctf.show&#x2F;db&#x2F;db.mdb</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/A%60M~%5B%5B9GGXE8%7DAG4%7D%29V2~6H.png" alt=""><br>
-下载db.mdb文件后，用记事本打开搜索flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/G8QY%29JHUVWV%60KE%40MU9K%7BXOT.png" alt=""><br>
-成功获取到flag</p>
-<h2 id="爆破-21-28"><a class="header-anchor" href="#爆破-21-28">¶</a>爆破(21-28)</h2>
-<h3 id="web21"><a class="header-anchor" href="#web21">¶</a>web21</h3>
-<p>题目给了一个zip文件，打开后解压是爆破的字典，我们抓包一下网址看看<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/%7DJ%7BI5%243FC%5D0~HWVBF9YEZAA.png" alt=""><br>
-发现账号和密码都被base64了，我们发送到intruder模块，给爆破的位置加上$符圈住<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CNNU1O4C%40XHK3Y5JORN%60Q1V.png" alt=""><br>
-去base64解码一下看看格式<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/XNGZCN%286QM%40%40S%40%29%5DCDH5810.png" alt=""><br>
-格式是账号:密码，那我们使用custom iterator(自定义迭代器)模块，首先第一个放账号admin<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CVUBPQE_TDC%60%282%7BNFWNJN66.png" alt=""><br>
-第二个放符号<code>:</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/EE%24R8%28LNP_D4TP6_LGD%40WBX.png" alt=""><br>
-第三个放题目给的字典<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/YDJT6U%5B3%7B%7B%5BW3%24LTQU%40S2I7.png" alt=""><br>
-接着再进行base64编码，还有把后面这个url编码字符最好取消掉<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/BG65%608Y%28U%5D%5BZ_Z0Q9PIR%7B%40V.png" alt=""><br>
-然后就是attack开始爆破了<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/I%40HP%40S%299HT%5DREAIMIUYYV8K.png" alt=""><br>
-爆破出密码，成功获得flag</p>
-<h3 id="web22"><a class="header-anchor" href="#web22">¶</a>web22</h3>
-<p>题目让我们去爆破ctfer.com域名，也就是去爆破子域名，直接上layer<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/CNI3BQ%29BITHJIJ~2%7B6E%5DFC6.png" alt=""><br>
-爆破出有flag的子域名，访问后得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/WW7DID%7BTYG1US%60G6%244MWXJI.png" alt=""></p>
-<h3 id="web23"><a class="header-anchor" href="#web23">¶</a>web23</h3>
-<p>打开看到php源码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 11:43:51</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 11:56:11</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;token&#x27;</span>]))&#123;</span><br><span class="line">    $token = md5($_GET[<span class="string">&#x27;token&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-<p>代码审计一下，输出flag需要满足两个条件</p>
-<blockquote>
-<p>第一，传入的token值经过md5加密后，第1位=第14位并且第14位=第17位<br>
-第二，第1位+第14位+第17位÷第1位等于第31位</p>
-</blockquote>
-<p>根据源码改一下，写个脚本</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   10:48</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$dict = <span class="string">&quot;0123456789qwertyuiopasdfghjklzxcvbnm&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>($i = <span class="number">0</span>;$i&lt; <span class="number">36</span>;$i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>($j = <span class="number">0</span>;$j&lt;<span class="number">36</span>;$j++)&#123;</span><br><span class="line">        $token = md5($dict[$i].$dict[$j]);</span><br><span class="line">        <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;加密后的md5值为：&quot;</span>.$token).<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;解密后的值为：&quot;</span>.$dict[$i].$dict[$j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行后得到满足的值，即3j<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/1%40X%282I%7D%29WT%40%7DX%7B%7BC%7B%7DW%5BYO3.png" alt=""><br>
-于是构造url传参token=3j，获得flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/%7DMZ8I%5BI%5BR%2441YZ%29P0%5DA8TU9.png" alt=""></p>
-<h3 id="web24"><a class="header-anchor" href="#web24">¶</a>web24</h3>
-<p>审计代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(<span class="number">372619038</span>);</span><br><span class="line">    <span class="keyword">if</span>(intval($r)===intval(mt_rand()))&#123;</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>发现其实这是伪随机数，因为mt_srang已经固定了，我们写个代码运行一下</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">mt_srand(<span class="number">372619038</span>);</span><br><span class="line">$result = intval(mt_rand());</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/7%28XX9%5BUBRX8TG%60%5BP4F8M%29%5BA.png" alt=""><br>
-得到1155388967，所以构成?r=1155388967即可获得flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/N9%294NSPFPC1BUE%28KK%24%7B7Q7R.png" alt=""></p>
-<h3 id="web25"><a class="header-anchor" href="#web25">¶</a>web25</h3>
-<p>首先审计代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 13:56:57</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 15:47:33</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(hexdec(substr(md5($flag), <span class="number">0</span>,<span class="number">8</span>)));</span><br><span class="line">    $rand = intval($r)-intval(mt_rand());</span><br><span class="line">    <span class="keyword">if</span>((!$rand))&#123;</span><br><span class="line">        <span class="keyword">if</span>($_COOKIE[<span class="string">&#x27;token&#x27;</span>]==(mt_rand()+mt_rand()))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> $rand;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-<p>这次种子没有给出，但发现一个关键地方，就是我们可以把传入的r设置为0，即?r=0，可以输出$rand的值，此时$rand=mt_rand()的值，也就是随机数的值<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/NM0%607T~RI%28QV7UQDCA%5B5%7DQT.png" alt=""><br>
-获得随机数为86715576，这个时候我们使用逆推工具尝试逆推出种子</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">工具地址：https:&#x2F;&#x2F;github.com&#x2F;Al1ex&#x2F;php_mt_seed</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_0%286QB7%245ME%24XVJ%5B2P8HMT0.png" alt=""><br>
-得到种子为4188754181，因为$_COOKIE[‘token’]的值要等于两个随机数相加，于是我们写个脚本</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">mt_srand(<span class="number">4188754181</span>);</span><br><span class="line"><span class="keyword">echo</span> mt_rand().<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">$result = mt_rand()+mt_rand();</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/LH_7%246BHAF3_G2K%24SH7_240.png" alt=""><br>
-得到token的值为2504830688</p>
-<blockquote>
-<p>所以开始构造<br>
-第一个，构造?r=86715576，使得$rang=0，满足if((!$rand))，进入下一层if判断token的值<br>
-第二个，构造cookie头里的token=2504830688</p>
-</blockquote>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_LWI%60Z57MJJ6T~63%25%28%29F4Z5.png" alt=""><br>
-成功拿到flag</p>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -1248,6 +1030,224 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?1&#x3D;&gt;nl</span><br><span class="line">?1&#x3D;*</span><br><span class="line">#还有另一个命令od（八进制输出）也是可以的</span><br></pre></td></tr></table></figure>
 <p>然后再源码中就可以看到flag了<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/ctfshow%E8%90%8C%E6%96%B0/%E8%8E%B7%E5%BE%97%E7%99%BE%E5%88%86%E4%B9%8B%E7%99%BE%E7%9A%84%E5%BF%AB%E4%B9%90/%24NA%24%7B4AR%7BMGLJT3%24JG~08%5DE.png" alt=""></p>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Web1000题系列修炼(一)</title>
+    <url>/posts/14827/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>这个web系列题是前些日子我随意逛逛的时候，在ctfshow平台上发现的，正好web太菜了，借由这个系列题开始自我修炼吧😖</p>
+<h2 id="信息收集-1-20"><a class="header-anchor" href="#信息收集-1-20">¶</a>信息收集(1-20)</h2>
+<h3 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h3>
+<p>右键查看源码就能看到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web1/%24A%60L%5D%280Z%28L%24%5DUO3%60QC03%5B0K.png" alt=""></p>
+<h3 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h3>
+<p>打开网页提示无法查看源代码，右键也使用不了，那我们就在url前面加上<code>view-source:</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">view-source:http:&#x2F;&#x2F;83a83588-671e-4a94-9c6f-6857f9e20c2f.chall.ctf.show&#x2F;</span><br></pre></td></tr></table></figure>
+<p>访问后即可获得flag</p>
+<h3 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h3>
+<p>右键源码也没看到信息，去查看一下请求头和响应头，在响应头这里找到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web3/58CPJ8K6U1MK55EAIOYX6%24D.png" alt=""></p>
+<h3 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h3>
+<p>题目提示robots，所以我们直接访问<code>http://c6f215bf-6c3e-4a21-949b-1c37d603ca56.chall.ctf.show/robots.txt</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/%28SHD3YCKR5EX_PFSJJJ~%28KT.png" alt=""><br>
+然后根据提示，再访问flagishere.txt，即可得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/8S25%29G2%40%25%7BLSCUTWJL%24FJJ1.png" alt=""></p>
+<h3 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h3>
+<p>题目提示是phps源码泄露，于是在index.php后面加上s，即构造url如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;69ba9522-1aaf-4726-b2df-360c5c88d1ac.chall.ctf.show&#x2F;index.phps</span><br></pre></td></tr></table></figure>
+<p>访问后弹出一个下载文件，下载后打开文件得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web5/XL%7D%60G7X%5BG1ZPH%60HYCE__%40%7DR.png" alt=""></p>
+<h3 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h3>
+<p>题目提示www.zip源码泄露，于是构造url访问下载压缩包</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;www.zip</span><br></pre></td></tr></table></figure>
+<p>在压缩包中有一个fl000g.txt文件，打开内容为：flag{flag_here}，本来以为这是flag，然后提交错误了。接着访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
+<p>得到正确的flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web6/%29%29EZQI_I6W%60%25OY7_%28GGJI%5B9.png" alt=""></p>
+<h3 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h3>
+<p>根据提示，是个git泄露问题，访问.git/index.php即可，即构造url如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e85f4c26-faf9-4ace-a049-4f1b4587ad44.chall.ctf.show&#x2F;.git&#x2F;index.php</span><br></pre></td></tr></table></figure>
+<p>访问后就能得到flag</p>
+<h3 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h3>
+<p>根据提示，本题考查的是svn泄露</p>
+<blockquote>
+<p>SVN（subversion）是源代码版本管理软件。 在使用SVN管理本地代码过程中，会自动生成一个隐藏文件夹，其中包含重要的源代码信息。但一些网站管理员在发布代码时，不愿意使用‘导出’功能，而是直接复制代码文件夹到WEB服务器上，这就使隐藏文件夹被暴露于外网环境，这使得渗透工程师可以借助其中包含版本信息追踪的网站文件，逐步摸清站点结构。 在服务器上布署代码时。如果是使用 svn checkout 功能来更新代码，而没有配置好目录访问权限，则会存在此漏洞。黑客利用此漏洞，可以下载整套网站的源代码。</p>
+</blockquote>
+<p>我们构造url访问，即可获得flag</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;a79a4695-f024-44dd-af3e-4eb6c2720be7.chall.ctf.show&#x2F;.svn&#x2F;</span><br></pre></td></tr></table></figure>
+<h3 id="web9"><a class="header-anchor" href="#web9">¶</a>web9</h3>
+<p>本题考查的是vim的缓存泄露</p>
+<blockquote>
+<p>vim编辑文本时会创建一个临时文件，如果程序正常退出，临时文件自动删除，如果意外退出就会保留，当vim异常退出后，因为未处理缓存文件，导致可以通过缓存文件恢复原始文件内容。而本题的情景就是电脑死机了意外退出，导致存在临时文件</p>
+</blockquote>
+<p>构造url如下，下载.swp后缀结尾的文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;0b4ba9f5-92a1-42fa-ba28-49cff3f8400e.chall.ctf.show&#x2F;index.php.swp</span><br></pre></td></tr></table></figure>
+<p>打开文件即可获取flag</p>
+<h3 id="web10"><a class="header-anchor" href="#web10">¶</a>web10</h3>
+<p>题目提示cookie，然后我们查看一下请求头，发现cookie数据为flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/5%5BL%7B~%7BV%24%245%254B7%5D67~%29B5CX.png" alt=""><br>
+我们解一下url编码，得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/%5DCN%2579K%24A9%280%24%60%240_TOFG%28E.png" alt=""></p>
+<h3 id="web11"><a class="header-anchor" href="#web11">¶</a>web11</h3>
+<p>根据提示，查询对ctfshow域名进行dns查询，查看TXT记录<br>
+阿里云查询链接：<a href="https://zijian.aliyun.com/">https://zijian.aliyun.com/</a><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web11/RDP905P_SOZF0HM725N3%7DJV.png" alt=""><br>
+获取flag成功</p>
+<h3 id="web12"><a class="header-anchor" href="#web12">¶</a>web12</h3>
+<p>根据题目提示，我们访问robots.txt，获取到后台地址<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/%24%24%28H%2954_BF%5DPS%7B06RN_M%7B7O.png" alt=""><br>
+然后我们访问一下后台</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;c25a456d-63f7-497e-9170-0365a9cdce53.chall.ctf.show&#x2F;admin&#x2F;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/3UKIBC9YJVM%40%7D6V%29O%28LT%291G.png" alt=""><br>
+账号名直接盲猜admin，密码是网站底部的这串数字，372619038<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/ZIA0BV2O2KFNIR~5%24%282T2DN.png" alt=""><br>
+登录进来后，获取到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/OD2%603%24A%4083R%5BL%287A%5DGC%24Z%5B2.png" alt=""></p>
+<h3 id="web13"><a class="header-anchor" href="#web13">¶</a>web13</h3>
+<p>在网站找到一个超链接<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/JDUYP_%7D%24%24HV%5B%7BUGOENSK%7BLB.png" alt=""><br>
+访问后，发现开发者在文档中写了自己的后台地址和账号密码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/Q%25%25%40CO8%29ZM%40M1%29_%7BMLDU6P6.png" alt=""><br>
+这里把your-domain换成自己的做题环境，访问后台地址</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e63907cd-33af-4c57-b605-4f7e04928e43.chall.ctf.show&#x2F;system1103&#x2F;login.php</span><br></pre></td></tr></table></figure>
+<p>输入账号和密码后得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/1G7F~2%7D~NO048WQL%5D1LFUTR.png" alt=""></p>
+<h3 id="web14"><a class="header-anchor" href="#web14">¶</a>web14</h3>
+<p>打开网站，根据提示访问<code>http://4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show/editor/</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/Y%5B8CN%60PAKNL%7BV%25SICU%60LH56.png" alt=""><br>
+看到一个编辑器，在flash的上传中，发现有个文件空间<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/617KH%5BRRFKY%5D4L%5BI%5DW~UXA3.png" alt=""><br>
+点击文件空间，发现爆出了目录<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%25U17ETN4D42GP3~TG%7D%25N3M8.png" alt=""><br>
+找了找，flag在var/www/html/nothinghere/fl000g.txt中，于是构造url访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show&#x2F;nothinghere&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
+<p>得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%60_%28G6DSOG5TBQLZLDH08F7V.png" alt=""></p>
+<h3 id="web15"><a class="header-anchor" href="#web15">¶</a>web15</h3>
+<p>根据题目提示邮箱，在网页底部发现一个邮箱<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/HK_MLVPS3%246282SAV6YPFIM.png" alt=""><br>
+再url后面加上admin访问一下后台<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/VFRR%5DS8%60%60%7DV7%5D%251%25_2QAGS7.png" alt=""><br>
+有一个忘记密码选项，点击一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/%24OSUPYKMZZOORSX80VE63S2.png" alt=""><br>
+有密保问题，联想到qq邮箱，搜索一下qq<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/8%24BYJYK%5B7%251M3N0TF%60F%60VK2.png" alt=""><br>
+得到地址为西安，于是提交西安<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/I%5D%5B9%7BXDD98TS%5BMO%5DB%28_%7B%29%60P.png" alt=""><br>
+得到密码为admin7789，账号还是admin，登录后获得flag</p>
+<h3 id="web16"><a class="header-anchor" href="#web16">¶</a>web16</h3>
+<p>根据题目提示，存在探针</p>
+<blockquote>
+<p>php探针是用来探测空间、服务器运行状况和PHP信息用的，探针可以实时查看服务器硬盘资源、内存占用、网卡流量、系统负载、服务器时间等信息。是一个查看服务器信息的工具。<br>
+比如查看服务器支持什么，不支持什么，空间速度等等状况！</p>
+</blockquote>
+<p>于是访问<code>http://e42c0d7a-d052-485d-bb09-a7c68a6d0214.chall.ctf.show/tz.php</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/CL_7ZWZ3%24~0%7D3D0Q1PPD86H.png" alt=""><br>
+再点击phpinfo查看信息<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/_NM4E%5B4%60TFQ%7DPP%60%240P2A~72.png" alt=""><br>
+在页面搜索一下ctfshow，即可得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/MK%7B%28X5DI52%29LVAPG%7D%7BTJSQE.png" alt=""></p>
+<h3 id="web17"><a class="header-anchor" href="#web17">¶</a>web17</h3>
+<p>根据题目，查找ctfer.com的真实ip，于是用fofa查找<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web17/%7BE3HVN%5DBT7C7%7BR%29_G%7DL%29ODI.png" alt=""><br>
+查到ip地址为：111.231.70.44，所以flag为：flag{111.231.70.44}</p>
+<h3 id="web18"><a class="header-anchor" href="#web18">¶</a>web18</h3>
+<p>打开是一个游戏，我们去找找它的文件，在js中发现了当分数大于100时，赋值的一串编码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/_%60NIPJPH%606XG7%7BHCOPOJMWC.png" alt=""><br>
+我们拿去unicode解码一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/WHIID%5B%5BUR1Y%5DOL_G0K7H%247G.png" alt=""><br>
+根据提示，访问110.php，构造url</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;884e39f8-376a-4d61-9618-ee22fecc3327.chall.ctf.show&#x2F;110.php</span><br></pre></td></tr></table></figure>
+<p>访问后得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/%60OO6K~50K%60A%7B~0EC%24G%5D_52N.png" alt=""></p>
+<h3 id="web19"><a class="header-anchor" href="#web19">¶</a>web19</h3>
+<p>打开是一个登录框，右键查看一下源码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/_KY%7DOY%5BDG6ICR%5DH9U~N%600%28E.png" alt=""><br>
+根据php源码，我们需要post发送用户名和密码过去</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">当用户名为admin</span><br><span class="line">密码为a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04</span><br><span class="line">即可输出flag</span><br></pre></td></tr></table></figure>
+<p>构造发送post请求<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/%5DK48MGWOC%243%2555U6R%28YHEWA.png" alt=""><br>
+成功获取flag</p>
+<h3 id="web20"><a class="header-anchor" href="#web20">¶</a>web20</h3>
+<p>根据题目提示，是mdb文件泄露</p>
+<blockquote>
+<p>mdb文件是早期asp+access构架的数据库文件</p>
+</blockquote>
+<p>于是我们访问/db/db.mdb，即构造url如下访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;5c070a5e-3a51-4904-a668-4385dfa7e714.chall.ctf.show&#x2F;db&#x2F;db.mdb</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/A%60M~%5B%5B9GGXE8%7DAG4%7D%29V2~6H.png" alt=""><br>
+下载db.mdb文件后，用记事本打开搜索flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/G8QY%29JHUVWV%60KE%40MU9K%7BXOT.png" alt=""><br>
+成功获取到flag</p>
+<h2 id="爆破-21-28"><a class="header-anchor" href="#爆破-21-28">¶</a>爆破(21-28)</h2>
+<h3 id="web21"><a class="header-anchor" href="#web21">¶</a>web21</h3>
+<p>题目给了一个zip文件，打开后解压是爆破的字典，我们抓包一下网址看看<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/%7DJ%7BI5%243FC%5D0~HWVBF9YEZAA.png" alt=""><br>
+发现账号和密码都被base64了，我们发送到intruder模块，给爆破的位置加上$符圈住<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CNNU1O4C%40XHK3Y5JORN%60Q1V.png" alt=""><br>
+去base64解码一下看看格式<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/XNGZCN%286QM%40%40S%40%29%5DCDH5810.png" alt=""><br>
+格式是账号:密码，那我们使用custom iterator(自定义迭代器)模块，首先第一个放账号admin<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CVUBPQE_TDC%60%282%7BNFWNJN66.png" alt=""><br>
+第二个放符号<code>:</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/EE%24R8%28LNP_D4TP6_LGD%40WBX.png" alt=""><br>
+第三个放题目给的字典<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/YDJT6U%5B3%7B%7B%5BW3%24LTQU%40S2I7.png" alt=""><br>
+接着再进行base64编码，还有把后面这个url编码字符最好取消掉<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/BG65%608Y%28U%5D%5BZ_Z0Q9PIR%7B%40V.png" alt=""><br>
+然后就是attack开始爆破了<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/I%40HP%40S%299HT%5DREAIMIUYYV8K.png" alt=""><br>
+爆破出密码，成功获得flag</p>
+<h3 id="web22"><a class="header-anchor" href="#web22">¶</a>web22</h3>
+<p>题目让我们去爆破ctfer.com域名，也就是去爆破子域名，直接上layer<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/CNI3BQ%29BITHJIJ~2%7B6E%5DFC6.png" alt=""><br>
+爆破出有flag的子域名，访问后得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/WW7DID%7BTYG1US%60G6%244MWXJI.png" alt=""></p>
+<h3 id="web23"><a class="header-anchor" href="#web23">¶</a>web23</h3>
+<p>打开看到php源码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 11:43:51</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 11:56:11</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;token&#x27;</span>]))&#123;</span><br><span class="line">    $token = md5($_GET[<span class="string">&#x27;token&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+<p>代码审计一下，输出flag需要满足两个条件</p>
+<blockquote>
+<p>第一，传入的token值经过md5加密后，第1位=第14位并且第14位=第17位<br>
+第二，第1位+第14位+第17位÷第1位等于第31位</p>
+</blockquote>
+<p>根据源码改一下，写个脚本</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   10:48</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$dict = <span class="string">&quot;0123456789qwertyuiopasdfghjklzxcvbnm&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>($i = <span class="number">0</span>;$i&lt; <span class="number">36</span>;$i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>($j = <span class="number">0</span>;$j&lt;<span class="number">36</span>;$j++)&#123;</span><br><span class="line">        $token = md5($dict[$i].$dict[$j]);</span><br><span class="line">        <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;加密后的md5值为：&quot;</span>.$token).<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;解密后的值为：&quot;</span>.$dict[$i].$dict[$j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后得到满足的值，即3j<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/1%40X%282I%7D%29WT%40%7DX%7B%7BC%7B%7DW%5BYO3.png" alt=""><br>
+于是构造url传参token=3j，获得flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/%7DMZ8I%5BI%5BR%2441YZ%29P0%5DA8TU9.png" alt=""></p>
+<h3 id="web24"><a class="header-anchor" href="#web24">¶</a>web24</h3>
+<p>审计代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(<span class="number">372619038</span>);</span><br><span class="line">    <span class="keyword">if</span>(intval($r)===intval(mt_rand()))&#123;</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>发现其实这是伪随机数，因为mt_srang已经固定了，我们写个代码运行一下</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">mt_srand(<span class="number">372619038</span>);</span><br><span class="line">$result = intval(mt_rand());</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/7%28XX9%5BUBRX8TG%60%5BP4F8M%29%5BA.png" alt=""><br>
+得到1155388967，所以构成?r=1155388967即可获得flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/N9%294NSPFPC1BUE%28KK%24%7B7Q7R.png" alt=""></p>
+<h3 id="web25"><a class="header-anchor" href="#web25">¶</a>web25</h3>
+<p>首先审计代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 13:56:57</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 15:47:33</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(hexdec(substr(md5($flag), <span class="number">0</span>,<span class="number">8</span>)));</span><br><span class="line">    $rand = intval($r)-intval(mt_rand());</span><br><span class="line">    <span class="keyword">if</span>((!$rand))&#123;</span><br><span class="line">        <span class="keyword">if</span>($_COOKIE[<span class="string">&#x27;token&#x27;</span>]==(mt_rand()+mt_rand()))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> $rand;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>这次种子没有给出，但发现一个关键地方，就是我们可以把传入的r设置为0，即?r=0，可以输出$rand的值，此时$rand=mt_rand()的值，也就是随机数的值<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/NM0%607T~RI%28QV7UQDCA%5B5%7DQT.png" alt=""><br>
+获得随机数为86715576，这个时候我们使用逆推工具尝试逆推出种子</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">工具地址：https:&#x2F;&#x2F;github.com&#x2F;Al1ex&#x2F;php_mt_seed</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_0%286QB7%245ME%24XVJ%5B2P8HMT0.png" alt=""><br>
+得到种子为4188754181，因为$_COOKIE[‘token’]的值要等于两个随机数相加，于是我们写个脚本</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">mt_srand(<span class="number">4188754181</span>);</span><br><span class="line"><span class="keyword">echo</span> mt_rand().<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">$result = mt_rand()+mt_rand();</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/LH_7%246BHAF3_G2K%24SH7_240.png" alt=""><br>
+得到token的值为2504830688</p>
+<blockquote>
+<p>所以开始构造<br>
+第一个，构造?r=86715576，使得$rang=0，满足if((!$rand))，进入下一层if判断token的值<br>
+第二个，构造cookie头里的token=2504830688</p>
+</blockquote>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_LWI%60Z57MJJ6T~63%25%28%29F4Z5.png" alt=""><br>
+成功拿到flag</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
@@ -2277,7 +2277,7 @@ flag在根目录下获得😀<br>
 <p>观察源码</p>
 <blockquote>
 <p>1.发现路由&quot;/reg&quot;会创建一个challenger用户字典<br>
-2.发现路由&quot;/update&quot;可以对challenger传参键值对（attrkey和attrval）到challenger字典中进行修改<br>
+2.发现路由&quot;/update&quot;可以对challenger传参键值对（attrkey和attrval），对challenger字典中进行修改<br>
 3.路由&quot;/getflag&quot;可以获取到flag，但存在几个验证，首先需要传参两个参数（key和password）进来，并且对用户字典中的年龄进行判断，大于79会失败；其次Admin[key]需要等于password，而body.password是多少我们是不知道的</p>
 </blockquote>
 <p>既然知道是原型链污染了，我们直接利用poc自定义一个password即可，而对于年龄，他是已经存在的变量，那我们就直接覆盖age变量<br>
