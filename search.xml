@@ -1659,7 +1659,7 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/F%28_C2B6B%60Q%24%25N~8VF%7BCZ~%258.png" alt=""><br>
 在爆破结果中得到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E7%88%86%E7%A0%B4/web28/%5D3HMWR%29%7B%60I%60V8~D~987Z5WS.png" alt=""></p>
-<h2 id="命令执行-29-124"><a class="header-anchor" href="#命令执行-29-124">¶</a>命令执行(29-124)</h2>
+<h2 id="命令执行-29-77-118-122-124"><a class="header-anchor" href="#命令执行-29-77-118-122-124">¶</a>命令执行(29-77&amp;118-122&amp;124)</h2>
 <h3 id="web29"><a class="header-anchor" href="#web29">¶</a>web29</h3>
 <p>源码</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c = $_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/flag/i&quot;</span>, $c))&#123;</span><br><span class="line">        <span class="keyword">eval</span>($c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
