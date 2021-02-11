@@ -1628,10 +1628,9 @@ strings</p>
 <h3 id="web56"><a class="header-anchor" href="#web56">¶</a>web56</h3>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|[a-z]|[0-9]|\\$|\(|\&#123;|\&#x27;|\&quot;|\`|\%|\x09|\x26|\&gt;|\&lt;/i&quot;</span>, $c))&#123;</span><br><span class="line">        system($c);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这次在上一题的基础上多过滤掉了数字，导致我们无法使用上题的payload。不过之前看过p师傅的一篇无字母数字webshell的文章，这里我们可以利用php的特性：如果我们发送一个上传文件的post包，php会将我们上传的文件保存在临时的文件夹下，并且默认的文件目录是/tmp/phpxxxxxx。文件名最后的6个字符是随机的大小写字母，而且最后一个字符大概率是大写字母。容易想到的匹配方式就是利用<code>？</code>进行匹配，即???/???，然而这不一定会匹配到我们上传的文件，这时候有什么办法呢？<br>
-在ascii码表中观察发现<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web56/M2%25_%25S79O3M5~2M4%7BV3_5%5BJ.png" style="float: left;"/><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web56/V%60UW7_7D%24P1E3BEV%7B6H%7B%24T4.png" style="float: right;"/><br>
-在大写字母A的前一个符号为<code>@</code>，大写字母Z的后一个字母为<code>[</code>，因此我们可以使用<code>[@-[]</code>来表示匹配大写字母，也就是变成了这样的形式：<code>???/????????[@-[]</code>，到这一步已经能匹配到了我们上传的文件，那限制了字母后该如何执行上传的文件呢？这里有个技巧，就是使用<code>. file</code>来执行文件，我们可以去操作看看<br>
+在ascii码表中观察发现</p>
+<figure class="half">     <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web56/M2%25_%25S79O3M5~2M4%7BV3_5%5BJ.png">     <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web56/V%60UW7_7D%24P1E3BEV%7B6H%7B%24T4.png"> </figure>
+<p>在大写字母A的前一个符号为<code>@</code>，大写字母Z的后一个字母为<code>[</code>，因此我们可以使用<code>[@-[]</code>来表示匹配大写字母，也就是变成了这样的形式：<code>???/????????[@-[]</code>，到这一步已经能匹配到了我们上传的文件，那限制了字母后该如何执行上传的文件呢？这里有个技巧，就是使用<code>. file</code>来执行文件，我们可以去操作看看<br>
 在目录下新建一个f.txt，内容为ls，我们使用<code>. /home/kali/ctf_tools/a/f.txt</code>来执行文件<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web56/LKNQQ5IM_3AI%7B1LH%2420J42O.png" alt=""><br>
 发现f.txt里的ls命令被成功执行，所以我们的完整payload就是</p>
