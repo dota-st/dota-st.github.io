@@ -1,1 +1,268 @@
-"use strict";var precacheConfig=[["E:/网站搭建/myblog/public/about/index.html","24a8dc80ec7882773cdff1597b6068fb"],["E:/网站搭建/myblog/public/archives/2020/10/index.html","267de600565321fd4cb72102f04b6e36"],["E:/网站搭建/myblog/public/archives/2020/11/index.html","acc10093e3a92a2c77be1068e055e303"],["E:/网站搭建/myblog/public/archives/2020/12/index.html","bf4c0cd8c0491b9625ce9faa411f7f37"],["E:/网站搭建/myblog/public/archives/2020/index.html","fb13baed9b5e78c2a2294a2d22dff5fb"],["E:/网站搭建/myblog/public/archives/2021/01/index.html","315ee6a5dbb94f3ce39194abcab65d9a"],["E:/网站搭建/myblog/public/archives/2021/02/index.html","db766097cd9724eb71ba9b728a41ebec"],["E:/网站搭建/myblog/public/archives/2021/index.html","600e08b8dc7186b339c00bf406f830a0"],["E:/网站搭建/myblog/public/archives/index.html","e43019e097797650e91561cb87874c23"],["E:/网站搭建/myblog/public/archives/page/2/index.html","bd58847a7f4bb6be0e1ca8ad5db06231"],["E:/网站搭建/myblog/public/css/index.css","4ba40f74967a5db2b303963823f39f7a"],["E:/网站搭建/myblog/public/css/var.css","d41d8cd98f00b204e9800998ecf8427e"],["E:/网站搭建/myblog/public/img/404.jpg","4ef3cfb882b6dd4128da4c8745e9a507"],["E:/网站搭建/myblog/public/img/algolia.svg","88450dd56ea1a00ba772424b30b7d34d"],["E:/网站搭建/myblog/public/img/friend_404.gif","68af0be9d22722e74665ef44dd532ba8"],["E:/网站搭建/myblog/public/img/icp.png","6e26aed5ced63bc60524cc736611d39e"],["E:/网站搭建/myblog/public/img/loading.gif","d1cf8d9ccb6a2b3514a7d14332035a3c"],["E:/网站搭建/myblog/public/index.html","bba6deb416083c99a1d79cb4f720d13f"],["E:/网站搭建/myblog/public/js/main.js","455fface5a0a3ff90766ca254affe502"],["E:/网站搭建/myblog/public/js/search/algolia.js","c9af02da2fc1f7d634843f61536369d1"],["E:/网站搭建/myblog/public/js/search/local-search.js","52d5277e9dddb5d80484d07595df8dbd"],["E:/网站搭建/myblog/public/js/tw_cn.js","bd869d5fd54e2fe1f1eeee7c46fa46bc"],["E:/网站搭建/myblog/public/js/utils.js","5720a78dca20fab16f21914ae3ac0757"],["E:/网站搭建/myblog/public/live2dw/assets/moc/haruto.2048/texture_00.png","56ff69b411abfc80cb68d0b1267959c5"],["E:/网站搭建/myblog/public/messageboard/index.html","fbed9a5bdf428f8cd623c8694972d8ec"],["E:/网站搭建/myblog/public/page/2/index.html","2418260e14f34701077d9af13798eea3"],["E:/网站搭建/myblog/public/posts/14571/index.html","e60074194f2e3afd550d137f20578bb4"],["E:/网站搭建/myblog/public/posts/14827/index.html","472261762b0ff04385271e510779c73c"],["E:/网站搭建/myblog/public/posts/16692/index.html","4a300d61433419cd6a161d8b7ef58b7f"],["E:/网站搭建/myblog/public/posts/16813/index.html","eb14564b645d7a6816a1f01fd1104c9d"],["E:/网站搭建/myblog/public/posts/25127/index.html","0c726d9984429712456274f4a7d4c4a9"],["E:/网站搭建/myblog/public/posts/33946/index.html","ba84fe18ce27aa8063a017a842a55f28"],["E:/网站搭建/myblog/public/posts/37998/index.html","5998ca370329be87d3605fc107eabb3e"],["E:/网站搭建/myblog/public/posts/46463/index.html","9d3f25b839f5f6529853feab47618afe"],["E:/网站搭建/myblog/public/posts/49040/index.html","7d1d9e6c6affe22c3e2773ecea06103e"],["E:/网站搭建/myblog/public/posts/51649/index.html","ab8c8aab8c4ffdf9f2a6ff767f22b169"],["E:/网站搭建/myblog/public/posts/55334/index.html","80be6ea89406275da8f7b1fb6adeeb03"],["E:/网站搭建/myblog/public/tags/AWD/index.html","7a2b7fcc030d866cf0a2b0083f15cadf"],["E:/网站搭建/myblog/public/tags/ctf/index.html","03d3758ba6cc81e3510313c1e0089948"],["E:/网站搭建/myblog/public/tags/index.html","ce7d3da42ece0c309b3daeb391fc9352"],["E:/网站搭建/myblog/public/tags/渗透/index.html","25e03056c2434383bb48d15b68728f47"],["E:/网站搭建/myblog/public/tags/程序/index.html","b31f73a073189b670e610c0378838e4f"]],cacheName="sw-precache-v3--"+(self.registration?self.registration.scope:""),ignoreUrlParametersMatching=[/^utm_/],addDirectoryIndex=function(e,c){e=new URL(e);return"/"===e.pathname.slice(-1)&&(e.pathname+=c),e.toString()},cleanResponse=function(c){return c.redirected?("body"in c?Promise.resolve(c.body):c.blob()).then(function(e){return new Response(e,{headers:c.headers,status:c.status,statusText:c.statusText})}):Promise.resolve(c)},createCacheKey=function(e,c,a,t){e=new URL(e);return t&&e.pathname.match(t)||(e.search+=(e.search?"&":"")+encodeURIComponent(c)+"="+encodeURIComponent(a)),e.toString()},isPathWhitelisted=function(e,c){if(0===e.length)return!0;var a=new URL(c).pathname;return e.some(function(e){return a.match(e)})},stripIgnoredUrlParameters=function(e,a){e=new URL(e);return e.hash="",e.search=e.search.slice(1).split("&").map(function(e){return e.split("=")}).filter(function(c){return a.every(function(e){return!e.test(c[0])})}).map(function(e){return e.join("=")}).join("&"),e.toString()},hashParamName="_sw-precache",urlsToCacheKeys=new Map(precacheConfig.map(function(e){var c=e[0],e=e[1],c=new URL(c,self.location),e=createCacheKey(c,hashParamName,e,!1);return[c.toString(),e]}));function setOfCachedUrls(e){return e.keys().then(function(e){return e.map(function(e){return e.url})}).then(function(e){return new Set(e)})}self.addEventListener("install",function(e){e.waitUntil(caches.open(cacheName).then(function(t){return setOfCachedUrls(t).then(function(a){return Promise.all(Array.from(urlsToCacheKeys.values()).map(function(c){if(!a.has(c)){var e=new Request(c,{credentials:"same-origin"});return fetch(e).then(function(e){if(!e.ok)throw new Error("Request for "+c+" returned a response with status "+e.status);return cleanResponse(e).then(function(e){return t.put(c,e)})})}}))})}).then(function(){return self.skipWaiting()}))}),self.addEventListener("activate",function(e){var a=new Set(urlsToCacheKeys.values());e.waitUntil(caches.open(cacheName).then(function(c){return c.keys().then(function(e){return Promise.all(e.map(function(e){if(!a.has(e.url))return c.delete(e)}))})}).then(function(){return self.clients.claim()}))}),self.addEventListener("fetch",function(c){var a,e,t;"GET"===c.request.method&&(a=stripIgnoredUrlParameters(c.request.url,ignoreUrlParametersMatching),t="index.html",(e=urlsToCacheKeys.has(a))||(a=addDirectoryIndex(a,t),e=urlsToCacheKeys.has(a)),e&&c.respondWith(caches.open(cacheName).then(function(e){return e.match(urlsToCacheKeys.get(a)).then(function(e){if(e)return e;throw Error("The cached response that was expected is missing.")})}).catch(function(e){return console.warn('Couldn\'t serve response for "%s" from cache: %O',c.request.url,e),fetch(c.request)})))});
+/**
+ * Copyright 2016 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
+// DO NOT EDIT THIS GENERATED OUTPUT DIRECTLY!
+// This file should be overwritten as part of your build process.
+// If you need to extend the behavior of the generated service worker, the best approach is to write
+// additional code and include it using the importScripts option:
+//   https://github.com/GoogleChrome/sw-precache#importscripts-arraystring
+//
+// Alternatively, it's possible to make changes to the underlying template file and then use that as the
+// new base for generating output, via the templateFilePath option:
+//   https://github.com/GoogleChrome/sw-precache#templatefilepath-string
+//
+// If you go that route, make sure that whenever you update your sw-precache dependency, you reconcile any
+// changes made to this original template file with your modified copy.
+
+// This generated service worker JavaScript will precache your site's resources.
+// The code needs to be saved in a .js file at the top-level of your site, and registered
+// from your pages in order to be used. See
+// https://github.com/googlechrome/sw-precache/blob/master/demo/app/js/service-worker-registration.js
+// for an example of how you can register this script and handle various service worker events.
+
+/* eslint-env worker, serviceworker */
+/* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
+'use strict';
+
+var precacheConfig = [["E:/网站搭建/myblog/public/about/index.html","89c0170976d198e75c99708db38e0edd"],["E:/网站搭建/myblog/public/archives/2020/10/index.html","05bfa4b6538e6d42dc6dc69e86408e58"],["E:/网站搭建/myblog/public/archives/2020/11/index.html","24783e4f1f72a835dfce6e013c62f3ea"],["E:/网站搭建/myblog/public/archives/2020/12/index.html","7ab7399b8b92efef1056628664bad602"],["E:/网站搭建/myblog/public/archives/2020/index.html","99fb29abf23398513ba7c2f0b165157f"],["E:/网站搭建/myblog/public/archives/2021/01/index.html","1a1014cc553ebc69bbd57deeac26c036"],["E:/网站搭建/myblog/public/archives/2021/02/index.html","4fcd78f8df7f3da37d3260ffe519d12a"],["E:/网站搭建/myblog/public/archives/2021/index.html","0fc9cbb2bef685eb1924621eab3849d0"],["E:/网站搭建/myblog/public/archives/index.html","ca6b7f7520f36580bb43fa9798e36e36"],["E:/网站搭建/myblog/public/archives/page/2/index.html","9cc56718da08e99fc9738d467a368de7"],["E:/网站搭建/myblog/public/baidu_verify_code-wBfODBq71t.html","9a89030a69e351731f9a84d7d64a7bfe"],["E:/网站搭建/myblog/public/css/index.css","5624c71969eb95759eda27caf33cd80b"],["E:/网站搭建/myblog/public/css/var.css","d41d8cd98f00b204e9800998ecf8427e"],["E:/网站搭建/myblog/public/google24506e84d8baf7d1.html","291e6f83c04632523587a339337c4eeb"],["E:/网站搭建/myblog/public/img/404.jpg","4ef3cfb882b6dd4128da4c8745e9a507"],["E:/网站搭建/myblog/public/img/algolia.svg","88450dd56ea1a00ba772424b30b7d34d"],["E:/网站搭建/myblog/public/img/friend_404.gif","68af0be9d22722e74665ef44dd532ba8"],["E:/网站搭建/myblog/public/img/icp.png","6e26aed5ced63bc60524cc736611d39e"],["E:/网站搭建/myblog/public/img/loading.gif","d1cf8d9ccb6a2b3514a7d14332035a3c"],["E:/网站搭建/myblog/public/index.html","e3553c1f347e4f76bba530f5dcde060e"],["E:/网站搭建/myblog/public/js/main.js","8a668fa2705f6c6d88e66aa7c6e1133d"],["E:/网站搭建/myblog/public/js/search/algolia.js","fc3aa51b6e9d9ffd27f4d6958c70eee8"],["E:/网站搭建/myblog/public/js/search/local-search.js","0165554df297d6ca3be8d1fa0faf2591"],["E:/网站搭建/myblog/public/js/tw_cn.js","42c99754804dd9c3bfa2b62451c843b7"],["E:/网站搭建/myblog/public/js/utils.js","0fc7cec179399e20e287a037d85f575d"],["E:/网站搭建/myblog/public/live2dw/assets/moc/haruto.2048/texture_00.png","56ff69b411abfc80cb68d0b1267959c5"],["E:/网站搭建/myblog/public/messageboard/index.html","0b5f1f5dd8cbab9f3164fda790da43ab"],["E:/网站搭建/myblog/public/page/2/index.html","84b9ceaab6a4c7bc80e4110f547607d5"],["E:/网站搭建/myblog/public/posts/14571/index.html","5994b65cef7f4592bd16cbc11909954f"],["E:/网站搭建/myblog/public/posts/14827/index.html","14a607901b84ab8fffe239f1ab8628a9"],["E:/网站搭建/myblog/public/posts/16692/index.html","bc6bed9b77e4d9edba0056526c4c8760"],["E:/网站搭建/myblog/public/posts/16813/index.html","4433da0592e2286bb465c15448286cec"],["E:/网站搭建/myblog/public/posts/25127/index.html","0231884526a96cd5351062ca8fb0917f"],["E:/网站搭建/myblog/public/posts/33946/index.html","64964fadd2b4d638ed03d8bf244ca885"],["E:/网站搭建/myblog/public/posts/37998/index.html","e643746b437442d5139bdbf5fe21436a"],["E:/网站搭建/myblog/public/posts/46463/index.html","cecf7451fbe2dfb5909c36e7e0f18ee1"],["E:/网站搭建/myblog/public/posts/49040/index.html","17492c92d2ce42be54fcbc26f20e6e5d"],["E:/网站搭建/myblog/public/posts/51649/index.html","989637c933cac6899c73a03fc7d8a9b2"],["E:/网站搭建/myblog/public/posts/55334/index.html","2709302eaacef3f910aaa90905280e77"],["E:/网站搭建/myblog/public/tags/AWD/index.html","4487dc4f630c8173d0847f57efa71282"],["E:/网站搭建/myblog/public/tags/ctf/index.html","efaa0c65bcfe040cb3e8f5235fa16b84"],["E:/网站搭建/myblog/public/tags/index.html","692a90283108f1c06206f8eedd4d3939"],["E:/网站搭建/myblog/public/tags/渗透/index.html","b77bbd351751aecc88d12a4307bcf9fe"],["E:/网站搭建/myblog/public/tags/程序/index.html","fb407a2fd8cfe1fb22f9495a86bc3afd"]];
+var cacheName = 'sw-precache-v3--' + (self.registration ? self.registration.scope : '');
+
+
+var ignoreUrlParametersMatching = [/^utm_/];
+
+
+
+var addDirectoryIndex = function(originalUrl, index) {
+    var url = new URL(originalUrl);
+    if (url.pathname.slice(-1) === '/') {
+      url.pathname += index;
+    }
+    return url.toString();
+  };
+
+var cleanResponse = function(originalResponse) {
+    // If this is not a redirected response, then we don't have to do anything.
+    if (!originalResponse.redirected) {
+      return Promise.resolve(originalResponse);
+    }
+
+    // Firefox 50 and below doesn't support the Response.body stream, so we may
+    // need to read the entire body to memory as a Blob.
+    var bodyPromise = 'body' in originalResponse ?
+      Promise.resolve(originalResponse.body) :
+      originalResponse.blob();
+
+    return bodyPromise.then(function(body) {
+      // new Response() is happy when passed either a stream or a Blob.
+      return new Response(body, {
+        headers: originalResponse.headers,
+        status: originalResponse.status,
+        statusText: originalResponse.statusText
+      });
+    });
+  };
+
+var createCacheKey = function(originalUrl, paramName, paramValue,
+                           dontCacheBustUrlsMatching) {
+    // Create a new URL object to avoid modifying originalUrl.
+    var url = new URL(originalUrl);
+
+    // If dontCacheBustUrlsMatching is not set, or if we don't have a match,
+    // then add in the extra cache-busting URL parameter.
+    if (!dontCacheBustUrlsMatching ||
+        !(url.pathname.match(dontCacheBustUrlsMatching))) {
+      url.search += (url.search ? '&' : '') +
+        encodeURIComponent(paramName) + '=' + encodeURIComponent(paramValue);
+    }
+
+    return url.toString();
+  };
+
+var isPathWhitelisted = function(whitelist, absoluteUrlString) {
+    // If the whitelist is empty, then consider all URLs to be whitelisted.
+    if (whitelist.length === 0) {
+      return true;
+    }
+
+    // Otherwise compare each path regex to the path of the URL passed in.
+    var path = (new URL(absoluteUrlString)).pathname;
+    return whitelist.some(function(whitelistedPathRegex) {
+      return path.match(whitelistedPathRegex);
+    });
+  };
+
+var stripIgnoredUrlParameters = function(originalUrl,
+    ignoreUrlParametersMatching) {
+    var url = new URL(originalUrl);
+    // Remove the hash; see https://github.com/GoogleChrome/sw-precache/issues/290
+    url.hash = '';
+
+    url.search = url.search.slice(1) // Exclude initial '?'
+      .split('&') // Split into an array of 'key=value' strings
+      .map(function(kv) {
+        return kv.split('='); // Split each 'key=value' string into a [key, value] array
+      })
+      .filter(function(kv) {
+        return ignoreUrlParametersMatching.every(function(ignoredRegex) {
+          return !ignoredRegex.test(kv[0]); // Return true iff the key doesn't match any of the regexes.
+        });
+      })
+      .map(function(kv) {
+        return kv.join('='); // Join each [key, value] array into a 'key=value' string
+      })
+      .join('&'); // Join the array of 'key=value' strings into a string with '&' in between each
+
+    return url.toString();
+  };
+
+
+var hashParamName = '_sw-precache';
+var urlsToCacheKeys = new Map(
+  precacheConfig.map(function(item) {
+    var relativeUrl = item[0];
+    var hash = item[1];
+    var absoluteUrl = new URL(relativeUrl, self.location);
+    var cacheKey = createCacheKey(absoluteUrl, hashParamName, hash, false);
+    return [absoluteUrl.toString(), cacheKey];
+  })
+);
+
+function setOfCachedUrls(cache) {
+  return cache.keys().then(function(requests) {
+    return requests.map(function(request) {
+      return request.url;
+    });
+  }).then(function(urls) {
+    return new Set(urls);
+  });
+}
+
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(cacheName).then(function(cache) {
+      return setOfCachedUrls(cache).then(function(cachedUrls) {
+        return Promise.all(
+          Array.from(urlsToCacheKeys.values()).map(function(cacheKey) {
+            // If we don't have a key matching url in the cache already, add it.
+            if (!cachedUrls.has(cacheKey)) {
+              var request = new Request(cacheKey, {credentials: 'same-origin'});
+              return fetch(request).then(function(response) {
+                // Bail out of installation unless we get back a 200 OK for
+                // every request.
+                if (!response.ok) {
+                  throw new Error('Request for ' + cacheKey + ' returned a ' +
+                    'response with status ' + response.status);
+                }
+
+                return cleanResponse(response).then(function(responseToCache) {
+                  return cache.put(cacheKey, responseToCache);
+                });
+              });
+            }
+          })
+        );
+      });
+    }).then(function() {
+      
+      // Force the SW to transition from installing -> active state
+      return self.skipWaiting();
+      
+    })
+  );
+});
+
+self.addEventListener('activate', function(event) {
+  var setOfExpectedUrls = new Set(urlsToCacheKeys.values());
+
+  event.waitUntil(
+    caches.open(cacheName).then(function(cache) {
+      return cache.keys().then(function(existingRequests) {
+        return Promise.all(
+          existingRequests.map(function(existingRequest) {
+            if (!setOfExpectedUrls.has(existingRequest.url)) {
+              return cache.delete(existingRequest);
+            }
+          })
+        );
+      });
+    }).then(function() {
+      
+      return self.clients.claim();
+      
+    })
+  );
+});
+
+
+self.addEventListener('fetch', function(event) {
+  if (event.request.method === 'GET') {
+    // Should we call event.respondWith() inside this fetch event handler?
+    // This needs to be determined synchronously, which will give other fetch
+    // handlers a chance to handle the request if need be.
+    var shouldRespond;
+
+    // First, remove all the ignored parameters and hash fragment, and see if we
+    // have that URL in our cache. If so, great! shouldRespond will be true.
+    var url = stripIgnoredUrlParameters(event.request.url, ignoreUrlParametersMatching);
+    shouldRespond = urlsToCacheKeys.has(url);
+
+    // If shouldRespond is false, check again, this time with 'index.html'
+    // (or whatever the directoryIndex option is set to) at the end.
+    var directoryIndex = 'index.html';
+    if (!shouldRespond && directoryIndex) {
+      url = addDirectoryIndex(url, directoryIndex);
+      shouldRespond = urlsToCacheKeys.has(url);
+    }
+
+    // If shouldRespond is still false, check to see if this is a navigation
+    // request, and if so, whether the URL matches navigateFallbackWhitelist.
+    var navigateFallback = '';
+    if (!shouldRespond &&
+        navigateFallback &&
+        (event.request.mode === 'navigate') &&
+        isPathWhitelisted([], event.request.url)) {
+      url = new URL(navigateFallback, self.location).toString();
+      shouldRespond = urlsToCacheKeys.has(url);
+    }
+
+    // If shouldRespond was set to true at any point, then call
+    // event.respondWith(), using the appropriate cache key.
+    if (shouldRespond) {
+      event.respondWith(
+        caches.open(cacheName).then(function(cache) {
+          return cache.match(urlsToCacheKeys.get(url)).then(function(response) {
+            if (response) {
+              return response;
+            }
+            throw Error('The cached response that was expected is missing.');
+          });
+        }).catch(function(e) {
+          // Fall back to just fetch()ing the request if some unexpected error
+          // prevented the cached response from being valid.
+          console.warn('Couldn\'t serve response for "%s" from cache: %O', event.request.url, e);
+          return fetch(event.request);
+        })
+      );
+    }
+  }
+});
+
+
+
+
+
+
+
