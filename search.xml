@@ -2779,11 +2779,34 @@ payload如下</p>
 </tbody>
 </table>
 <p>返回字符串在另一字符串中第一次出现的位置，如果没有找到字符串则返回 FALSE。</p>
-<p>**注释：**字符串位置从 0 开始，不是从 1 开始。</p>
+<p><strong>注释</strong>：字符串位置从 0 开始，不是从 1 开始。</p>
 </blockquote>
 <p>因为八进制需要开头指定为0，而strpos()会匹配到返回0，!0也就是1得执行die，我们可以在前面加个空格，这样strpos()会返回1，所以我们把4476转换为8进制10574后，前面再加一个空格即可，paylaod为</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?num&#x3D; 010574</span><br></pre></td></tr></table></figure>
 <h3 id="web95"><a class="header-anchor" href="#web95">¶</a>web95</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;num&#x27;</span>]))&#123;</span><br><span class="line">    $num = $_GET[<span class="string">&#x27;num&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>($num==<span class="number">4476</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&quot;/[a-z]|\./i&quot;</span>, $num))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no!!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(!strpos($num, <span class="string">&quot;0&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no!!!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(intval($num,<span class="number">0</span>)===<span class="number">4476</span>)&#123;</span><br><span class="line">        <span class="keyword">echo</span> $flag;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>换成弱比较了，一样使用上题payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?num&#x3D; 010574</span><br></pre></td></tr></table></figure>
+<h3 id="web96"><a class="header-anchor" href="#web96">¶</a>web96</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">&#x27;u&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span>($_GET[<span class="string">&#x27;u&#x27;</span>]==<span class="string">&#x27;flag.php&#x27;</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no no no&quot;</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        highlight_file($_GET[<span class="string">&#x27;u&#x27;</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>读取文件，参数不等于flag.php，那直接加个<code>./</code>即可，有多种办法，php伪协议也可</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?u&#x3D;.&#x2F;flag.php</span><br></pre></td></tr></table></figure>
+<h3 id="web97"><a class="header-anchor" href="#web97">¶</a>web97</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_POST[<span class="string">&#x27;a&#x27;</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>($_POST[<span class="string">&#x27;b&#x27;</span>])) &#123;</span><br><span class="line">	<span class="keyword">if</span> ($_POST[<span class="string">&#x27;a&#x27;</span>] != $_POST[<span class="string">&#x27;b&#x27;</span>])</span><br><span class="line">		<span class="keyword">if</span> (md5($_POST[<span class="string">&#x27;a&#x27;</span>]) === md5($_POST[<span class="string">&#x27;b&#x27;</span>]))</span><br><span class="line">			<span class="keyword">echo</span> $flag;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="keyword">print</span> <span class="string">&#x27;Wrong.&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>强比较md5类型题目，我刚好做过这个题型总结，师傅们可以去我的这篇文章看看https://www.wlhhlc.top/posts/16813/<br>
+md5函数处理数组舒服会返回NULL，两个NULL即相等<br>
+paylaod为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">post：</span><br><span class="line">a[]&#x3D;1&amp;b[]&#x3D;2</span><br></pre></td></tr></table></figure>
+<h3 id="web98"><a class="header-anchor" href="#web98">¶</a>web98</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$_GET?$_GET=&amp;$_POST:<span class="string">&#x27;flag&#x27;</span>;</span><br><span class="line">$_GET[<span class="string">&#x27;flag&#x27;</span>]==<span class="string">&#x27;flag&#x27;</span>?$_GET=&amp;$_COOKIE:<span class="string">&#x27;flag&#x27;</span>;</span><br><span class="line">$_GET[<span class="string">&#x27;flag&#x27;</span>]==<span class="string">&#x27;flag&#x27;</span>?$_GET=&amp;$_SERVER:<span class="string">&#x27;flag&#x27;</span>;</span><br><span class="line">highlight_file($_GET[<span class="string">&#x27;HTTP_FLAG&#x27;</span>]==<span class="string">&#x27;flag&#x27;</span>?$flag:<span class="keyword">__FILE__</span>); </span><br></pre></td></tr></table></figure>
+<p>这里是三目运算符和取地址，第二行和第三行是无用的，因为用不到，所以我们分析一下第一行和第四行</p>
+<blockquote>
+<p>第一行：如果存在get传参，则把post传参地址给get<br>
+第四行，如果get参数<code>HTTP_FLAG</code>的值为flag，就读取文件，也就是输出flag</p>
+</blockquote>
+<p>所以思路也就出来了，payload为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?1&#x3D;2</span><br><span class="line"></span><br><span class="line">post：</span><br><span class="line">HTTP_FLAG&#x3D;flag</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/php%E7%89%B9%E6%80%A7/V0DP3K7N%5BS%7BO%29LE%5B%40U%5DGTVY.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
