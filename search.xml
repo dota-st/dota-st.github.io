@@ -1870,7 +1870,7 @@ flag在根目录下获得😀<br>
 接下来看第二个正则匹配，按理说这里的正则内容应该是匹配<code>\</code>或者<code>.php</code><br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/No%20one%20knows%20regex%20better%20than%20me/01%5DLS5CSW%29FR1D6%28R%249%7D8JJ.png" alt=""><br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/No%20one%20knows%20regex%20better%20than%20me/%5B5A90LBMULJ4F1%40W%608M3F1T.png" alt=""><br>
-这里有个小坑点，让我耗了点时间，与一血失之交臂😢；在php里如果<code>|</code>后面没有接空格，它也会被当作匹配的一部分内容<br>
+这里有个小坑点，让我耗了点时间，与一血失之交臂😢；这里因为php解释器的问题，第一个<code>\</code>把第二个<code>\</code>实义了之后，接着第二个<code>\</code>又转义了<code>|</code>，结果<code>|</code>变成了字符串的一部分<br>
 所以paylaod为</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?zero&#x3D;ZmxhZy5waHA&amp;first&#x3D;|.php</span><br></pre></td></tr></table></figure>
 <h2 id="Misc"><a class="header-anchor" href="#Misc">¶</a>Misc</h2>
@@ -3025,6 +3025,7 @@ $instance  = $class-&gt;newInstanceArgs($args); // 相当于实例化ctfshow类<
 在php中变量名只有数字字母下划线，被get或者post传入的变量名，如果含有<code>空格、+、[</code>则会被转化为<code>_</code>，所以按理来说我们构造不出<code>CTF_SHOW.COM</code>这个变量(因为含有<code>.</code>)，但php中有个特性就是如果传入<code>[</code>，它被转化为<code>_</code>之后，后面的字符就会被保留下来不会被替换，所以payload为</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">post：</span><br><span class="line">CTF_SHOW&#x3D;1&amp;CTF[SHOW.COM&#x3D;1&amp;fun&#x3D;echo $flag</span><br></pre></td></tr></table></figure>
 <h3 id="web125"><a class="header-anchor" href="#web125">¶</a>web125</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>CTF</tag>
