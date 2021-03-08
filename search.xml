@@ -169,6 +169,34 @@
       </tags>
   </entry>
   <entry>
+    <title>Hack The Box账号注册</title>
+    <url>/posts/33946/</url>
+    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
+<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
+<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
+<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
+<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
+<p>跑去查看js文件源码</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
+<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
+<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
+<p><strong>解密结果：</strong></p>
+<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
+<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
+<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
+<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
+]]></content>
+  </entry>
+  <entry>
     <title>php-md5类型题目汇总</title>
     <url>/posts/16813/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -284,34 +312,6 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
       <tags>
         <tag>ctf</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hack The Box账号注册</title>
-    <url>/posts/33946/</url>
-    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
-<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
-<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
-<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
-<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
-<p>跑去查看js文件源码</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
-<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
-<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
-<p><strong>解密结果：</strong></p>
-<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
-<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
-<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
-<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
-]]></content>
   </entry>
   <entry>
     <title>模拟网站攻击到提权的全部过程</title>
@@ -2599,18 +2599,7 @@ exp：</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">    $code=$_POST[<span class="string">&#x27;code&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/\x09|\x0a|[a-z]|[0-9]|PATH|BASH|HOME|\/|\(|\)|\[|\]|\\\\|\+|\-|\!|\=|\^|\*|\x26|\%|\&lt;|\&gt;|\&#x27;|\&quot;|\`|\||\,/&#x27;</span>, $code))&#123;    </span><br><span class="line">        <span class="keyword">if</span>(strlen($code)&gt;<span class="number">65</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;&#x27;</span>.<span class="string">&#x27;you are so long , I dont like &#x27;</span>.<span class="string">&#x27;&lt;/div&gt;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;&#x27;</span>.system($code).<span class="string">&#x27;&lt;/div&gt;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">     <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;evil input&lt;/div&gt;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>这次限制payload长度在65以内，上题我们payload达到99的长度，所以我们适当减少一下，我们就不取www-data中的at，只取a进行匹配，好家伙那我上题还想半天构造数字2(太菜了)，尝试构造如下</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$&#123;PWD:$&#123;#&#125;:$&#123;#SHLVL&#125;&#125;???$&#123;PWD:$&#123;#&#125;:$&#123;#SHLVL&#125;&#125;?$&#123;USER:~A&#125;? ????.???</span><br></pre></td></tr></table></figure>
-<p>发现长度是66还是超了，接着我们把<code>$&#123;#&#125;`去掉，也是可以的，最终payload如下
-
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">code&#x3D;$&#123;PWD::$&#123;#SHLVL&#125;&#125;???$&#123;PWD::$&#123;#SHLVL&#125;&#125;?$&#123;USER:~A&#125;? ????.???</span><br></pre></td></tr></table></figure>
-
-右键源码得到flag
-![](https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/web120/%5D%400%402N%25U%28%242%29DRO2%7BW%29ELWU.png)
-
-### web121
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">    $code=$_POST[<span class="string">&#x27;code&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/\x09|\x0a|[a-z]|[0-9]|FLAG|PATH|BASH|HOME|HISTIGNORE|HISTFILESIZE|HISTFILE|HISTCMD|USER|TERM|HOSTNAME|HOSTTYPE|MACHTYPE|PPID|SHLVL|FUNCNAME|\/|\(|\)|\[|\]|\\\\|\+|\-|_|~|\!|\=|\^|\*|\x26|\%|\&lt;|\&gt;|\&#x27;|\&quot;|\`|\||\,/&#x27;</span>, $code))&#123;    </span><br><span class="line">        <span class="keyword">if</span>(strlen($code)&gt;<span class="number">65</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;&#x27;</span>.<span class="string">&#x27;you are so long , I dont like &#x27;</span>.<span class="string">&#x27;&lt;/div&gt;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;div align=&quot;center&quot;&gt;&#x27;</span>.system($code).<span class="string">&#x27;&lt;/div&gt;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
-
-这次把USER给禁了，首先我们现在可以利用的是PWD，也就是“/var/www/html”，对应了一下bin中的命令，发现我们可以取r来构造`/bin/rev`取反命令读取文件，也就是我们需要构造出`$&#123;PWD:3:1&#125;`的效果，这里我们可以用`$&#123;IFS&#125;`和`$&#123;##&#125;</code>分别替代</p>
+<p>发现长度是66还是超了，接着我们把$`分别替代</p>
 <blockquote>
 <p>$<code>了，这里使用</code>$?`</p>
 </blockquote>
