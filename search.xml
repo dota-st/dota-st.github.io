@@ -3389,6 +3389,13 @@ web82写的脚本改改直接用</p>
 然后抓包，执行命令获取flag<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/web165/Q27%28%245SI%256F%5B%28_~B8%40%5B%7D%7B0C.png" alt=""></p>
 <h3 id="web166"><a class="header-anchor" href="#web166">¶</a>web166</h3>
+<p>查看源码，发现只能上传zip<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/web166/YT%5DSW%7DTXIA%5B%29%5D1MVO%24UZKGJ.png" alt=""><br>
+我们写个一句话木马，然后把php改成zip上传<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/web166/AZ3QVAW82G%5BXF8JXL%5D%257_XP.png" alt=""><br>
+然后访问上传的页面，通过文件包含的特性，我们直接执行命令即可<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/web166/%408FNPO90%5DJXB%29XEAAXTS%5BBO.png" alt=""></p>
+<h3 id="web167"><a class="header-anchor" href="#web167">¶</a>web167</h3>
 ]]></content>
       <tags>
         <tag>CTF</tag>
