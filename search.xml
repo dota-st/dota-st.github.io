@@ -1886,6 +1886,17 @@ flag在根目录下获得😀<br>
 <img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/%E8%81%AA%E6%98%8E%E7%9A%84php/%5DE9MV%28NK%5B~%60%29_SKC5SHG3CC.png" alt=""><br>
 得到flag，最终paylaod为</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?a&#x3D;$&#123;passthru(&quot;tac ..&#x2F;..&#x2F;..&#x2F;_16634&quot;)&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Simple-SSTI-1"><a class="header-anchor" href="#Simple-SSTI-1">¶</a>Simple_SSTI_1</h3>
+<p>从题目上来看就知道是ssti模板注入，并且提示传参flag<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/Simple_SSTI_1/%5B%7B42M5~I%40%7DR2402%24CSLHN%28A.png" alt=""><br>
+用<code>&#123;&#123;config&#125;&#125;</code>查看配置信息一下<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/Simple_SSTI_1/%5B%5B0%25U9R_AU1MG%5B4N%5DUT9UOX.png" alt=""><br>
+直接看到了flag</p>
+<h3 id="Simple-SSTI-2"><a class="header-anchor" href="#Simple-SSTI-2">¶</a>Simple_SSTI_2</h3>
+<p>这次不再配置信息中，我们利用os中的popen来执行我们的命令，用ls来查看当前目录<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/ssti2/O1G%5D4NUNR%7BKAO%7D94RW9%5DE%7DU.png" alt=""><br>
+发现flag，直接cat读取即可<br>
+<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/%E6%96%B0bugku/ssti2/9%24X63%5DKZR%609E5NJI9W_P~KN.png" alt=""></p>
 <h2 id="Misc"><a class="header-anchor" href="#Misc">¶</a>Misc</h2>
 <h3 id="花点流量听听歌"><a class="header-anchor" href="#花点流量听听歌">¶</a>花点流量听听歌</h3>
 <p>首先下载文件是一个压缩包，解压出来是一个音频文件，于是直接丢到au中查看一下，查看频谱图<br>
