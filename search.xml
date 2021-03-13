@@ -2997,7 +2997,7 @@ $instance  = $class-&gt;newInstanceArgs($args); // 相当于实例化ctfshow类<
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&quot;^[a-zA-Z]+$&quot;</span>, $_GET[<span class="string">&#x27;c&#x27;</span>])===<span class="literal">FALSE</span>)  &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;error&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//只有36d的人才能看到flag</span></span><br><span class="line"><span class="keyword">if</span>(intval(strrev($_GET[<span class="string">&#x27;c&#x27;</span>]))==<span class="number">0x36d</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> $flag;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
 <p>首先了解一下几个函数</p>
 <blockquote>
-<p>**ereg() **函数搜索由指定的字符串作为由模式指定的字符串，如果发现模式则返回true，否则返回false。搜索对于字母字符是区分大小写的</p>
+<p>**ereg() ** 函数搜索由指定的字符串作为由模式指定的字符串，如果发现模式则返回true，否则返回false。搜索对于字母字符是区分大小写的</p>
 <p><strong>strrev()</strong> 函数反转字符串。</p>
 <p><strong>intval()</strong> 函数用于获取变量的整数值</p>
 </blockquote>
@@ -3355,7 +3355,7 @@ web82写的脚本改改直接用</p>
 <h3 id="web161"><a class="header-anchor" href="#web161">¶</a>web161</h3>
 <p>这次上传失败了，尝试在头部加了图片文件头，就过去了，所以这里应该是用了getimagesize()进行检测</p>
 <blockquote>
-<p>**getimagesize()😗*会对目标文件的16进制去进行一个读取，去读取头几个字符串是不是符合图片的要求</p>
+<p><strong>getimagesize():</strong> 会对目标文件的16进制去进行一个读取，去读取头几个字符串是不是符合图片的要求</p>
 </blockquote>
 <p>所以在上题的基础上都加个GIF89a图片头就可以了<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/web161/CQ%5D%7B%25E%40MBYWM%40RD~BGK0%28U4.png" alt=""><br>
