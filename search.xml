@@ -898,17 +898,17 @@ nginx默认日志位置：/var/log/nginx/access.log<br>
 <tbody>
 <tr>
 <td>1</td>
-<td>&lt;@IMG_RAW&gt;&lt;/@IMG_RAW&gt;</td>
+<td><code>&lt;@IMG_RAW&gt;&lt;/@IMG_RAW&gt;</code></td>
 <td>代表验证码图片原二进制内容</td>
 </tr>
 <tr>
 <td>2</td>
-<td>&lt;@URLENCODE&gt;<a href="mailto:/@URLENCODE">/@URLENCODE</a></td>
+<td><code>&lt;@URLENCODE&gt;&lt;/@URLENCODE&gt;</code></td>
 <td>对标签内的内容进行url编码</td>
 </tr>
 <tr>
 <td>3</td>
-<td>&lt;@BASE64&gt;<a href="mailto:/@BASE64">/@BASE64</a></td>
+<td><code>&lt;@BASE64&gt;&lt;/@BASE64&gt;</code></td>
 <td>对标签内的内容进行base64编码</td>
 </tr>
 </tbody>
