@@ -314,6 +314,41 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
 ]]></content>
   </entry>
   <entry>
+    <title>src漏洞挖掘实战</title>
+    <url>/posts/24632/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>好久没更新博客了，消失了快两个礼拜，去尝试摸了一下edusrc。本来打算弄个证书，但好像证书站简单的漏洞都被大师傅们给挖没了，一直出不来洞，QAQ…开篇文章打算慢慢记一下一些有趣的实战（文中所有提到的漏洞已提交给edusrc平台），整个过程需要脱敏，所以马赛克是避免不了的，大家将就看看啦~</p>
+<h3 id="登录逻辑漏洞"><a class="header-anchor" href="#登录逻辑漏洞">¶</a>登录逻辑漏洞</h3>
+<p>开始了开始了，逛了逛发现一个后台，尝试弱口令登录，admin/123456一套怼上去<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/1.png" alt=""><br>
+坑爹的是发现居然点击登录框没有反应，没有响应对应的请求，右键源码查看一下登录框这里的代码<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/2.png" alt=""><br>
+好家伙，居然只是披着一层登录按钮的皮<br>
+<a href="https://imgtu.com/i/6vxGkD"><img src="https://z3.ax1x.com/2021/03/26/6vxGkD.gif" alt="6vxGkD.gif"></a></p>
+<p>继续翻看源码，看见登录处理的逻辑，并且发现逻辑校验登录成功后会跳转到<code>main.php</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/3.png" alt=""><br>
+心中一喜，可能有戏，直接url换成<code>main.php</code>访问<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/4.png" alt=""><br>
+但进去后，马上弹了一个框又给我踢了出来<br>
+<img src="%5B!%5B6vxOj1.jpg%5D(https://z3.ax1x.com/2021/03/26/6vxOj1.jpg)%5D(https://imgtu.com/i/6vxOj1)" alt=""><br>
+我们抓包看看，猜测应该有个文件是校验登录的<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/5.png" alt=""><br>
+抓包<code>main.php</code>，放包后，果然看见了一个session.php，这应该是校验登录结果的文件，我们右键抓一个<code>session.php</code>的返回包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/6.png" alt=""><br>
+看见了返回的登录结果，解码一下是刚刚弹的框的文字<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/7.png" alt=""><br>
+见证奇迹的时候到了，我们把后面的errMsg给删除，然后把false改成true，这波我单走一个true给你<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/8.png" alt=""><br>
+接着我们放包，成功进来了后台<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/9.png" alt=""><br>
+<a href="https://imgtu.com/i/6xSAG4"><img src="https://z3.ax1x.com/2021/03/26/6xSAG4.jpg" alt="6xSAG4.jpg"></a></p>
+<p>告辞，水完一篇了~</p>
+]]></content>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>模拟网站攻击到提权的全部过程</title>
     <url>/posts/46463/</url>
     <content><![CDATA[<h1>前言</h1>
