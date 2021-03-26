@@ -169,6 +169,34 @@
       </tags>
   </entry>
   <entry>
+    <title>Hack The Box账号注册</title>
+    <url>/posts/33946/</url>
+    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
+<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
+<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
+<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
+<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
+<p>跑去查看js文件源码</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
+<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
+<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
+<p><strong>解密结果：</strong></p>
+<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
+<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
+<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
+<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
+]]></content>
+  </entry>
+  <entry>
     <title>php-md5类型题目汇总</title>
     <url>/posts/16813/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -286,38 +314,11 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
       </tags>
   </entry>
   <entry>
-    <title>Hack The Box账号注册</title>
-    <url>/posts/33946/</url>
-    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
-<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
-<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
-<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
-<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
-<p>跑去查看js文件源码</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
-<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
-<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = input(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line">print(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i<span class="number">-13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">print(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
-<p><strong>解密结果：</strong></p>
-<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
-<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
-<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(str)</span><br><span class="line"></span><br><span class="line">print(temp.decode())</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
-<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
-]]></content>
-  </entry>
-  <entry>
     <title>src漏洞挖掘实战</title>
     <url>/posts/24632/</url>
     <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
 <p>好久没更新博客了，消失了快两个礼拜，去尝试摸了一下edusrc。本来打算弄个证书，但好像证书站简单的漏洞都被大师傅们给挖没了，一直出不来洞，QAQ…开篇文章打算慢慢记一下一些有趣的实战（文中所有提到的漏洞已提交给edusrc平台），整个过程需要脱敏，所以马赛克是避免不了的，大家将就看看啦~</p>
+<h2 id="实战"><a class="header-anchor" href="#实战">¶</a>实战</h2>
 <h3 id="登录逻辑漏洞"><a class="header-anchor" href="#登录逻辑漏洞">¶</a>登录逻辑漏洞</h3>
 <p>开始了开始了，逛了逛发现一个后台，尝试弱口令登录，admin/123456一套怼上去<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/1.png" alt=""><br>
