@@ -330,7 +330,7 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
 心中一喜，可能有戏，直接url换成<code>main.php</code>访问<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/4.png" alt=""><br>
 但进去后，马上弹了一个框又给我踢了出来<br>
-<img src="%5B!%5B6vxOj1.jpg%5D(https://z3.ax1x.com/2021/03/26/6vxOj1.jpg)%5D(https://imgtu.com/i/6vxOj1)" alt=""><br>
+<a href="https://imgtu.com/i/6xSOw6"><img src="https://z3.ax1x.com/2021/03/26/6xSOw6.jpg" alt="6xSOw6.jpg"></a><br>
 我们抓包看看，猜测应该有个文件是校验登录的<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/5.png" alt=""><br>
 抓包<code>main.php</code>，放包后，果然看见了一个session.php，这应该是校验登录结果的文件，我们右键抓一个<code>session.php</code>的返回包<br>
