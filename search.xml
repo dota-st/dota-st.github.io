@@ -372,6 +372,28 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
 <p>没想到，密码123就登录成功了，嘿嘿，看来网站数据库里有用户密码是123<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/35b9af4c7fc405e94804e34b80cfde62_adc840d6-c7e5-42b6-846d-18212af3e7d2-ITL7TzPR.png" alt=""><br>
 但可惜的是，在审核期间，网站就被学校管理员关站了，导致审核不通过；但总归还是好的，又成功减少了一个网络危害</p>
+<h3 id="随笔2"><a class="header-anchor" href="#随笔2">¶</a>随笔2</h3>
+<p>最近很忙，以至于博客很久也没有来更新，今天省hw结束了，随即打算更新一下文章；思绪从哪里开始讲起呢？从3月份中旬开始学习漏洞挖掘开始吧，一开始其实没有打算先接触src漏洞挖掘，因为觉得自己还需要更多知识来沉淀自己，但为了在4月底的省hw拿个好名次，也就不得不开始去学习一下，好在结果还算满意，最后离结束只剩几个小时的时候用三个0day埋伏了一手，稳稳拿下了省hw高校第一；想起这一个月的学习，还是蛮惊讶的，发现自己在一个月的时间陆陆续续获得了上海交通大学、同济大学、兰州大学、南开大学、东北林业大学、常熟理工、上海外国语等学校颁发的漏洞证书，下面贴几张已经收到的图片吧<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/IMG_20210414_114939.jpg" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838122349.jpg" alt=""></p>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838030290.jpg" alt=""></p>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619837999884.jpg" alt=""></p>
+<p>到底还是最后逼了自己一把，还是那句话，有付出才会有收获；后面估计很长一段时间不会再进行src的漏洞挖掘了，打算把精力转向基础知识的学习</p>
+<h3 id="逻辑漏洞-垂直越权"><a class="header-anchor" href="#逻辑漏洞-垂直越权">¶</a>逻辑漏洞-垂直越权</h3>
+<p>这个洞纯属偶然，在刷手机的时候，无意发现的学校的网址，用电脑访问了之后是一个登录页面<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%60JOP7W%7D%29%5B7%40E_%24U6D0LG~G6.png" alt="">可以注册，注册了一个账号<br>
+账号：3150103968<br>
+密码：12345678<br>
+然后登陆，进去是普通的用户权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/JQFF554I%5BK%40VMAB1VMC_%60SC.png" alt=""><br>
+然后退出登录，回到登录框这里，用burpsuite抓取登录的数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/MFP1%28PB5%7B~%40_J4I5S%25S~SIQ.png" alt=""><br>
+抓取返回包进行观察，发现一个控制用户权限的字段<code>userPermission</code>，这里是user<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%28%24A%29GMXU%25%285%7B667%5B%28ZK%60A4U.png" alt=""><br>
+我们把他改成admin，然后发送数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/Z%7BW0ERG%25MS5NJAQZ%24WK%24WBK.png" alt=""><br>
+登录成功后，发现拥有了管理员的权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/9ATRN%28%247%29R7%7DNS%7DKY7%25MI%7DR.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>渗透</tag>
