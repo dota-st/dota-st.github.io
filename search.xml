@@ -3659,7 +3659,7 @@ web82写的脚本改改直接用</p>
 <p>很明显注入点是md5()函数这里，后面用了参数true，返回的是一个16位二进制<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web187/SI%24XF70%249%5D1LXD61%25G6I%7DOS.png" alt=""><br>
 而从网上搜集到的有一个字符串<code>ffifdyop</code>很特殊</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">echo</span> md5(<span class="string">&quot;ffifdyop&quot;</span>,<span class="literal">true</span>);</span><br><span class="line"><span class="comment">//结果</span></span><br><span class="line"><span class="string">&#x27;or&#x27;</span><span class="number">6.</span>.....</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">echo</span> md5(<span class="string">&quot;ffifdyop&quot;</span>,<span class="literal">true</span>);</span><br><span class="line"><span class="comment">//结果</span></span><br><span class="line"><span class="string">&#x27;or&#x27;</span><span class="number">6</span>(后面的是不可见字符)</span><br></pre></td></tr></table></figure>
 <p>可以看到会返回引号闭合和or并且后面是一些不可见字符，在mysql中进行布尔判断的时候，只要是数字开头就会被当作true，结果也就是</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">password&#x3D;&#39;&#39;or true</span><br></pre></td></tr></table></figure>
 <p>也就是一个万能密码登录，在返回包中成功拿到flag<br>
