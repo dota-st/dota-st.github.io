@@ -5,7 +5,7 @@
     <url>/posts/16692/</url>
     <content><![CDATA[<h1>前言</h1>
 <p>这两天玩了一下bugku的awd模式，因为之前也没有正式玩过，所以本萌新被各位师傅打得惨惨。这里分享一个安恒维护的开源项目AoiAWD，不过搭建可谓是问题连连。昨天一共有10轮，因为使用不当，导致前五轮都在传探针和执行的过程，所以错过了前五轮的机会，后面五轮都在看师傅们打过来的马和流量，去用着师傅们的马去连接别人的拿flag得分…QWQ。等有时间也研究一下批量写马和获取flag的套路。这里贴一下最后的结果图吧，一共50支队伍，最后得了第七名惨惨😫<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/GALX2N9Z%28%7D%28ZN%28I%242F7K3%247.png" alt=""></p>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/GALX2N9Z%28%7D%28ZN%28I%242F7K3%247.png" alt=""></p>
 <h1>项目</h1>
 <h2 id="项目说明"><a class="header-anchor" href="#项目说明">¶</a>项目说明</h2>
 <p>这里直接贴官方的说明</p>
@@ -81,37 +81,44 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RoundWorm: AoiAWD Filesystem &amp; Process Monitor Tool</span><br><span class="line">Usage: .&#x2F;roundworm [OPTIONS]</span><br><span class="line">         -d Running in daemon mode.</span><br><span class="line">         -s [HOST] AoiAWD Probe IP. Default: 127.0.0.1</span><br><span class="line">         -p [PORT] AoiAWD Probe PORT. Default: 8023</span><br><span class="line">         -w [PATH] Inotify watch dir, &#39;;&#39; as divider. Default: &#x2F;tmp</span><br><span class="line">         -i [MSECOND] Process watch interval. Default: 100</span><br><span class="line">         -h This help info</span><br></pre></td></tr></table></figure>
 <h2 id="搭建流程"><a class="header-anchor" href="#搭建流程">¶</a>搭建流程</h2>
-<p>这里我使用的是阿里云的ubuntu18.04系统<br>
+<blockquote>
+<p>更新<br>
+时间：2021.7.10<br>
+之前记录的方法是使用的ubuntu18.04环境，今天搭建的时候遇见了npm版本的问题，遂重新更新一下使用方法，环境基于ubuntu20.04</p>
+</blockquote>
+<p>这里我使用的是阿里云的ubuntu20.04系统<br>
 项目地址：<a href="https://github.com/DasSecurity-HatLab/AoiAWD">https://github.com/DasSecurity-HatLab/AoiAWD</a><br>
 首先需要更新一波</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
 <p><strong>安装git和下载项目</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt install git</span><br><span class="line">git clone https:&#x2F;&#x2F;github.com.cnpmjs.org&#x2F;DasSecurity-HatLab&#x2F;AoiAWD.git</span><br></pre></td></tr></table></figure>
 <p><strong>安装inotifywait</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir inotifywait   #新建文件夹</span><br><span class="line">cd inotifywait      #进入文件夹</span><br><span class="line">wget http:&#x2F;&#x2F;github.com&#x2F;downloads&#x2F;rvoicilas&#x2F;inotify-tools&#x2F;inotify-tools-3.14.tar.gz   #下载</span><br><span class="line">tar zxf inotify-tools-3.14.tar.gz   #解压</span><br><span class="line">cd inotify-tools-3.14&#x2F;</span><br><span class="line">.&#x2F;configure &amp;&amp; make &amp;&amp; make install #安装</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir inotifywait   #新建文件夹</span><br><span class="line">cd inotifywait      #进入文件夹</span><br><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;downloads&#x2F;rvoicilas&#x2F;inotify-tools&#x2F;inotify-tools-3.14.tar.gz   #下载</span><br><span class="line">tar zxf inotify-tools-3.14.tar.gz   #解压</span><br><span class="line">cd inotify-tools-3.14&#x2F;</span><br><span class="line">.&#x2F;configure &amp;&amp; make &amp;&amp; make install #安装</span><br></pre></td></tr></table></figure>
 <p>可用<code>man inotifywait</code>命令查看文档以确定是否安装正确，然后按q退出<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/QXB3LNP%7B6%25LVW~Y%60%5DIXGSJ0.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/QXB3LNP%7B6%25LVW~Y%60%5DIXGSJ0.png" alt=""><br>
 <strong>安装mongdb需要的依赖</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install mongodb-server</span><br><span class="line">sudo apt-get install php7.2-dev php-pear</span><br><span class="line">sudo pecl install mongodb   				#这里下载速度需要等多点时间</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install mongodb-server</span><br><span class="line">sudo apt-get install php7.4-dev php-pear</span><br><span class="line">sudo pecl install mongodb   				#这里下载速度需要等多点时间</span><br></pre></td></tr></table></figure>
+<p>如果在sudo pecl install mongodb这一步报错了，换成下面的方式安装</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl &#39;https:&#x2F;&#x2F;pecl.php.net&#x2F;get&#x2F;mongodb-1.9.0.tgz&#39; -o mongodb-1.9.0.tgz  #这里报错ssl错误的话多试几次</span><br><span class="line">pecl install mongodb-1.9.0.tgz</span><br></pre></td></tr></table></figure>
 <p>下面分别是这三条命令安装成功的截图：<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_1.png" alt=""><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_2.png" alt=""><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/mon_3.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/mon_1.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/mon_2.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/mon_3.png" alt=""><br>
 如果出现了提示<code>You should add &quot;extension=mongodb.so&quot; to php.ini</code>说明成功了，接着我们去php的配置文件php.ini进行修改<br>
-路径一般为:<code>/etc/php/7.2/cli/php.ini</code>，<a href="http://%E6%8E%A5%E7%9D%80%E6%88%91%E4%BB%AC%E5%8E%BB%E6%8B%93%E5%B1%95%E5%A4%84%E5%8A%A0%E4%B8%8Aextension=mongodb.so">接着我们去拓展处加上extension=mongodb.so</a><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/3CBP_L%2507KRWPG%40EF96MB0A.png" alt=""><br>
+路径一般为:<code>/etc/php/7.4/cli/php.ini</code>，接着我们去拓展处加上<code>extension=mongodb.so</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/3CBP_L%2507KRWPG%40EF96MB0A.png" alt=""><br>
 然后再把这两个开关改成Off，记住要把前面的分号去掉，不然会被注释掉<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/7SM9T%60%5BK%29%7D52XNR_%40~1HI6L.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/7SM9T%60%5BK%29%7D52XNR_%40~1HI6L.png" alt=""><br>
 <strong>构建Fronted项目</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt install npm      #安装npm</span><br><span class="line">cd AoiAWD  			#进入下载的项目</span><br><span class="line">cd Frontend</span><br><span class="line">npm install</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
-<p>下面分别是最后两条命令执行成功的截图：<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/7%24%401QSWN4%40%5B%24%60FGF~CQFT%5DV.png" alt=""><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/7R5E7F8J%24NH69%60%60Q%5DOCHN%608.png" alt=""><br>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt install npm      #安装npm</span><br><span class="line">cd AoiAWD  			#进入下载的项目</span><br><span class="line">cd Frontend</span><br><span class="line">npm install          #如有提示可继续敲npm fund命令</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+<p>下面分别是最后两条命令执行成功的截图（后来发现不同环境下会有出入，仅做参考）：<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/Y88%7B7%25NZ%29N0PV8KQIA%406FOB.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/9FNX9%2873_BGGQ%29AJ2X4AC6F.png" alt=""><br>
 执行成功会在dist/目录下得到index.html和static目录</p>
 <p><strong>构建AoiAWDcore</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd AoiAWD</span><br><span class="line">rm -rf src&#x2F;public&#x2F;*						#删除</span><br><span class="line">cp -r ..&#x2F;Frontend&#x2F;dist&#x2F;* src&#x2F;public&#x2F;	  #复制静态资源</span><br><span class="line">php compile.php</span><br></pre></td></tr></table></figure>
 <p>执行成功截图：<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/D%5DS33%60%25S3%28_CZKLE_4XTFH3.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/D%5DS33%60%25S3%28_CZKLE_4XTFH3.png" alt=""><br>
 执行成功后得到aoiawd.phar</p>
 <p><strong>构建TapeWorm</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TapeWorm</span><br><span class="line">php compile.php</span><br></pre></td></tr></table></figure>
@@ -122,19 +129,19 @@
 <p><strong>构建RoundWorm</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd RoundWorm</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
 <p>构建成功会得到roundworm<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/8A8%24_NC6%7BHMR%5DVZM%24Z%7B4C%409.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/8A8%24_NC6%7BHMR%5DVZM%24Z%7B4C%409.png" alt=""><br>
 <strong>启动AoiAWD</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd AoiAWD</span><br><span class="line">sudo mongod</span><br><span class="line">.&#x2F;aoiawd.phar</span><br></pre></td></tr></table></figure>
 <p>执行后：<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/4%7D89%5DOMY%25KLM%60K85%7DX%5D%40N_K.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/4%7D89%5DOMY%25KLM%60K85%7DX%5D%40N_K.png" alt=""><br>
 会提供一个随机token和开放三个端口，1337是web访问端口，8023是探针的接收端口，然后我们通过ip:1337去访问开启的AoiAWD界面<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/PG2FKEM%24%5D%5B6P3BH%5B5IHV270.png" alt=""></p>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/PG2FKEM%24%5D%5B6P3BH%5B5IHV270.png" alt=""></p>
 <h2 id="使用方法"><a class="header-anchor" href="#使用方法">¶</a>使用方法</h2>
 <p>搭建完后把刚刚那些文件夹中的生成的文件例如xxx.phar等发送到提供给我们的靶机上去，然后记得赋予权限，ip是云服务器ip，端口就是默认8023</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chmod +x tapeworm.phar</span><br><span class="line">chmod +x roundworm</span><br><span class="line">chmod +x guardian.phar</span><br><span class="line">.&#x2F;tapeworm.phar -d 目录 -s ip:port</span><br><span class="line">.&#x2F;roundworm  -w 目录 -s ip -p port</span><br><span class="line">.&#x2F;guardian.phar -i 目录 -s ip:port</span><br></pre></td></tr></table></figure>
 <p>这里贴当时比赛的一些图：<br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/Q%28%25%25P14U%7DOJ~%29C5ZO1%24XR0S.png" alt=""><br>
-<img src="https://blog-file-1302856486.cos.ap-guangzhou.myqcloud.com/AoiAWD/VMCECNOZK%295W79%6019%60%606U%28G.png" alt=""></p>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/Q%28%25%25P14U%7DOJ~%29C5ZO1%24XR0S.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/AoiAWD/VMCECNOZK%295W79%6019%60%606U%28G.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>AWD</tag>
