@@ -137,6 +137,13 @@
 
   
   <url>
+    <loc>https://www.wlhhlc.top/tags/AWD/</loc>
+    <lastmod>2021-08-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.wlhhlc.top/tags/%E7%A8%8B%E5%BA%8F/</loc>
     <lastmod>2021-08-18</lastmod>
     <changefreq>daily</changefreq>
@@ -144,7 +151,7 @@
   </url>
   
   <url>
-    <loc>https://www.wlhhlc.top/tags/AWD/</loc>
+    <loc>https://www.wlhhlc.top/tags/ctf/</loc>
     <lastmod>2021-08-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -159,13 +166,6 @@
   
   <url>
     <loc>https://www.wlhhlc.top/tags/%E6%B8%97%E9%80%8F/</loc>
-    <lastmod>2021-08-18</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.wlhhlc.top/tags/ctf/</loc>
     <lastmod>2021-08-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
